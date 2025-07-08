@@ -3,7 +3,7 @@
 ## Build/Configuration Instructions
 
 ### Prerequisites
-- **Java 24** (main project) / **Java 17+** (mcp-annotations-server submodule)
+- **Java 24** (main project)
 - **Maven 3.6+**
 - **Apache Druid cluster** (for integration testing with real Druid instance)
 
@@ -21,16 +21,6 @@ mvn clean package -DskipTests
 #### Build with Tests
 ```bash
 mvn clean package
-```
-
-#### Build Specific Module
-```bash
-# Main module only
-mvn clean package -DskipTests
-
-# Annotations server submodule only
-cd mcp-annotations-server
-./mvnw clean package -DskipTests
 ```
 
 ### Key Dependencies
@@ -65,7 +55,6 @@ mvn test
 ```bash
 mvn test -Dtest=DruidMcpServerApplicationTests
 mvn test -Dtest=DruidServicesIntegrationTest
-mvn test -Dtest=SimpleTestExample
 ```
 
 #### Test with Debug Output
@@ -186,54 +175,40 @@ src/
 │   │   │   ├── CompactionConfigRepository.java
 │   │   │   └── CompactionPromptProvider.java
 │   │   ├── datasource/
-│   │   │   ├── DatasourceToolProvider.java
-│   │   │   ├── DatasourceRepository.java
-│   │   │   └── DatasourceResources.java
+│   │   │   └── [Datasource management components]
 │   │   ├── lookup/
-│   │   │   ├── LookupToolProvider.java
-│   │   │   ├── LookupRepository.java
-│   │   │   └── LookupResources.java
+│   │   │   └── [Lookup management components]
 │   │   ├── query/
-│   │   │   ├── QueryService.java
-│   │   │   └── DataAnalysisPromptProvider.java
+│   │   │   └── [Query execution components]
 │   │   ├── retention/
-│   │   │   ├── RetentionRulesToolProvider.java
-│   │   │   ├── RetentionRulesRepository.java
-│   │   │   └── RetentionPromptProvider.java
+│   │   │   └── [Retention policy components]
 │   │   └── segments/
-│   │       ├── SegmentToolProvider.java
-│   │       ├── SegmentRepository.java
-│   │       └── SegmentResources.java
+│   │       └── [Segment management components]
 │   ├── ingestion/
 │   │   ├── IngestionManagementPromptProvider.java
 │   │   ├── spec/
-│   │   │   ├── IngestionSpecToolProvider.java
-│   │   │   └── IngestionSpecRepository.java
+│   │   │   └── [Ingestion specification components]
 │   │   ├── supervisors/
-│   │   │   ├── SupervisorsToolProvider.java
-│   │   │   └── SupervisorsRepository.java
+│   │   │   └── [Supervisor management components]
 │   │   └── tasks/
-│   │       ├── TasksToolProvider.java
-│   │       └── TasksRepository.java
+│   │       └── [Task management components]
 │   ├── monitoring/health/
 │   │   ├── basic/
-│   │   │   └── HealthToolProvider.java
+│   │   │   └── [Basic health check components]
 │   │   ├── diagnostics/
-│   │   │   └── DruidDoctorToolProvider.java
+│   │   │   └── [Diagnostic tools components]
 │   │   ├── functionality/
-│   │   │   └── FunctionalityHealthToolProvider.java
+│   │   │   └── [Functionality health components]
 │   │   ├── prompts/
-│   │   │   └── ClusterManagementPromptProvider.java
+│   │   │   └── [Health monitoring prompts]
 │   │   └── repository/
-│   │       ├── ClusterRepository.java
-│   │       ├── HealthStatusRepository.java
-│   │       └── ServerRepository.java
+│   │       └── [Health data repositories]
 │   ├── operations/
 │   │   └── OperationalPromptProvider.java
-│   └── shared/
-│       └── [Common utilities]
+│   └── resources/
+│       └── [Configuration files and templates]
 └── test/java/com/iunera/druidmcpserver/
-    └── [Comprehensive test suite]
+    └── [Comprehensive test suite matching main structure]
 ```
 
 ### Key Technologies

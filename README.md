@@ -21,6 +21,76 @@ This MCP server implements a feature-based architecture where each package repre
 - Customizable prompt templates
 - Feature-based package organization
 
+
+### MCP Inspector Interface
+
+When connected to an MCP client, you can inspect the available tools, resources, and prompts through the MCP inspector interface:
+
+#### Available Tools
+![MCP Inspector - Tools](assets/images/mcpinspector-tools.png)
+
+The tools interface shows all available Druid management functions organized by feature areas including data management, ingestion management, and monitoring & health.
+
+#### Available Resources
+![MCP Inspector - Resources](assets/images/mcpinspector-resources.png)
+
+The resources interface displays all accessible Druid data sources and metadata that can be retrieved through the MCP protocol.
+
+#### Available Prompts
+![MCP Inspector - Prompts](assets/images/mcpinspector-prompts.png)
+
+The prompts interface shows all AI-assisted guidance templates available for various Druid management tasks and data analysis workflows.
+
+
+
+
+## Quick Start
+
+### Prerequisites
+- Java 24
+- Maven 3.6+
+- Apache Druid cluster running with router on port 8888
+
+### Build and Run
+```bash
+# Build the application
+mvn clean package -DskipTests
+
+# Run the application
+java -jar target/druid-mcp-server-1.0.0.jar
+```
+
+The server will start on port 8080 by default.
+
+For detailed build instructions, testing, Docker setup, and development guidelines, see [development.md](development.md).
+
+## Installation from Maven Central
+
+If you prefer to use the pre-built JAR without building from source, you can download and run it directly from Maven Central.
+
+### Prerequisites
+- Java 24 JRE only
+
+### Download and Run
+
+```bash
+# Create a directory for the application
+mkdir druid-mcp-server && cd druid-mcp-server
+
+# Download the JAR from Maven Central
+curl -L -o druid-mcp-server-1.0.0.jar \
+  "https://repo.maven.apache.org/maven2/com/iunera/druid-mcp-server/1.0.0/druid-mcp-server-1.0.0.jar"
+
+# Run with SSE Transport (HTTP-based, default)
+java -jar druid-mcp-server-1.0.0.jar
+
+# OR run with STDIO Transport (recommended for LLM clients)
+java -Dspring.ai.mcp.server.stdio=true \
+     -Dspring.main.web-application-type=none \
+     -Dlogging.pattern.console= \
+     -jar druid-mcp-server-1.0.0.jar
+```
+
 ## For Developers
 
 For detailed development information including build instructions, testing guidelines, architecture details, and contributing guidelines, see [development.md](development.md).
@@ -304,63 +374,6 @@ Update your `mcp-servers-config.json` to include environment variables:
 }
 ```
 
-#### Troubleshooting SSL and Authentication
-
-##### Common SSL Issues
-
-1. **Certificate Validation Errors**
-   ```
-   Error: PKIX path building failed
-   ```
-   - Solution: Ensure certificates are properly installed in the system truststore, or use `DRUID_SSL_SKIP_VERIFICATION=true` for testing
-
-2. **Connection Timeout**
-   ```
-   Error: Connection timed out
-   ```
-   - Solution: Verify the HTTPS URL is correct and the Druid cluster is accessible
-
-##### Common Authentication Issues
-
-1. **401 Unauthorized**
-   ```
-   Error: HTTP 401 Unauthorized
-   ```
-   - Solution: Verify username and password are correct and the user has necessary permissions
-
-2. **Missing Credentials**
-   ```
-   Error: Authentication required
-   ```
-   - Solution: Ensure both `DRUID_AUTH_USERNAME` and `DRUID_AUTH_PASSWORD` are set
-
-##### Verification Steps
-
-1. **Test SSL Connection**:
-   ```bash
-   curl -k -u "username:password" "https://your-druid-cluster.example.com:8888/status"
-   ```
-
-2. **Verify Environment Variables**:
-   ```bash
-   echo $DRUID_ROUTER_URL
-   echo $DRUID_AUTH_USERNAME
-   echo $DRUID_SSL_ENABLED
-   ```
-
-3. **Check MCP Server Logs**:
-   ```bash
-   tail -f target/druid-mcp-server.log
-   ```
-
-#### Security Best Practices
-
-1. **Use Environment Variables**: Never hardcode credentials in configuration files
-2. **Enable SSL Verification**: Always use `DRUID_SSL_SKIP_VERIFICATION=false` in production
-3. **Secure Credential Storage**: Use secure credential management systems for production deployments
-4. **Regular Certificate Updates**: Ensure SSL certificates are kept up to date
-5. **Principle of Least Privilege**: Use Druid user accounts with minimal required permissions
-
 ## MCP Prompt Customization
 
 The server provides extensive prompt customization capabilities through the `prompts.properties` file located in `src/main/resources/`.
@@ -400,19 +413,6 @@ Environment: {environment}
 2. Load it at runtime:
 ```bash
 java -Dspring.config.additional-location=classpath:custom-prompts.properties \
-     -jar target/druid-mcp-server-1.0.0.jar
-```
-
-#### Method 3: Environment-Specific Configuration
-
-Create environment-specific prompt files:
-- `prompts-dev.properties`
-- `prompts-staging.properties`  
-- `prompts-prod.properties`
-
-Then activate with Spring profiles:
-```bash
-java -Dspring.profiles.active=prod \
      -jar target/druid-mcp-server-1.0.0.jar
 ```
 
@@ -488,11 +488,13 @@ java -jar target/druid-mcp-server-1.0.0.jar
 
 ### MCP Configuration for LLMs
 
-A ready-to-use MCP configuration file is provided at `mcp-servers-config.json` that can be used with LLM clients to connect to this Druid MCP server.
+A ready-to-use MCP configuration file is provided at `mcp-servers-config.json` that can be used with LLM clients to connect to this Druid MCP server. 
 
 The configuration includes both transport options:
 
 #### STDIO Transport (Recommended)
+More details on this on [examples/stdio/README.md](examples/stdio/README.md).
+
 ```json
 {
   "mcpServers": {
@@ -511,6 +513,8 @@ The configuration includes both transport options:
 ```
 
 #### SSE Transport
+More details on this on [examples/sse/README.md](examples/stdio/README.md).
+
 ```json
 {
   "mcpServers": {
@@ -526,26 +530,6 @@ The configuration includes both transport options:
 1. **Build the server first:** See [development.md](development.md) for build instructions
 2. **For STDIO transport:** The MCP server will be automatically started by the LLM client
 3. **For SSE transport:** Start the server manually first
-
-## Quick Start
-
-### Prerequisites
-- Java 24
-- Maven 3.6+
-- Apache Druid cluster running with router on port 8888
-
-### Build and Run
-```bash
-# Build the application
-mvn clean package -DskipTests
-
-# Run the application
-java -jar target/druid-mcp-server-1.0.0.jar
-```
-
-The server will start on port 8080 by default.
-
-For detailed build instructions, testing, Docker setup, and development guidelines, see [development.md](development.md).
 
 ## Examples
 
@@ -629,7 +613,7 @@ This Druid MCP Server is developed and maintained by **[iunera](https://www.iune
 
 iunera specializes in:
 - **AI-Powered Analytics**: Cutting-edge artificial intelligence solutions for data analysis
-- **Enterprise Data Platforms**: Scalable data infrastructure and analytics platforms
+- **Enterprise Data Platforms**: Scalable data infrastructure and analytics platforms (Druid, Flink, Kubernetes, Kafka, Spring)
 - **Model Context Protocol (MCP) Solutions**: Advanced MCP server implementations for various data systems
 - **Custom AI Development**: Tailored AI solutions for enterprise needs
 

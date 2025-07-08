@@ -3,7 +3,7 @@
 ## Build/Configuration Instructions
 
 ### Prerequisites
-- **Java 24** (main project) / **Java 17+** (mcp-annotations-server submodule)
+- **Java 24** (main project)
 - **Maven 3.6+**
 - **Apache Druid cluster** (for integration testing with real Druid instance)
 
@@ -26,16 +26,6 @@ mvn clean package -DskipTests
 #### Build with Tests
 ```bash
 mvn clean package
-```
-
-#### Build Specific Module
-```bash
-# Main module only
-mvn clean package -DskipTests
-
-# Annotations server submodule only
-cd mcp-annotations-server
-./mvnw clean package -DskipTests
 ```
 
 ### Key Dependencies
