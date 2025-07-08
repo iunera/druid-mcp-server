@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-#    paths:
-#      - 'pom.xml'
+    paths:
+      - 'pom.xml'
   pull_request:
     types:
       - closed
@@ -81,31 +81,31 @@ jobs:
     - name: Build application
       run: mvn clean package -DskipTests -Prelease
 
-  #    - name: Create Git tag
-#      run: |
-#        git config --local user.email "action@github.com"
-#        git config --local user.name "GitHub Action"
-#        git tag -a "v${{ steps.version.outputs.version }}" -m "Release version ${{ steps.version.outputs.version }}"
-#        git push origin "v${{ steps.version.outputs.version }}"
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#
-#    - name: Create GitHub Release
-#      uses: softprops/action-gh-release@v1
-#      with:
-#        tag_name: v${{ steps.version.outputs.version }}
-#        name: Release v${{ steps.version.outputs.version }}
-#        body: |
-#          Release version ${{ steps.version.outputs.version }}
-#
-#          ## Changes
-#          - Automated release from pom.xml version ${{ steps.version.outputs.version }}
-#        draft: false
-#        prerelease: false
-#        files: |
-#          ./target/druid-mcp-server-${{ steps.version.outputs.version }}.jar
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Git tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a "v${{ steps.version.outputs.version }}" -m "Release version ${{ steps.version.outputs.version }}"
+        git push origin "v${{ steps.version.outputs.version }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.version.outputs.version }}
+        name: Release v${{ steps.version.outputs.version }}
+        body: |
+          Release version ${{ steps.version.outputs.version }}
+
+          ## Changes
+          - Automated release from pom.xml version ${{ steps.version.outputs.version }}
+        draft: false
+        prerelease: false
+        files: |
+          ./target/druid-mcp-server-${{ steps.version.outputs.version }}.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Docker build and push job
   docker:
