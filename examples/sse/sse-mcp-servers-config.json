@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "default-server": {
+      "type": "sse",
+      "url": "http://localhost:8080/sse",
+      "note": "For SSE connections, add this URL directly in your MCP Client"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+examples/druidcluster/docker-compose.yaml
+.dockerignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# Build artifacts
+target/
+!target/druid-mcp-server-*.jar
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+HELP.md
+
+# Maven wrapper (we use the container's maven)
+.mvn/
+mvnw
+mvnw.cmd

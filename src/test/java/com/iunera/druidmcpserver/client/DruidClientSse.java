@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver;
+package com.iunera.druidmcpserver.client;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 
-@SpringBootTest
-class DruidMcpServerApplicationTests {
+/**
+ * Druid MCP client using SSE/HTTP transport.
+ * Requires the druid-mcp-server to be running on localhost:8080
+ */
+public class DruidClientSse {
 
-    @Test
-    void contextLoads() {
+    public static void main(String[] args) {
+        var transport = HttpClientSseClientTransport.builder("http://localhost:8080").build();
+        new DruidSampleClient(transport).run();
     }
-
 }
