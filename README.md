@@ -596,6 +596,7 @@ A specialized Apache Druid extension for ingesting and analyzing code-related da
 
 ## Roadmap
 
+- **Readonly Mode**: Implement a Readonly Mode (R) for Druid and disallow the Create, Update, Delete on all tools.
 - **Authentication on SSE Mode**: Introduce Oauth Authentication
 - **Druid Auto Compaction**: Intelligent automatic compaction configuration
 - **MCP Auto Completion**: Enhanced autocomplete functionality with sampling
@@ -617,12 +618,16 @@ iunera specializes in:
 - **Model Context Protocol (MCP) Solutions**: Advanced MCP server implementations for various data systems
 - **Custom AI Development**: Tailored AI solutions for enterprise needs
 
+As veterans in Apache Druid iunera deployed and maintained a large number of solutions based on [Apache Druid](https://druid.apache.org/) in productive enterprise grade scenarios. 
+
 For more information about our services and solutions, visit [www.iunera.com](https://www.iunera.com).
 
 ### Contact & Support
 
+Need help? Let 
+
 - **Website**: [https://www.iunera.com](https://www.iunera.com)
-- **Professional Services**: Contact us through [www.iunera.com](https://www.iunera.com) for enterprise support and custom development
+- **Professional Services**: Contact us through [www.iunera.com](https://www.iunera.com) or [email](mailto:contact@iunera.com?subject=Druid%20MCP%20Server%20inquiry) for enterprise support and custom development
 - **Open Source**: This project is open source and community contributions are welcome
 
 ---
