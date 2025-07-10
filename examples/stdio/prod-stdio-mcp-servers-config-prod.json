@@ -3,13 +3,13 @@
     "druid-mcp-server": {
       "command": "java",
       "args": [
-        "-Dspring.ai.mcp.server.stdio\u003dtrue",
-        "-Dspring.main.web-application-type\u003dnone",
-        "-Ddruid.router.url\u003dhttps://druid.example.com",
-        "-Ddruid.auth.username\u003dmcp-user",
-        "-Ddruid.auth.password\u003dmcp-user-password",
-        "-Ddruid.ssl.enabled\u003dtrue",
-        "-Dlogging.pattern.console\u003d",
+        "-Dspring.ai.mcp.server.stdio=true",
+        "-Dspring.main.web-application-type=none",
+        "-Ddruid.router.url=https://druid.example.com",
+        "-Ddruid.auth.username=mcp-user",
+        "-Ddruid.auth.password=mcp-user-password",
+        "-Ddruid.ssl.enabled=true",
+        "-Dlogging.pattern.console=",
         "-jar",
         "target/druid-mcp-server-1.0.0.jar"
       ]
