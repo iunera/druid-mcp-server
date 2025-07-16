@@ -29,10 +29,10 @@ Production-ready configuration with security and authentication settings.
 - Production-grade security settings
 
 **Configuration Parameters:**
-- `druid.router.url`: HTTPS URL to your Druid router/broker
-- `druid.auth.username`: Authentication username
-- `druid.auth.password`: Authentication password
-- `druid.ssl.enabled`: Enables SSL/TLS connections
+- `DRUID_ROUTER_URL`: HTTPS URL to your Druid router/broker
+- `DRUID_AUTH_USERNAME`: Authentication username
+- `DRUID_AUTH_PASSWORD`: Authentication password
+- `DRUID_SSL_ENABLED`: Enables SSL/TLS connections
 
 ## How to Use
 
@@ -66,26 +66,28 @@ Both configuration files follow the MCP server configuration format:
     "druid-mcp-server": {
       "command": "java",
       "args": [
-        "-Dspring.ai.mcp.server.stdio=true",
-        "-Dspring.main.web-application-type=none",
-        "-Dlogging.pattern.console=",
         "-jar",
         "target/druid-mcp-server-1.0.0.jar"
-      ]
+      ],
+      "env": {
+        "SPRING_AI_MCP_SERVER_STDIO": "true",
+        "SPRING_MAIN_WEB_APPLICATION_TYPE": "none",
+        "LOGGING_PATTERN_CONSOLE": ""
+      }
     }
   }
 }
 ```
 
-The `args` array contains Java system properties and arguments needed to run the server in STDIO mode.
+The `args` array contains the essential Java arguments, while the `env` object contains environment variables needed to configure the server in STDIO mode.
 
 ## Key STDIO Transport Settings
 
-The following Java system properties are essential for STDIO transport:
+The following environment variables are essential for STDIO transport:
 
-- `-Dspring.ai.mcp.server.stdio=true`: Enables STDIO transport mode
-- `-Dspring.main.web-application-type=none`: Disables web server (required for STDIO)
-- `-Dlogging.pattern.console=`: Disables console logging pattern (required for clean STDIO communication)
+- `SPRING_AI_MCP_SERVER_STDIO=true`: Enables STDIO transport mode
+- `SPRING_MAIN_WEB_APPLICATION_TYPE=none`: Disables web server (required for STDIO)
+- `LOGGING_PATTERN_CONSOLE=`: Disables console logging pattern (required for clean STDIO communication)
 
 ## Troubleshooting
 
@@ -98,9 +100,16 @@ The following Java system properties are essential for STDIO transport:
 
 ### Debug Mode
 
-To enable debug logging, add the following argument to the configuration:
+To enable debug logging, add the following environment variable to the `env` object in your configuration:
 ```json
-"-Dlogging.level.com.iunera.druidmcpserver=DEBUG"
+{
+  "env": {
+    "SPRING_AI_MCP_SERVER_STDIO": "true",
+    "SPRING_MAIN_WEB_APPLICATION_TYPE": "none",
+    "LOGGING_PATTERN_CONSOLE": "",
+    "LOGGING_LEVEL_COM_IUNERA_DRUIDMCPSERVER": "DEBUG"
+  }
+}
 ```
 
 ## Integration with MCP Clients

@@ -3,12 +3,14 @@
     "druid-mcp-server": {
       "command": "java",
       "args": [
-        "-Dspring.ai.mcp.server.stdio=true",
-        "-Dspring.main.web-application-type=none",
-        "-Dlogging.pattern.console=",
         "-jar",
         "target/druid-mcp-server-1.0.0.jar"
-      ]
+      ],
+      "env": {
+        "SPRING_AI_MCP_SERVER_STDIO": "true",
+        "SPRING_MAIN_WEB_APPLICATION_TYPE": "none",
+        "LOGGING_PATTERN_CONSOLE": ""
+      }
     }
   }
 }

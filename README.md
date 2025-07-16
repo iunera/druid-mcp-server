@@ -99,6 +99,37 @@ java -Dspring.ai.mcp.server.stdio=true \
      -jar druid-mcp-server-1.0.0.jar
 ```
 
+## Installation with Docker
+
+If you prefer to use Docker, you can run the pre-built Docker image directly from Docker Hub without any local Java installation.
+
+### Prerequisites
+- Docker installed and running
+
+### Pull and Run
+
+```bash
+# Pull the latest Docker image
+docker pull iunera/druid-mcp-server:latest
+
+# Run with SSE Transport (HTTP-based, default)
+docker run -p 8080:8080 \
+  -e DRUID_BROKER_URL=http://your-druid-broker:8082 \
+  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
+  iunera/druid-mcp-server:latest
+
+# OR run with STDIO Transport (recommended for LLM clients)
+docker run --rm -i \
+  -e SPRING_AI_MCP_SERVER_STDIO=true \
+  -e SPRING_MAIN_WEB_APPLICATION_TYPE=none \
+  -e LOGGING_PATTERN_CONSOLE= \
+  -e DRUID_BROKER_URL=http://your-druid-broker:8082 \
+  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
+  iunera/druid-mcp-server:latest
+```
+
+Replace `your-druid-broker` and `your-druid-coordinator` with your actual Druid cluster endpoints.
+
 ## For Developers
 
 For detailed development information including build instructions, testing guidelines, architecture details, and contributing guidelines, see [development.md](development.md).
@@ -560,6 +591,16 @@ Configuration examples for STDIO (Standard Input/Output) transport mode - the re
 - Authentication and SSL setup examples
 - Integration guides for popular MCP clients
 - Troubleshooting and security best practices
+
+### 🐳📡 [STDIO Transport with Docker](examples/stdio-docker/README.md)
+Configuration examples for running the Druid MCP Server using Docker with STDIO transport mode. This approach combines the convenience of Docker deployment with STDIO transport for LLM client integration.
+
+**Features:**
+- Docker-based MCP configuration files for development and production
+- No Java installation required on client machines
+- Docker Compose setup for simplified deployment
+- Environment variable configuration for Druid connections
+- Authentication and SSL support via Docker environment variables
 
 ### 🌐 [SSE Transport Configuration](examples/sse/README.md)
 Configuration examples for SSE (Server-Sent Events) transport mode, providing HTTP-based communication suitable for web applications and REST API integrations.

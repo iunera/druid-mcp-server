@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "druid-mcp-server": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-e", "SPRING_AI_MCP_SERVER_STDIO=true",
+        "-e", "SPRING_MAIN_WEB_APPLICATION_TYPE=none",
+        "-e", "LOGGING_PATTERN_CONSOLE=",
+        "-e", "DRUID_ROUTER_URL=http://host.docker.internal:8888",
+        "iunera/druid-mcp-server:latest"
+      ]
+    }
+  }
+}
