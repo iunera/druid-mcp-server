@@ -12,6 +12,14 @@ This MCP server implements a feature-based architecture where each package repre
 - **Resources** - Data providers for accessing information  
 - **Prompts** - AI-assisted guidance templates
 
+## Video Walkthrough
+
+Learn how to integrate AI agents with Apache Druid using the MCP server. This tutorial demonstrates time series data exploration, statistical analysis, and data ingestion using natural language with AI assistants like Claude, ChatGPT, and Gemini.
+
+[![Time Series on AI Steroids: Apache Druid Enterprise MCP Server Tutorial](https://img.youtube.com/vi/BqCEWRZbRjU/0.jpg)](https://www.youtube.com/watch?v=BqCEWRZbRjU)
+
+*Click the thumbnail above to watch the video on YouTube*
+
 ## Features
 
 - Spring AI MCP Server integration
