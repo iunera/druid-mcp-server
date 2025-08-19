@@ -1,4 +1,5 @@
 # Druid MCP Server
+[![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/iunera/druid-mcp-server)](https://archestra.ai/mcp-catalog/iunera__druid-mcp-server)
 
 A comprehensive Model Context Protocol (MCP) server for Apache Druid that provides extensive tools, resources, and prompts for managing and analyzing Druid clusters.
 
