@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.datamanagement.datasource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -41,7 +41,7 @@ public class DatasourceToolProvider {
     /**
      * List all datasource names
      */
-    @Tool(description = "List all available Druid datasource names")
+    @McpTool(description = "List all available Druid datasource names")
     public String listDatasources() {
         try {
             JsonNode result = datasourceRepository.getAllDatasources();
@@ -67,7 +67,7 @@ public class DatasourceToolProvider {
     /**
      * Show detailed information for a specific datasource including column names and data types
      */
-    @Tool(description = "Show detailed information for a specific Druid datasource including column information with names and data types")
+    @McpTool(description = "Show detailed information for a specific Druid datasource including column information with names and data types")
     public String showDatasourceDetails(String datasourceName) {
         try {
             JsonNode result = datasourceRepository.getAllDatasources();
@@ -96,7 +96,7 @@ public class DatasourceToolProvider {
     /**
      * Kill a datasource permanently with all its data and metadata
      */
-    @Tool(description = "Kill a Druid datasource permanently, removing all data and metadata for the specified time interval. Use with extreme caution as this operation is irreversible.")
+    @McpTool(description = "Kill a Druid datasource permanently, removing all data and metadata for the specified time interval. Use with extreme caution as this operation is irreversible.")
     public String killDatasource(String datasourceName, String interval) {
         try {
             JsonNode result = datasourceRepository.killDatasource(datasourceName, interval);

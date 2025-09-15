@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.datamanagement.segments;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -37,7 +37,7 @@ public class SegmentToolProvider {
     /**
      * List all segments for all datasources
      */
-    @Tool(description = "List all segments for all datasources with full details")
+    @McpTool(description = "List all segments for all datasources with full details")
     public String listAllSegments() {
         try {
             JsonNode result = segmentRepository.getAllSegments();
@@ -52,7 +52,7 @@ public class SegmentToolProvider {
     /**
      * Get segments for a specific datasource
      */
-    @Tool(description = "Get segments for a specific datasource")
+    @McpTool(description = "Get segments for a specific datasource")
     public String getSegmentsForDatasource(String datasourceName) {
         try {
             JsonNode result = segmentRepository.getSegmentsForDatasource(datasourceName);
@@ -67,7 +67,7 @@ public class SegmentToolProvider {
     /**
      * Get segments for a specific datasource with full details
      */
-    @Tool(description = "Get segments for a specific datasource with full details including metadata")
+    @McpTool(description = "Get segments for a specific datasource with full details including metadata")
     public String getSegmentsWithDetailsForDatasource(String datasourceName) {
         try {
             JsonNode result = segmentRepository.getSegmentsForDatasourceWithDetails(datasourceName);
@@ -82,7 +82,7 @@ public class SegmentToolProvider {
     /**
      * Get specific segment details
      */
-    @Tool(description = "Get details for a specific segment by datasource and segment ID")
+    @McpTool(description = "Get details for a specific segment by datasource and segment ID")
     public String getSegmentDetails(String datasourceName, String segmentId) {
         try {
             JsonNode result = segmentRepository.getSegmentDetails(datasourceName, segmentId);
@@ -97,7 +97,7 @@ public class SegmentToolProvider {
     /**
      * Enable a segment
      */
-    @Tool(description = "Enable a specific segment by datasource and segment ID")
+    @McpTool(description = "Enable a specific segment by datasource and segment ID")
     public String enableSegment(String datasourceName, String segmentId) {
         try {
             JsonNode result = segmentRepository.enableSegment(datasourceName, segmentId);
@@ -112,7 +112,7 @@ public class SegmentToolProvider {
     /**
      * Disable a segment
      */
-    @Tool(description = "Disable a specific segment by datasource and segment ID")
+    @McpTool(description = "Disable a specific segment by datasource and segment ID")
     public String disableSegment(String datasourceName, String segmentId) {
         try {
             JsonNode result = segmentRepository.disableSegment(datasourceName, segmentId);
@@ -127,7 +127,7 @@ public class SegmentToolProvider {
     /**
      * Get segment metadata using SQL query
      */
-    @Tool(description = "Get segment metadata for all datasources using SQL query from sys.segments table")
+    @McpTool(description = "Get segment metadata for all datasources using SQL query from sys.segments table")
     public String getSegmentMetadata() {
         try {
             JsonNode result = segmentRepository.getSegmentMetadata();
@@ -142,7 +142,7 @@ public class SegmentToolProvider {
     /**
      * Get segment metadata for a specific datasource using SQL
      */
-    @Tool(description = "Get segment metadata for a specific datasource using SQL query from sys.segments table")
+    @McpTool(description = "Get segment metadata for a specific datasource using SQL query from sys.segments table")
     public String getSegmentMetadataForDatasource(String datasourceName) {
         try {
             JsonNode result = segmentRepository.getSegmentMetadataForDatasource(datasourceName);
@@ -157,7 +157,7 @@ public class SegmentToolProvider {
     /**
      * Get load queue status
      */
-    @Tool(description = "Get load queue status for all servers showing segments being loaded")
+    @McpTool(description = "Get load queue status for all servers showing segments being loaded")
     public String getLoadQueueStatus() {
         try {
             JsonNode result = segmentRepository.getLoadQueueStatus();
@@ -172,7 +172,7 @@ public class SegmentToolProvider {
     /**
      * Get load queue status for a specific server
      */
-    @Tool(description = "Get load queue status for a specific server showing segments being loaded on that server")
+    @McpTool(description = "Get load queue status for a specific server showing segments being loaded on that server")
     public String getLoadQueueStatusForServer(String serverName) {
         try {
             JsonNode result = segmentRepository.getLoadQueueStatusForServer(serverName);

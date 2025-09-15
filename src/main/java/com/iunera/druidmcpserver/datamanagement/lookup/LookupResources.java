@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.datamanagement.lookup;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.logaritex.mcp.annotation.McpResource;
+import org.springaicommunity.mcp.annotation.McpResource;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;

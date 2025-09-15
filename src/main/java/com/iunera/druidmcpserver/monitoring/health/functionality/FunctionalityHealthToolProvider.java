@@ -22,7 +22,7 @@ import com.iunera.druidmcpserver.datamanagement.segments.SegmentRepository;
 import com.iunera.druidmcpserver.ingestion.supervisors.SupervisorsRepository;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 
 /**
@@ -53,7 +53,7 @@ public class FunctionalityHealthToolProvider {
     /**
      * Comprehensive health check for all supervisor functionalities
      */
-    @Tool(description = "Check the health of all Druid supervisor functionalities including ingestion status, task health, and performance metrics")
+    @McpTool(description = "Check the health of all Druid supervisor functionalities including ingestion status, task health, and performance metrics")
     public String checkSupervisorHealth() {
         var healthReport = objectMapper.createObjectNode();
         var issues = objectMapper.createArrayNode();
@@ -157,7 +157,7 @@ public class FunctionalityHealthToolProvider {
     /**
      * Comprehensive health check for historical nodes and segment distribution
      */
-    @Tool(description = "Check the health of Druid historical nodes including segment distribution, load queue, and performance metrics")
+    @McpTool(description = "Check the health of Druid historical nodes including segment distribution, load queue, and performance metrics")
     public String checkHistoricalHealth() {
         var healthReport = objectMapper.createObjectNode();
         var issues = objectMapper.createArrayNode();
@@ -248,7 +248,7 @@ public class FunctionalityHealthToolProvider {
     /**
      * Comprehensive functionality health check combining supervisors and historicals
      */
-    @Tool(description = "Perform comprehensive health check of all Druid functionalities including supervisors, historicals, and ingestion pipeline")
+    @McpTool(description = "Perform comprehensive health check of all Druid functionalities including supervisors, historicals, and ingestion pipeline")
     public String checkFunctionalityHealth() {
         var healthReport = objectMapper.createObjectNode();
         var overallIssues = objectMapper.createArrayNode();
@@ -344,7 +344,7 @@ public class FunctionalityHealthToolProvider {
     /**
      * Quick functionality check for rapid health assessment
      */
-    @Tool(description = "Perform quick functionality health check for rapid assessment of Druid ingestion and query capabilities")
+    @McpTool(description = "Perform quick functionality health check for rapid assessment of Druid ingestion and query capabilities")
     public String quickFunctionalityCheck() {
         var healthReport = objectMapper.createObjectNode();
         var issues = objectMapper.createArrayNode();

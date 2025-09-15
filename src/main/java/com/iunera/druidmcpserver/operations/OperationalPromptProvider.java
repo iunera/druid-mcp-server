@@ -17,7 +17,7 @@
 package com.iunera.druidmcpserver.operations;
 
 import com.iunera.druidmcpserver.config.PromptTemplateService;
-import com.logaritex.mcp.annotation.McpPrompt;
+import org.springaicommunity.mcp.annotation.McpPrompt;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
 import io.modelcontextprotocol.spec.McpSchema.Role;

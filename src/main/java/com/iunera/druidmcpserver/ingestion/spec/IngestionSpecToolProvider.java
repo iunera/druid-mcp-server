@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.ingestion.spec;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -40,7 +40,7 @@ public class IngestionSpecToolProvider {
     /**
      * Create and submit a Druid ingestion spec
      */
-    @Tool(description = "Create and submit a Druid ingestion specification. Provide the ingestion spec as a JSON string containing the task type, spec, and context.")
+    @McpTool(description = "Create and submit a Druid ingestion specification. Provide the ingestion spec as a JSON string containing the task type, spec, and context.")
     public String createIngestionSpec(String ingestionSpecJson) {
         try {
             // Parse the ingestion spec JSON
@@ -69,7 +69,7 @@ public class IngestionSpecToolProvider {
     /**
      * Create a simple batch ingestion spec template
      */
-    @Tool(description = "Create a template for a simple batch ingestion spec. Provide datasource name, input source type (local, s3, http, etc.), and input source path.")
+    @McpTool(description = "Create a template for a simple batch ingestion spec. Provide datasource name, input source type (local, s3, http, etc.), and input source path.")
     public String createBatchIngestionTemplate(String datasourceName, String inputSourceType, String inputSourcePath) {
         try {
             Map<String, Object> ingestionSpec = new HashMap<>();

@@ -19,7 +19,7 @@ package com.iunera.druidmcpserver.datamanagement.query;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -43,7 +43,7 @@ public class QueryToolProvider {
     /**
      * Execute a Druid SQL query against a datasource
      */
-    @Tool(description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter.")
+    @McpTool(description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter.")
     public String queryDruidSql(String sqlQuery) {
         try {
             JsonNode result = queryRepository.executeSqlQuery(sqlQuery);
@@ -58,7 +58,7 @@ public class QueryToolProvider {
     /**
      * Execute a multi-stage Druid SQL query as a task
      */
-    @Tool(description = "Execute a multi-stage SQL query against Druid datasources as a task. This is suitable for complex queries, large datasets, and INSERT/REPLACE operations. Provide the SQL query as a parameter.")
+    @McpTool(description = "Execute a multi-stage SQL query against Druid datasources as a task. This is suitable for complex queries, large datasets, and INSERT/REPLACE operations. Provide the SQL query as a parameter.")
     public String queryDruidMultiStage(String sqlQuery) {
         try {
             JsonNode result = queryRepository.executeMultiStageSqlQuery(sqlQuery);
@@ -73,7 +73,7 @@ public class QueryToolProvider {
     /**
      * Execute a multi-stage Druid SQL query with custom context parameters
      */
-    @Tool(description = "Execute a multi-stage SQL query with custom context parameters. Provide the SQL query and context as JSON string. Context can include maxNumTasks, taskAssignment, finalizeAggregations, groupByEnableMultiValueUnnesting, etc.")
+    @McpTool(description = "Execute a multi-stage SQL query with custom context parameters. Provide the SQL query and context as JSON string. Context can include maxNumTasks, taskAssignment, finalizeAggregations, groupByEnableMultiValueUnnesting, etc.")
     public String queryDruidMultiStageWithContext(String sqlQuery, String contextJson) {
         try {
             Map<String, Object> context = null;
@@ -96,7 +96,7 @@ public class QueryToolProvider {
     /**
      * Get status of a multi-stage query task
      */
-    @Tool(description = "Get the status of a multi-stage query task. Provide the task ID as a parameter.")
+    @McpTool(description = "Get the status of a multi-stage query task. Provide the task ID as a parameter.")
     public String getMultiStageQueryTaskStatus(String taskId) {
         try {
             JsonNode result = tasksRepository.getTaskStatus(taskId);
@@ -111,7 +111,7 @@ public class QueryToolProvider {
     /**
      * Cancel a multi-stage query task
      */
-    @Tool(description = "Cancel a running multi-stage query task. Provide the task ID as a parameter.")
+    @McpTool(description = "Cancel a running multi-stage query task. Provide the task ID as a parameter.")
     public String cancelMultiStageQueryTask(String taskId) {
         try {
             JsonNode result = tasksRepository.killTask(taskId);

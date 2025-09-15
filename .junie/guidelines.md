@@ -30,9 +30,9 @@ mvn clean package
 
 ### Key Dependencies
 - **Spring Boot**: 3.5.3 (main), 3.3.6 (submodule)
-- **Spring AI MCP Server**: 1.1.0-SNAPSHOT
-- **Spring AI BOM**: 1.1.0-SNAPSHOT
-- **MCP Annotations**: 0.1.0 (logaritex.mcp)
+- **Spring AI MCP Server**: 1.1.0-M1 (with official MCP annotations support)
+- **Spring AI BOM**: 1.1.0-M1
+- **Spring AI MCP Annotations**: Included in Spring AI 1.1.0-M1
 
 ### Repository Configuration
 The project requires custom Maven repositories for Spring AI snapshots:
@@ -60,7 +60,7 @@ logging.pattern.console=     # Required for STDIO
 ```
 
 ### Autowiring
-Features like Tools, Resources, Prompts and more, need to be autowired in the main Class `DruidMcpServerApplication.java` in the  `@Bean ToolCallbackProvider druidTools`
+Features like Tools, Resources, Prompts and more, are automatically discovered and registered by Spring AI 1.1.0-M1 auto-configuration through annotation scanning. Simply use `@Component` on classes with `@McpTool`, `@McpResource`, `@McpPrompt`, and `@McpComplete` annotated methods.
 
 ## Testing Information
 
@@ -140,10 +140,10 @@ See `SimpleTestExample.java` for a complete example demonstrating:
 
 ### MCP Architecture
 The project implements Model Context Protocol (MCP) server with:
-- **Tools**: Executable functions (`@Tool` annotation)
+- **Tools**: Executable functions (`@McpTool` annotation)
 - **Resources**: Data providers (`@McpResource` annotation)
 - **Transport**: STDIO and SSE support
-- **Prompts**: Prompt templates (`@McpPrompt`annotation)
+- **Prompts**: Prompt templates (`@McpPrompt` annotation)
 - **Autocomplete**: Autocomplete with Sampling (`@McpComplete` annotation)
 
 For every Resource we need a separate Tool to access it in addition.
@@ -179,9 +179,42 @@ java -jar target/druid-mcp-server-0.0.1-SNAPSHOT.jar
 ### Code Style Guidelines
 
 #### Annotations Usage
-- Use `@Tool` for MCP tool methods that return String
+- Use `@McpTool` for MCP tool methods that return String
 - Use `@McpResource` for resource methods that return `ReadResourceResult`
 - Include descriptive method documentation for MCP tool discovery
+
+#### New @McpTool Annotation Usage
+- Use `@McpTool` for defining MCP tools with automatic JSON schema generation
+- Use `@McpToolParam` to define required input parameters with descriptions
+- Use `@McpTool.McpAnnotations` for advanced metadata like `title`, `readOnlyHint`, `destructiveHint`, and `idempotentHint`
+
+#### Example (@McpTool):
+```java
+@Component
+public class ExampleToolProvider {
+    
+    @McpTool(name = "query-druid-sql", description = "Execute a SQL query against Druid datasources")
+    public String queryDruidSql(
+            @McpToolParam(description = "SQL query string", required = true) String sqlQuery) {
+        // Implementation
+        return result;
+    }
+    
+    @McpTool(name = "calculate-area", 
+             description = "Calculate the area of a rectangle",
+             annotations = @McpTool.McpAnnotations(
+                 title = "Rectangle Area Calculator",
+                 readOnlyHint = true,
+                 destructiveHint = false,
+                 idempotentHint = true
+             ))
+    public AreaResult calculateRectangleArea(
+            @McpToolParam(description = "Width", required = true) double width,
+            @McpToolParam(description = "Height", required = true) double height) {
+        return new AreaResult(width * height, "square units");
+    }
+}
+```
 
 #### Package by Feature 
 - Always create a package by Feature structure to separate the concerns

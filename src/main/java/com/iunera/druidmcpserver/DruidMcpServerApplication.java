@@ -37,7 +37,6 @@ import com.iunera.druidmcpserver.monitoring.health.diagnostics.DruidDoctorToolPr
 import com.iunera.druidmcpserver.monitoring.health.functionality.FunctionalityHealthToolProvider;
 import com.iunera.druidmcpserver.monitoring.health.prompts.ClusterManagementPromptProvider;
 import com.iunera.druidmcpserver.operations.OperationalPromptProvider;
-import com.logaritex.mcp.spring.SpringAiMcpAnnotationProvider;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncPromptSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceSpecification;
 import org.springframework.ai.tool.ToolCallbackProvider;
@@ -55,57 +54,65 @@ public class DruidMcpServerApplication {
         SpringApplication.run(DruidMcpServerApplication.class, args);
     }
 
-    @Bean
-    public ToolCallbackProvider druidTools(
-            QueryToolProvider queryToolProvider,
-            CompactionConfigToolProvider compactionConfigToolProvider,
-            DatasourceToolProvider datasourceToolProvider,
-            LookupToolProvider lookupToolProvider,
-            RetentionRulesToolProvider retentionRulesToolProvider,
-            IngestionSpecToolProvider ingestionSpecToolProvider,
-            SupervisorsToolProvider supervisorsToolProvider,
-            TasksToolProvider tasksToolProvider,
-            SegmentToolProvider segmentToolProvider,
-            HealthToolProvider healthToolProvider,
-            DruidDoctorToolProvider druidDoctorToolProvider,
-            FunctionalityHealthToolProvider functionalityHealthToolProvider
-    ) {
-        return MethodToolCallbackProvider.builder()
-                .toolObjects(
-                        queryToolProvider,
-                        compactionConfigToolProvider,
-                        datasourceToolProvider,
-                        retentionRulesToolProvider,
-                        ingestionSpecToolProvider,
-                        supervisorsToolProvider,
-                        tasksToolProvider,
-                        lookupToolProvider,
-                        segmentToolProvider,
-                        healthToolProvider,
-                        druidDoctorToolProvider,
-                        functionalityHealthToolProvider
-                )
-                .build();
-    }
-
-    @Bean
-    public List<SyncResourceSpecification> resourceSpecs(DatasourceResources datasourceResourceProvider,
-                                                         SegmentResources segmentResourceProvider,
-                                                         LookupResources lookupResourceProvider) {
-        return SpringAiMcpAnnotationProvider.createSyncResourceSpecifications(
-                List.of(datasourceResourceProvider, segmentResourceProvider, lookupResourceProvider));
-    }
-
-    @Bean
-    public List<SyncPromptSpecification> promptSpecs(DataAnalysisPromptProvider dataAnalysisPromptProvider,
-                                                     ClusterManagementPromptProvider clusterManagementPromptProvider,
-                                                     IngestionManagementPromptProvider ingestionManagementPromptProvider,
-                                                     RetentionPromptProvider retentionPromptProvider,
-                                                     CompactionPromptProvider compactionPromptProvider,
-                                                     OperationalPromptProvider operationalPromptProvider) {
-        return SpringAiMcpAnnotationProvider.createSyncPromptSpecifications(
-                List.of(dataAnalysisPromptProvider, clusterManagementPromptProvider,
-                        ingestionManagementPromptProvider, retentionPromptProvider,
-                        compactionPromptProvider, operationalPromptProvider));
-    }
+//    @Bean
+//    public ToolCallbackProvider druidTools(
+//            QueryToolProvider queryToolProvider,
+//            CompactionConfigToolProvider compactionConfigToolProvider,
+//            DatasourceToolProvider datasourceToolProvider,
+//            LookupToolProvider lookupToolProvider,
+//            RetentionRulesToolProvider retentionRulesToolProvider,
+//            IngestionSpecToolProvider ingestionSpecToolProvider,
+//            SupervisorsToolProvider supervisorsToolProvider,
+//            TasksToolProvider tasksToolProvider,
+//            SegmentToolProvider segmentToolProvider,
+//            HealthToolProvider healthToolProvider,
+//            DruidDoctorToolProvider druidDoctorToolProvider,
+//            FunctionalityHealthToolProvider functionalityHealthToolProvider,
+//            @org.springframework.beans.factory.annotation.Value("${readonly.enabled:false}") boolean readonlyEnabled
+//    ) {
+//        java.util.List<Object> toolObjects = new java.util.ArrayList<>();
+//        if (readonlyEnabled) {
+//            // Register only read-only tools
+//            toolObjects.add(queryToolProvider);
+//            toolObjects.add(healthToolProvider);
+//            toolObjects.add(druidDoctorToolProvider);
+//            toolObjects.add(functionalityHealthToolProvider);
+//        } else {
+//            // Register all tools
+//            toolObjects.add(queryToolProvider);
+//            toolObjects.add(compactionConfigToolProvider);
+//            toolObjects.add(datasourceToolProvider);
+//            toolObjects.add(retentionRulesToolProvider);
+//            toolObjects.add(ingestionSpecToolProvider);
+//            toolObjects.add(supervisorsToolProvider);
+//            toolObjects.add(tasksToolProvider);
+//            toolObjects.add(lookupToolProvider);
+//            toolObjects.add(segmentToolProvider);
+//            toolObjects.add(healthToolProvider);
+//            toolObjects.add(druidDoctorToolProvider);
+//            toolObjects.add(functionalityHealthToolProvider);
+//        }
+//        return MethodToolCallbackProvider.builder().toolObjects(toolObjects.toArray()).build();
+//    }
+//
+//    @Bean
+//    public List<SyncResourceSpecification> resourceSpecs(DatasourceResources datasourceResourceProvider,
+//                                                         SegmentResources segmentResourceProvider,
+//                                                         LookupResources lookupResourceProvider) {
+//        return SpringAiMcpAnnotationProvider.createSyncResourceSpecifications(
+//                List.of(datasourceResourceProvider, segmentResourceProvider, lookupResourceProvider));
+//    }
+//
+//    @Bean
+//    public List<SyncPromptSpecification> promptSpecs(DataAnalysisPromptProvider dataAnalysisPromptProvider,
+//                                                     ClusterManagementPromptProvider clusterManagementPromptProvider,
+//                                                     IngestionManagementPromptProvider ingestionManagementPromptProvider,
+//                                                     RetentionPromptProvider retentionPromptProvider,
+//                                                     CompactionPromptProvider compactionPromptProvider,
+//                                                     OperationalPromptProvider operationalPromptProvider) {
+//        return SpringAiMcpAnnotationProvider.createSyncPromptSpecifications(
+//                List.of(dataAnalysisPromptProvider, clusterManagementPromptProvider,
+//                        ingestionManagementPromptProvider, retentionPromptProvider,
+//                        compactionPromptProvider, operationalPromptProvider));
+//    }
 }
