@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.ingestion.supervisors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -36,7 +36,7 @@ public class SupervisorsToolProvider {
     /**
      * List all supervisors
      */
-    @Tool(description = "List all Druid supervisors")
+    @McpTool(description = "List all Druid supervisors")
     public String listSupervisors() {
         try {
             JsonNode result = supervisorsRepository.getAllSupervisors();
@@ -51,7 +51,7 @@ public class SupervisorsToolProvider {
     /**
      * Get supervisor status
      */
-    @Tool(description = "Get the status of a Druid supervisor by supervisor ID")
+    @McpTool(description = "Get the status of a Druid supervisor by supervisor ID")
     public String getSupervisorStatus(String supervisorId) {
         try {
             JsonNode result = supervisorsRepository.getSupervisorStatus(supervisorId);
@@ -66,7 +66,7 @@ public class SupervisorsToolProvider {
     /**
      * Suspend a supervisor
      */
-    @Tool(description = "Suspend a Druid supervisor by supervisor ID")
+    @McpTool(description = "Suspend a Druid supervisor by supervisor ID")
     public String suspendSupervisor(String supervisorId) {
         try {
             JsonNode result = supervisorsRepository.suspendSupervisor(supervisorId);
@@ -81,7 +81,7 @@ public class SupervisorsToolProvider {
     /**
      * Start/Resume a supervisor
      */
-    @Tool(description = "Start or resume a Druid supervisor by supervisor ID")
+    @McpTool(description = "Start or resume a Druid supervisor by supervisor ID")
     public String startSupervisor(String supervisorId) {
         try {
             JsonNode result = supervisorsRepository.resumeSupervisor(supervisorId);
@@ -96,7 +96,7 @@ public class SupervisorsToolProvider {
     /**
      * Terminate a supervisor
      */
-    @Tool(description = "Terminate a Druid supervisor by supervisor ID. Use with extreme caution as this operation is irreversible.")
+    @McpTool(description = "Terminate a Druid supervisor by supervisor ID. Use with extreme caution as this operation is irreversible.")
     public String terminateSupervisor(String supervisorId) {
         try {
             JsonNode result = supervisorsRepository.terminateSupervisor(supervisorId);

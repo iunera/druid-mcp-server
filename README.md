@@ -97,7 +97,7 @@ java -jar druid-mcp-server-1.0.0.jar
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar druid-mcp-server-1.0.0.jar
+     -jar druid-mcp-server-1.1.0.jar
 ```
 
 ## Installation with Docker
@@ -221,7 +221,7 @@ Configure your Druid connection in `src/main/resources/application.properties`:
 ```properties
 # Spring AI MCP Server configuration
 spring.ai.mcp.server.name=druid-mcp-server
-spring.ai.mcp.server.version=1.0.0
+spring.ai.mcp.server.version=1.1.0
 
 # Druid configuration
 druid.router.url=http://localhost:8888

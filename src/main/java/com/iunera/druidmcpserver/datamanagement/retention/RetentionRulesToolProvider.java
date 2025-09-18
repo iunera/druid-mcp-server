@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.datamanagement.retention;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -40,7 +40,7 @@ public class RetentionRulesToolProvider {
     /**
      * View retention rules for all datasources
      */
-    @Tool(description = "View retention rules for all Druid datasources. Returns a JSON object with datasource names as keys and their retention rules as values.")
+    @McpTool(description = "View retention rules for all Druid datasources. Returns a JSON object with datasource names as keys and their retention rules as values.")
     public String viewAllRetentionRules() {
         try {
             JsonNode result = retentionRulesRepository.getAllRetentionRules();
@@ -55,7 +55,7 @@ public class RetentionRulesToolProvider {
     /**
      * View retention rules for a specific datasource
      */
-    @Tool(description = "View retention rules for a specific Druid datasource. Provide the datasource name as parameter.")
+    @McpTool(description = "View retention rules for a specific Druid datasource. Provide the datasource name as parameter.")
     public String viewRetentionRulesForDatasource(String datasourceName) {
         try {
             JsonNode result = retentionRulesRepository.getRetentionRulesForDatasource(datasourceName);
@@ -70,7 +70,7 @@ public class RetentionRulesToolProvider {
     /**
      * Edit retention rules for a specific datasource
      */
-    @Tool(description = "Edit retention rules for a specific Druid datasource. Provide the datasource name and rules as JSON string. Rules should be an array of rule objects with type, period, and other properties.")
+    @McpTool(description = "Edit retention rules for a specific Druid datasource. Provide the datasource name and rules as JSON string. Rules should be an array of rule objects with type, period, and other properties.")
     public String editRetentionRulesForDatasource(String datasourceName, String rulesJson) {
         try {
             // Parse the rules JSON string into a List of Maps
@@ -90,7 +90,7 @@ public class RetentionRulesToolProvider {
     /**
      * View retention rule history for a specific datasource
      */
-    @Tool(description = "View retention rule change history for a specific Druid datasource. Provide the datasource name as parameter.")
+    @McpTool(description = "View retention rule change history for a specific Druid datasource. Provide the datasource name as parameter.")
     public String viewRetentionRuleHistory(String datasourceName) {
         try {
             JsonNode result = retentionRulesRepository.getRetentionRuleHistory(datasourceName);

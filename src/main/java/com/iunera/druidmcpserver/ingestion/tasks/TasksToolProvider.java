@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.ingestion.tasks;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -36,7 +36,7 @@ public class TasksToolProvider {
     /**
      * Kill a task
      */
-    @Tool(description = "Kill/shutdown a Druid task by task ID")
+    @McpTool(description = "Kill/shutdown a Druid task by task ID")
     public String killTask(String taskId) {
         try {
             JsonNode result = tasksRepository.killTask(taskId);
@@ -51,7 +51,7 @@ public class TasksToolProvider {
     /**
      * Get task raw details
      */
-    @Tool(description = "Get raw details of a Druid task by task ID")
+    @McpTool(description = "Get raw details of a Druid task by task ID")
     public String getTaskRawDetails(String taskId) {
         try {
             JsonNode result = tasksRepository.getTaskDetails(taskId);
@@ -66,7 +66,7 @@ public class TasksToolProvider {
     /**
      * Get task ingestion spec
      */
-    @Tool(description = "Get the ingestion specification of a Druid task by task ID")
+    @McpTool(description = "Get the ingestion specification of a Druid task by task ID")
     public String getTaskIngestionSpec(String taskId) {
         try {
             JsonNode result = tasksRepository.getTaskIngestionSpec(taskId);
@@ -84,7 +84,7 @@ public class TasksToolProvider {
     /**
      * Get task reports
      */
-    @Tool(description = "Get the reports of a Druid task by task ID")
+    @McpTool(description = "Get the reports of a Druid task by task ID")
     public String getTaskReports(String taskId) {
         try {
             JsonNode result = tasksRepository.getTaskReports(taskId);
@@ -99,7 +99,7 @@ public class TasksToolProvider {
     /**
      * Get task log
      */
-    @Tool(description = "Get the log of a Druid task by task ID")
+    @McpTool(description = "Get the log of a Druid task by task ID")
     public String getTaskLog(String taskId) {
         try {
             String result = tasksRepository.getTaskLog(taskId);
@@ -114,7 +114,7 @@ public class TasksToolProvider {
     /**
      * Get task log with offset
      */
-    @Tool(description = "Get the log of a Druid task by task ID starting from a specific offset")
+    @McpTool(description = "Get the log of a Druid task by task ID starting from a specific offset")
     public String getTaskLogWithOffset(String taskId, long offset) {
         try {
             String result = tasksRepository.getTaskLog(taskId, offset);
@@ -129,7 +129,7 @@ public class TasksToolProvider {
     /**
      * Get task status
      */
-    @Tool(description = "Get the status of a Druid task by task ID")
+    @McpTool(description = "Get the status of a Druid task by task ID")
     public String getTaskStatus(String taskId) {
         try {
             JsonNode result = tasksRepository.getTaskStatus(taskId);
@@ -144,7 +144,7 @@ public class TasksToolProvider {
     /**
      * List all running ingestion tasks
      */
-    @Tool(description = "List all currently running Druid ingestion tasks")
+    @McpTool(description = "List all currently running Druid ingestion tasks")
     public String listRunningTasks() {
         try {
             JsonNode result = tasksRepository.getRunningTasks();
@@ -159,7 +159,7 @@ public class TasksToolProvider {
     /**
      * List all pending ingestion tasks
      */
-    @Tool(description = "List all pending Druid ingestion tasks")
+    @McpTool(description = "List all pending Druid ingestion tasks")
     public String listPendingTasks() {
         try {
             JsonNode result = tasksRepository.getPendingTasks();
@@ -174,7 +174,7 @@ public class TasksToolProvider {
     /**
      * List all waiting ingestion tasks
      */
-    @Tool(description = "List all waiting Druid ingestion tasks")
+    @McpTool(description = "List all waiting Druid ingestion tasks")
     public String listWaitingTasks() {
         try {
             JsonNode result = tasksRepository.getWaitingTasks();
@@ -189,7 +189,7 @@ public class TasksToolProvider {
     /**
      * List all completed ingestion tasks
      */
-    @Tool(description = "List all completed Druid ingestion tasks")
+    @McpTool(description = "List all completed Druid ingestion tasks")
     public String listCompletedTasks() {
         try {
             JsonNode result = tasksRepository.getCompleteTasks();

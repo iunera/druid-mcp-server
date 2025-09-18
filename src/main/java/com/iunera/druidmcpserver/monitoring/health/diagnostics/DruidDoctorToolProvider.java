@@ -24,7 +24,7 @@ import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.ClusterRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.ServerRepository;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 
 /**
@@ -61,7 +61,7 @@ public class DruidDoctorToolProvider {
     /**
      * Comprehensive cluster health diagnosis with recommendations
      */
-    @Tool(description = "Perform comprehensive Druid cluster health diagnosis with automated recommendations and issue detection")
+    @McpTool(description = "Perform comprehensive Druid cluster health diagnosis with automated recommendations and issue detection")
     public String diagnoseCluster() {
         var diagnosis = objectMapper.createObjectNode();
         var issues = objectMapper.createArrayNode();
@@ -120,7 +120,7 @@ public class DruidDoctorToolProvider {
     /**
      * Quick health check with immediate action items
      */
-    @Tool(description = "Perform quick Druid cluster health check with immediate action items for critical issues")
+    @McpTool(description = "Perform quick Druid cluster health check with immediate action items for critical issues")
     public String quickHealthCheck() {
         var quickCheck = objectMapper.createObjectNode();
         var criticalIssues = objectMapper.createArrayNode();
@@ -148,7 +148,7 @@ public class DruidDoctorToolProvider {
     /**
      * Analyze cluster performance and provide optimization recommendations
      */
-    @Tool(description = "Analyze Druid cluster performance and provide optimization recommendations")
+    @McpTool(description = "Analyze Druid cluster performance and provide optimization recommendations")
     public String analyzePerformance() {
         var analysis = objectMapper.createObjectNode();
         var performanceIssues = objectMapper.createArrayNode();
@@ -178,7 +178,7 @@ public class DruidDoctorToolProvider {
     /**
      * Validate cluster configuration and provide best practice recommendations
      */
-    @Tool(description = "Validate Druid cluster configuration and provide best practice recommendations")
+    @McpTool(description = "Validate Druid cluster configuration and provide best practice recommendations")
     public String validateConfiguration() {
         var validation = objectMapper.createObjectNode();
         var configIssues = objectMapper.createArrayNode();

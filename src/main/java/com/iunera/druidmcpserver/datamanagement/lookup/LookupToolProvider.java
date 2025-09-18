@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.datamanagement.lookup;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -39,7 +39,7 @@ public class LookupToolProvider {
     /**
      * List all available Druid lookups from the coordinator
      */
-    @Tool(description = "List all available Druid lookups from the coordinator")
+    @McpTool(description = "List all available Druid lookups from the coordinator")
     public String listLookups() {
         try {
             JsonNode result = lookupRepository.getAllLookups();
@@ -54,7 +54,7 @@ public class LookupToolProvider {
     /**
      * Get lookup configurations for a specific tier
      */
-    @Tool(description = "Get lookup configurations for a specific tier")
+    @McpTool(description = "Get lookup configurations for a specific tier")
     public String getLookupsForTier(String tier) {
         try {
             JsonNode result = lookupRepository.getLookupsForTier(tier);
@@ -69,7 +69,7 @@ public class LookupToolProvider {
     /**
      * Get specific lookup configuration
      */
-    @Tool(description = "Get configuration for a specific lookup by tier and name")
+    @McpTool(description = "Get configuration for a specific lookup by tier and name")
     public String getLookup(String tier, String lookupName) {
         try {
             JsonNode result = lookupRepository.getLookup(tier, lookupName);
@@ -84,7 +84,7 @@ public class LookupToolProvider {
     /**
      * Create or update a lookup configuration
      */
-    @Tool(description = "Create or update a lookup configuration. Provide tier, lookup name, and configuration as JSON string")
+    @McpTool(description = "Create or update a lookup configuration. Provide tier, lookup name, and configuration as JSON string")
     public String createOrUpdateLookup(String tier, String lookupName, String configJson) {
         try {
             Map<String, Object> config = objectMapper.readValue(configJson, Map.class);
@@ -100,7 +100,7 @@ public class LookupToolProvider {
     /**
      * Delete a lookup configuration
      */
-    @Tool(description = "Delete a lookup configuration by tier and name")
+    @McpTool(description = "Delete a lookup configuration by tier and name")
     public String deleteLookup(String tier, String lookupName) {
         try {
             JsonNode result = lookupRepository.deleteLookup(tier, lookupName);
@@ -115,7 +115,7 @@ public class LookupToolProvider {
     /**
      * Get lookup status for all tiers
      */
-    @Tool(description = "Get lookup status for all tiers")
+    @McpTool(description = "Get lookup status for all tiers")
     public String getLookupStatus() {
         try {
             JsonNode result = lookupRepository.getLookupStatus();
@@ -130,7 +130,7 @@ public class LookupToolProvider {
     /**
      * Get lookup status for a specific tier
      */
-    @Tool(description = "Get lookup status for a specific tier")
+    @McpTool(description = "Get lookup status for a specific tier")
     public String getLookupStatusForTier(String tier) {
         try {
             JsonNode result = lookupRepository.getLookupStatusForTier(tier);
