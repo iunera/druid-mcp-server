@@ -18,7 +18,7 @@ package com.iunera.druidmcpserver.datamanagement.compaction;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -39,7 +39,7 @@ public class CompactionConfigToolProvider {
     /**
      * View compaction configuration for all datasources
      */
-    @Tool(description = "View compaction configuration for all Druid datasources. Returns an array of compaction configurations.")
+    @McpTool(description = "View compaction configuration for all Druid datasources. Returns an array of compaction configurations.")
     public String viewAllCompactionConfigs() {
         try {
             JsonNode result = compactionConfigRepository.getAllCompactionConfigs();
@@ -54,7 +54,7 @@ public class CompactionConfigToolProvider {
     /**
      * View compaction configuration for a specific datasource
      */
-    @Tool(description = "View compaction configuration for a specific Druid datasource. Provide the datasource name as parameter.")
+    @McpTool(description = "View compaction configuration for a specific Druid datasource. Provide the datasource name as parameter.")
     public String viewCompactionConfigForDatasource(String datasourceName) {
         try {
             JsonNode result = compactionConfigRepository.getCompactionConfigForDatasource(datasourceName);
@@ -69,7 +69,7 @@ public class CompactionConfigToolProvider {
     /**
      * Edit compaction configuration for a specific datasource
      */
-    @Tool(description = "Edit compaction configuration for a specific Druid datasource. Provide the datasource name and configuration as JSON string. Configuration should include dataSource, taskPriority, inputSegmentSizeBytes, maxRowsPerSegment, skipOffsetFromLatest, tuningConfig, taskContext, granularitySpec, dimensionsSpec, metricsSpec, and transformSpec.")
+    @McpTool(description = "Edit compaction configuration for a specific Druid datasource. Provide the datasource name and configuration as JSON string. Configuration should include dataSource, taskPriority, inputSegmentSizeBytes, maxRowsPerSegment, skipOffsetFromLatest, tuningConfig, taskContext, granularitySpec, dimensionsSpec, metricsSpec, and transformSpec.")
     public String editCompactionConfigForDatasource(String datasourceName, String configJson) {
         try {
             // Parse the configuration JSON string into a Map
@@ -91,7 +91,7 @@ public class CompactionConfigToolProvider {
     /**
      * Delete compaction configuration for a specific datasource
      */
-    @Tool(description = "Delete compaction configuration for a specific Druid datasource. Provide the datasource name as parameter.")
+    @McpTool(description = "Delete compaction configuration for a specific Druid datasource. Provide the datasource name as parameter.")
     public String deleteCompactionConfigForDatasource(String datasourceName) {
         try {
             JsonNode result = compactionConfigRepository.deleteCompactionConfigForDatasource(datasourceName);
@@ -106,7 +106,7 @@ public class CompactionConfigToolProvider {
     /**
      * View compaction configuration history for a specific datasource
      */
-    @Tool(description = "View compaction configuration change history for a specific Druid datasource. Provide the datasource name as parameter.")
+    @McpTool(description = "View compaction configuration change history for a specific Druid datasource. Provide the datasource name as parameter.")
     public String viewCompactionConfigHistory(String datasourceName) {
         try {
             JsonNode result = compactionConfigRepository.getCompactionConfigHistory(datasourceName);
@@ -121,7 +121,7 @@ public class CompactionConfigToolProvider {
     /**
      * View compaction status for all datasources
      */
-    @Tool(description = "View compaction status for all Druid datasources. Shows the current state of compaction tasks and progress.")
+    @McpTool(description = "View compaction status for all Druid datasources. Shows the current state of compaction tasks and progress.")
     public String viewCompactionStatus() {
         try {
             JsonNode result = compactionConfigRepository.getCompactionStatus();
@@ -136,7 +136,7 @@ public class CompactionConfigToolProvider {
     /**
      * View compaction status for a specific datasource
      */
-    @Tool(description = "View compaction status for a specific Druid datasource. Shows the current state of compaction tasks and progress for the datasource. Provide the datasource name as parameter.")
+    @McpTool(description = "View compaction status for a specific Druid datasource. Shows the current state of compaction tasks and progress for the datasource. Provide the datasource name as parameter.")
     public String viewCompactionStatusForDatasource(String datasourceName) {
         try {
             JsonNode result = compactionConfigRepository.getCompactionStatusForDatasource(datasourceName);

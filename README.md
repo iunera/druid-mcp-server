@@ -25,10 +25,17 @@ Learn how to integrate AI agents with Apache Druid using the MCP server. This tu
 
 - Spring AI MCP Server integration
 - Tool-based architecture for MCP protocol compliance
-- STDIO and SSE transport support
+- **Tool-based Architecture**: Complete MCP protocol compliance with automatic JSON schema generation
+- **Multiple Transport Modes**: STDIO, SSE, and **Streamable HTTP** support
+- **Real-time Communication**: Server-Sent Events with streaming capabilities
 - Comprehensive error handling
-- Customizable prompt templates
-- Feature-based package organization
+- **Customizable Prompt Templates**: AI-assisted guidance with template customization
+- **Comprehensive Error Handling**: Graceful error handling with meaningful responses
+
+### Architecture & Organization
+- **Feature-based Package Organization**: Each package represents a distinct Druid management area
+- **Auto-discovery**: Automatic registration of tools, resources, and prompts via annotations
+- **Enterprise Ready**: Production-grade configuration and security features
 
 
 ### MCP Inspector Interface
@@ -97,7 +104,7 @@ java -jar druid-mcp-server-1.0.0.jar
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar druid-mcp-server-1.0.0.jar
+     -jar druid-mcp-server-1.1.0.jar
 ```
 
 ## Installation with Docker
@@ -221,7 +228,7 @@ Configure your Druid connection in `src/main/resources/application.properties`:
 ```properties
 # Spring AI MCP Server configuration
 spring.ai.mcp.server.name=druid-mcp-server
-spring.ai.mcp.server.version=1.0.0
+spring.ai.mcp.server.version=1.1.0
 
 # Druid configuration
 druid.router.url=http://localhost:8888
@@ -512,7 +519,33 @@ This server uses Spring AI's MCP Server framework and supports both STDIO and SS
 
 ### Transport Modes
 
-#### STDIO Transport (Recommended for LLM clients)
+The Druid MCP Server supports multiple transport modes compliant with MCP 2025-06-18 specification:
+
+#### Streamable HTTP Transport (Recommended - New in MCP 2025-06-18)
+The new **Streamable HTTP** transport provides enhanced performance and scalability with support for multiple concurrent clients:
+
+```bash
+# Default configuration with Streamable HTTP
+
+java -Dspring.ai.mcp.server.stdio=true \
+     -Dspring.main.web-application-type=none \
+     -Dspring.ai.mcp.server.protocol=STREAMABLE \
+     -Dlogging.pattern.console= \
+     -jar target/druid-mcp-server-1.0.0.jar
+# Server available at http://localhost:8080/mcp (configurable endpoint)
+```
+
+**Features:**
+- **Single Endpoint**: One HTTP endpoint handles both POST and GET requests
+- **Multiple Clients**: Support for concurrent client connections
+- **Optional SSE Streaming**: Server-Sent Events for real-time updates
+- **Enhanced Security**: Origin header validation and authentication
+- **Backwards Compatibility**: Automatic fallback for older MCP clients
+- **Keep-alive**: Configurable connection health monitoring
+
+#### STDIO Transport (Command-line Integration)
+Perfect for LLM clients and desktop applications:
+
 ```bash
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
@@ -520,10 +553,12 @@ java -Dspring.ai.mcp.server.stdio=true \
      -jar target/druid-mcp-server-1.0.0.jar
 ```
 
-#### SSE Transport (HTTP-based)
+#### Legacy SSE Transport (Default)
+Still supported for backwards compatibility kept as Default. Will be deprecated in the next version.
+
 ```bash
 java -jar target/druid-mcp-server-1.0.0.jar
-# Server available at http://localhost:8080
+# Server available at http://localhost:8080/sse
 ```
 
 ### MCP Configuration for LLMs

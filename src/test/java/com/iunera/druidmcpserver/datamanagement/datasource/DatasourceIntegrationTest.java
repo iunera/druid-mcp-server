@@ -21,7 +21,6 @@ import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -48,26 +47,13 @@ class DatasourceIntegrationTest {
     @Autowired
     private QueryToolProvider queryToolProvider;
 
-
-    @Autowired
-    private ToolCallbackProvider druidTools;
-
     @Test
     void testServicesAreInjected() {
         assertNotNull(datasourceResourceProvider, "DatasourceResourceProvider should be injected");
         assertNotNull(datasourceToolProvider, "DatasourceToolProvider should be injected");
         assertNotNull(queryToolProvider, "QueryToolProvider should be injected");
-        assertNotNull(druidTools, "ToolCallbackProvider should be injected");
     }
 
-    @Test
-    void testToolCallbackProviderExists() {
-        // Verify that the ToolCallbackProvider is properly configured
-        assertNotNull(druidTools, "ToolCallbackProvider should not be null");
-
-        // Basic verification that it's a valid provider
-        assertNotNull(druidTools.toString(), "ToolCallbackProvider should have a string representation");
-    }
 
     @Test
     void testDatasourceResourceProviderMethodsExist() {

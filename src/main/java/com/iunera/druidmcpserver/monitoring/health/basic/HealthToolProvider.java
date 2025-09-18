@@ -23,7 +23,7 @@ import com.iunera.druidmcpserver.datamanagement.segments.SegmentRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.ClusterRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.ServerRepository;
-import org.springframework.ai.tool.annotation.Tool;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -58,7 +58,7 @@ public class HealthToolProvider {
     /**
      * Check overall Druid cluster health
      */
-    @Tool(description = "Check overall Druid cluster health including coordinator and router status")
+    @McpTool(description = "Check overall Druid cluster health including coordinator and router status")
     public String checkClusterHealth() {
         var healthReport = objectMapper.createObjectNode();
 
@@ -112,7 +112,7 @@ public class HealthToolProvider {
     /**
      * Get coordinator health status
      */
-    @Tool(description = "Get Druid coordinator health status")
+    @McpTool(description = "Get Druid coordinator health status")
     public String getCoordinatorHealth() {
         try {
             JsonNode result = healthStatusRepository.getCoordinatorHealth();
@@ -127,7 +127,7 @@ public class HealthToolProvider {
     /**
      * Get router health status
      */
-    @Tool(description = "Get Druid router health status")
+    @McpTool(description = "Get Druid router health status")
     public String getRouterHealth() {
         try {
             JsonNode result = healthStatusRepository.getRouterHealth();
@@ -142,7 +142,7 @@ public class HealthToolProvider {
     /**
      * Get coordinator self-discovery status
      */
-    @Tool(description = "Get Druid coordinator self-discovery status")
+    @McpTool(description = "Get Druid coordinator self-discovery status")
     public String getCoordinatorSelfDiscovered() {
         try {
             JsonNode result = healthStatusRepository.getCoordinatorSelfDiscovered();
@@ -157,7 +157,7 @@ public class HealthToolProvider {
     /**
      * Get router self-discovery status
      */
-    @Tool(description = "Get Druid router self-discovery status")
+    @McpTool(description = "Get Druid router self-discovery status")
     public String getRouterSelfDiscovered() {
         try {
             JsonNode result = healthStatusRepository.getRouterSelfDiscovered();
@@ -172,7 +172,7 @@ public class HealthToolProvider {
     /**
      * Get all servers status
      */
-    @Tool(description = "Get status of all Druid servers")
+    @McpTool(description = "Get status of all Druid servers")
     public String getAllServersStatus() {
         try {
             JsonNode result = serverRepository.getAllServersStatus();
@@ -187,7 +187,7 @@ public class HealthToolProvider {
     /**
      * Get all servers status with details
      */
-    @Tool(description = "Get detailed status of all Druid servers")
+    @McpTool(description = "Get detailed status of all Druid servers")
     public String getAllServersStatusWithDetails() {
         try {
             JsonNode result = serverRepository.getAllServersStatusWithDetails();
@@ -202,7 +202,7 @@ public class HealthToolProvider {
     /**
      * Get specific server status
      */
-    @Tool(description = "Get status of a specific Druid server")
+    @McpTool(description = "Get status of a specific Druid server")
     public String getServerStatus(String serverName) {
         try {
             JsonNode result = serverRepository.getServerStatus(serverName);
@@ -217,7 +217,7 @@ public class HealthToolProvider {
     /**
      * Get cluster metadata
      */
-    @Tool(description = "Get Druid cluster configuration metadata")
+    @McpTool(description = "Get Druid cluster configuration metadata")
     public String getClusterMetadata() {
         try {
             JsonNode result = clusterRepository.getClusterMetadata();
@@ -232,7 +232,7 @@ public class HealthToolProvider {
     /**
      * Get leader information
      */
-    @Tool(description = "Get Druid cluster leader information")
+    @McpTool(description = "Get Druid cluster leader information")
     public String getLeaderInfo() {
         try {
             JsonNode result = clusterRepository.getLeaderInfo();
@@ -247,7 +247,7 @@ public class HealthToolProvider {
     /**
      * Check if coordinator is leader
      */
-    @Tool(description = "Check if coordinator is the cluster leader")
+    @McpTool(description = "Check if coordinator is the cluster leader")
     public String isCoordinatorLeader() {
         try {
             JsonNode result = clusterRepository.isCoordinatorLeader();
@@ -262,7 +262,7 @@ public class HealthToolProvider {
     /**
      * Get coordinator properties
      */
-    @Tool(description = "Get Druid coordinator properties")
+    @McpTool(description = "Get Druid coordinator properties")
     public String getCoordinatorProperties() {
         try {
             JsonNode result = healthStatusRepository.getCoordinatorProperties();
@@ -277,7 +277,7 @@ public class HealthToolProvider {
     /**
      * Get router properties
      */
-    @Tool(description = "Get Druid router properties")
+    @McpTool(description = "Get Druid router properties")
     public String getRouterProperties() {
         try {
             JsonNode result = healthStatusRepository.getRouterProperties();
@@ -292,7 +292,7 @@ public class HealthToolProvider {
     /**
      * Get broker status
      */
-    @Tool(description = "Get Druid broker status through router")
+    @McpTool(description = "Get Druid broker status through router")
     public String getBrokerStatus() {
         try {
             JsonNode result = serverRepository.getBrokerStatus();

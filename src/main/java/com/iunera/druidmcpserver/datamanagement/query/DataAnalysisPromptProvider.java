@@ -17,12 +17,12 @@
 package com.iunera.druidmcpserver.datamanagement.query;
 
 import com.iunera.druidmcpserver.config.PromptTemplateService;
-import com.logaritex.mcp.annotation.McpArg;
-import com.logaritex.mcp.annotation.McpPrompt;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
 import io.modelcontextprotocol.spec.McpSchema.Role;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
+import org.springaicommunity.mcp.annotation.McpArg;
+import org.springaicommunity.mcp.annotation.McpPrompt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
