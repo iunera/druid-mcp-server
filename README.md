@@ -521,7 +521,7 @@ This server uses Spring AI's MCP Server framework and supports both STDIO and SS
 
 The Druid MCP Server supports multiple transport modes compliant with MCP 2025-06-18 specification:
 
-#### Streamable HTTP Transport (Recommended - New in MCP 2025-06-18)
+#### Streamable HTTP Transport (Recommended and Default - New in MCP 2025-06-18)
 The new **Streamable HTTP** transport provides enhanced performance and scalability with support for multiple concurrent clients:
 
 ```bash
@@ -529,11 +529,12 @@ The new **Streamable HTTP** transport provides enhanced performance and scalabil
 
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
-     -Dspring.ai.mcp.server.protocol=STREAMABLE \
      -Dlogging.pattern.console= \
      -jar target/druid-mcp-server-1.0.0.jar
 # Server available at http://localhost:8080/mcp (configurable endpoint)
 ```
+
+Note: The `-Dspring.ai.mcp.server.protocol` option is deprecated and no longer required. `STREAMABLE` is the default protocol and is configured in `application.properties`. If you previously set this flag, you can safely remove it.
 
 **Features:**
 - **Single Endpoint**: One HTTP endpoint handles both POST and GET requests
@@ -553,8 +554,8 @@ java -Dspring.ai.mcp.server.stdio=true \
      -jar target/druid-mcp-server-1.0.0.jar
 ```
 
-#### Legacy SSE Transport (Default)
-Still supported for backwards compatibility kept as Default. Will be deprecated in the next version.
+#### Legacy SSE Transport (Deprecated)
+Still supported for backwards compatibility. It is no longer the default and may be removed in a future version.
 
 ```bash
 java -jar target/druid-mcp-server-1.0.0.jar
