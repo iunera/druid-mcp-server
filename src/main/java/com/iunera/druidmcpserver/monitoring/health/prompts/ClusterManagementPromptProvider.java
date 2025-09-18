@@ -17,11 +17,11 @@
 package com.iunera.druidmcpserver.monitoring.health.prompts;
 
 import com.iunera.druidmcpserver.config.PromptTemplateService;
-import org.springaicommunity.mcp.annotation.McpPrompt;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
 import io.modelcontextprotocol.spec.McpSchema.Role;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
+import org.springaicommunity.mcp.annotation.McpPrompt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

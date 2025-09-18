@@ -11,11 +11,6 @@
 This is a single-module Maven project with one main component:
 - **Main module**: `druid-mcp-server` - The core Druid MCP server implementation
 
-### Example Project for Juni
-
-There is a submodule as example project for Juni. This project must not be changed.
-- **Submodule**: `mcp-annotations-server` - Sample/reference implementation using MCP annotations
-
 ### Build Commands
 
 #### Clean Build (Recommended)
@@ -29,7 +24,7 @@ mvn clean package
 ```
 
 ### Key Dependencies
-- **Spring Boot**: 3.5.3 (main), 3.3.6 (submodule)
+- **Spring Boot**: 3.5.4 (main), 3.3.6 (submodule)
 - **Spring AI MCP Server**: 1.1.0-M1 (with official MCP annotations support)
 - **Spring AI BOM**: 1.1.0-M1
 - **Spring AI MCP Annotations**: Included in Spring AI 1.1.0-M1
