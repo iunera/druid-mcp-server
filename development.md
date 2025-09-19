@@ -24,25 +24,47 @@ mvn clean package
 ```
 
 ### Key Dependencies
-- **Spring Boot**: 3.5.3 (main), 3.3.6 (submodule)
-- **Spring AI MCP Server**: 1.1.0-SNAPSHOT
-- **Spring AI BOM**: 1.1.0-SNAPSHOT
-- **MCP Annotations**: 0.1.0 (logaritex.mcp)
+- Spring Boot: 3.5.6 (main)
+- Spring AI MCP Server: 1.1.0-M1 (with official MCP annotations support)
+- Spring AI BOM: 1.1.0-M1
+- Spring AI MCP Annotations: Included in Spring AI 1.1.0-M1
 
 ### Repository Configuration
-The project requires custom Maven repositories for Spring AI snapshots:
-- Spring Milestones: `https://repo.spring.io/milestone`
-- Spring Snapshots: `https://repo.spring.io/snapshot`
-- Central Portal Snapshots: `https://central.sonatype.com/repository/maven-snapshots/`
+The project requires custom Maven repositories for Spring AI milestones/snapshots:
+- Spring Milestones: https://repo.spring.io/milestone
+- Spring Snapshots: https://repo.spring.io/snapshot
+- Central Portal Snapshots: https://central.sonatype.com/repository/maven-snapshots/
+
+### Configuration Properties
+Add these essentials to `src/main/resources/application.properties` (or as env vars):
+```properties
+# MCP Server identification
+spring.ai.mcp.server.name=druid-mcp-server
+spring.ai.mcp.server.version=0.0.1-SNAPSHOT
+
+# Druid connection
+druid.broker.url=http://localhost:8082
+druid.coordinator.url=http://localhost:8081
+
+# Transport configuration
+server.port=8080
+
+# STDIO transport requirements (only for stdio mode)
+spring.main.banner-mode=off
+logging.pattern.console=
+```
+
+### Autowiring
+Features like Tools, Resources, Prompts and more are automatically discovered and registered by Spring AI 1.1.0-M1 auto-configuration through annotation scanning. Simply use `@Component` on classes with `@McpTool`, `@McpResource`, `@McpPrompt`, and `@McpComplete` annotated methods. No manual registration in the main application class is required.
 
 ## Testing Information
 
 ### Test Structure
 The project uses JUnit 5 with Spring Boot Test framework:
-- **Unit Tests**: Basic functionality and configuration testing
-- **Integration Tests**: Full Spring context with MCP service testing
-- **Client Tests**: MCP client implementations for testing server functionality
-- Create test classes for the corresponding implementation feature. 
+- Unit Tests: Basic functionality and configuration testing
+- Integration Tests: Full Spring context with MCP service testing
+- Client Tests: MCP client implementations for testing server functionality
+- Create test classes for the corresponding implementation feature.
 
 ### Running Tests
 
@@ -95,12 +117,11 @@ class MyIntegrationTest {
 ```
 
 ### Adding New Tests
-
-1. **Create test class** in `src/test/java/com/iunera/druidmcpserver/`
-2. **Use appropriate annotations**: `@SpringBootTest`, `@TestPropertySource`
-3. **Include debug logging**: Use `[DEBUG_LOG]` prefix for debugging
-4. **Test both success and error scenarios**: Handle cases where Druid is not available
-5. **Verify return types**: Ensure MCP tools return correct data types
+1. Create test class in `src/test/java/com/iunera/druidmcpserver/`
+2. Use appropriate annotations: `@SpringBootTest`, `@TestPropertySource`
+3. Include debug logging: Use `[DEBUG_LOG]` prefix for debugging
+4. Test both success and error scenarios: Handle cases where Druid is not available
+5. Verify return types: Ensure MCP tools return correct data types
 
 ### Example Test Creation
 See `SimpleTestExample.java` for a complete example demonstrating:
@@ -109,7 +130,8 @@ See `SimpleTestExample.java` for a complete example demonstrating:
 - Debug logging usage
 - Basic assertion patterns
 
-## Docker Support
+## Docker Integration
+The project includes Docker support via `Dockerfile` for containerized runs.
 
 The project includes Docker support with a `Dockerfile` and `docker-compose.yaml` for easy deployment.
 
@@ -142,7 +164,6 @@ Once all services are running:
 ## Architecture
 
 ### Feature-Based Organization
-
 The project follows a feature-based package structure where each package represents a distinct functional area:
 
 - **`datamanagement`** - Core data operations (datasources, segments, lookups, queries, retention, compaction)
@@ -153,13 +174,12 @@ The project follows a feature-based package structure where each package represe
 - **`shared`** - Common utilities and components
 
 ### Component Types
-
 Each feature may contain:
-- **ToolProvider** - Implements `@Tool` annotated methods for executable functions
-- **Resources** - Implements `@McpResource` annotated methods for data access
-- **PromptProvider** - Implements `@McpPrompt` annotated methods for AI guidance
-- **Repository** - Data access layer for Druid APIs
-- **Configuration** - Feature-specific configuration classes
+- ToolProvider - Implements `@McpTool` annotated methods for executable functions
+- Resources - Implements `@McpResource` annotated methods for data access
+- PromptProvider - Implements `@McpPrompt` annotated methods for AI guidance
+- Repository - Data access layer for Druid APIs
+- Configuration - Feature-specific configuration classes
 
 ### Project Structure
 ```
@@ -171,9 +191,10 @@ src/
 │   │   └── PromptTemplateService.java
 │   ├── datamanagement/
 │   │   ├── compaction/
-│   │   │   ├── CompactionConfigToolProvider.java
+│   │   │   ├── ReadCompactionConfigTools.java
+│   │   │   ├── WriteCompactionConfigTools.java
 │   │   │   ├── CompactionConfigRepository.java
-│   │   │   └── CompactionPromptProvider.java
+│   │   │   └── CompactionPrompts.java
 │   │   ├── datasource/
 │   │   │   └── [Datasource management components]
 │   │   ├── lookup/
@@ -185,7 +206,7 @@ src/
 │   │   └── segments/
 │   │       └── [Segment management components]
 │   ├── ingestion/
-│   │   ├── IngestionManagementPromptProvider.java
+│   │   ├── IngestionManagementPrompts.java
 │   │   ├── spec/
 │   │   │   └── [Ingestion specification components]
 │   │   ├── supervisors/
@@ -204,7 +225,10 @@ src/
 │   │   └── repository/
 │   │       └── [Health data repositories]
 │   ├── operations/
-│   │   └── OperationalPromptProvider.java
+│   │   └── OperationalPrompts.java
+│   ├── readonly/
+│   │   └── ReadonlyModeProperties.java
+│   │   └── ReadonlyRestClientInterceptor.java
 │   └── resources/
 │       └── [Configuration files and templates]
 └── test/java/com/iunera/druidmcpserver/
@@ -212,19 +236,19 @@ src/
 ```
 
 ### Key Technologies
-- **Spring Boot 3.5.3** - Main framework
-- **Spring AI MCP Server 1.1.0-SNAPSHOT** - MCP protocol implementation
-- **Jackson** - JSON processing
-- **RestClient** - HTTP client for Druid communication
-- **JUnit 5** - Testing framework
+- Spring Boot 3.5.6 - Main framework
+- Spring AI MCP Server 1.1.0-M1 - MCP protocol implementation
+- Jackson - JSON processing
+- RestClient - HTTP client for Druid communication
+- JUnit 5 - Testing framework
 
 ## MCP Architecture
 The project implements Model Context Protocol (MCP) server with:
-- **Tools**: Executable functions (`@Tool` annotation)
-- **Resources**: Data providers (`@McpResource` annotation)
-- **Transport**: STDIO and SSE support
-- **Prompts**: Prompt templates (`@McpPrompt`annotation)
-- **Autocomplete**: Autocomplete with Sampling (`@McpComplete` annotation)
+- Tools: Executable functions (`@McpTool` annotation)
+- Resources: Data providers (`@McpResource` annotation)
+- Transport: STDIO and SSE support
+- Prompts: Prompt templates (`@McpPrompt` annotation)
+- Autocomplete: Autocomplete with Sampling (`@McpComplete` annotation)
 
 For every Resource we need a separate Tool to access it in addition.
 
@@ -247,12 +271,12 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.0.jar
 ```
 
 #### SSE Transport (HTTP-based)
 ```bash
-java -jar target/druid-mcp-server-1.0.0.jar
+java -jar target/druid-mcp-server-1.2.0.jar
 # Server available at http://localhost:8080
 ```
 
@@ -267,42 +291,60 @@ The application includes comprehensive error handling:
 - Prompt generation errors are handled with fallback templates
 
 ## Contributing
-
 When adding new features:
+1. Create a new package under the appropriate feature category (package-by-feature)
+2. Implement ToolProvider for executable functions using `@McpTool` annotation
+3. Add Resources if the feature provides data access using `@McpResource` annotation
+4. Create PromptProvider for AI guidance using `@McpPrompt` annotation
+5. Add Repository for Druid API interactions
+6. Add tests following the existing patterns
+7. Update documentation as needed
 
-1. **Create a new package** under the appropriate feature category
-2. **Implement ToolProvider** for executable functions using `@Tool` annotation
-3. **Add Resources** if the feature provides data access using `@McpResource` annotation  
-4. **Create PromptProvider** for AI guidance using `@McpPrompt` annotation
-5. **Add Repository** for Druid API interactions
-6. **Register components** in `DruidMcpServerApplication.java`
-7. **Add tests** following the existing patterns
-8. **Update documentation** in this README
-
-### Autowiring Requirements
-Features like Tools, Resources, Prompts need to be autowired in the main class `DruidMcpServerApplication.java` in the `@Bean ToolCallbackProvider druidTools` method.
-
-### Package by Feature Guidelines
-- Always create a package by Feature structure to separate concerns
-- Each feature should be self-contained with its own tools, resources, and prompts
-- Follow the established naming conventions for consistency
-
-### Code Style Guidelines
-
-#### Annotations Usage
-- Use `@Tool` for MCP tool methods that return String
+### Annotations Usage
+- Use `@McpTool` for MCP tool methods (with optional `annotations` metadata)
+- Use `@McpToolParam` to define required input parameters with descriptions
 - Use `@McpResource` for resource methods that return `ReadResourceResult`
 - Include descriptive method documentation for MCP tool discovery
 
-#### Package by Feature 
-- Always create a package by Feature structure to separate the concerns
+#### Example (@McpTool)
+```java
+@Component
+public class ExampleToolProvider {
 
-#### Error Handling
+    @McpTool(name = "query-druid-sql", description = "Execute a SQL query against Druid datasources")
+    public String queryDruidSql(
+            @McpToolParam(description = "SQL query string", required = true) String sqlQuery) {
+        // Implementation
+        return "result";
+    }
+
+    @McpTool(name = "calculate-area",
+             description = "Calculate the area of a rectangle",
+             annotations = @McpTool.McpAnnotations(
+                 title = "Rectangle Area Calculator",
+                 readOnlyHint = true,
+                 destructiveHint = false,
+                 idempotentHint = true
+             ))
+    public AreaResult calculateRectangleArea(
+            @McpToolParam(description = "Width", required = true) double width,
+            @McpToolParam(description = "Height", required = true) double height) {
+        return new AreaResult(width * height, "square units");
+    }
+}
+```
+
+### Package by Feature Guidelines
+- Always create a package-by-feature structure to separate concerns
+- Each feature should be self-contained with its own tools, resources, and prompts
+- Follow the established naming conventions for consistency
+
+### Error Handling Guidelines
 - Always handle Druid connection failures gracefully
 - Return meaningful error messages in JSON format
 - Log errors with appropriate levels
 
-#### Testing Patterns
+### Testing Patterns
 - Use `[DEBUG_LOG]` prefix for all debug output in tests
 - Test both success and failure scenarios
 - Verify dependency injection with `assertNotNull()`
@@ -312,25 +354,24 @@ Features like Tools, Resources, Prompts need to be autowired in the main class `
 Ready-to-use MCP configuration in `mcp-servers-config.json` for LLM clients supporting both STDIO and SSE transports.
 
 ### Debugging Tips
-1. **Enable debug logging** in tests using `[DEBUG_LOG]` prefix
-2. **Check Druid connectivity** before running integration tests
-3. **Verify MCP tool registration** through Spring Boot actuator endpoints
-4. **Test both transport modes** (STDIO/SSE) for compatibility
-5. **Monitor application logs** in `target/druid-mcp-server.log`
+1. Enable debug logging in tests using `[DEBUG_LOG]` prefix
+2. Check Druid connectivity before running integration tests
+3. Verify MCP tool registration through Spring Boot actuator endpoints
+4. Test both transport modes (STDIO/SSE) for compatibility
+5. Monitor application logs in `target/druid-mcp-server.log`
 
 ### Common Issues
-- **STDIO transport**: Requires banner and console logging disabled
-- **Snapshot dependencies**: May require repository updates for latest versions
-- **Druid connectivity**: Integration tests handle connection failures gracefully
-- **Java version compatibility**: Main project uses Java 24, submodule uses Java 17+
+- STDIO transport: Requires banner and console logging disabled
+- Snapshot/Milestone dependencies: May require repository updates for latest versions
+- Druid connectivity: Integration tests should handle connection failures gracefully
+- Java version compatibility: Main project uses Java 24, submodule uses Java 17+
 
 ---
 
 ## About iunera
+This Druid MCP Server is developed and maintained by [iunera](https://www.iunera.com), a leading provider of advanced AI and data analytics solutions.
 
-This Druid MCP Server is developed and maintained by **[iunera](https://www.iunera.com)**, a leading provider of advanced AI and data analytics solutions.
-
-For more information about our enterprise solutions and professional services, visit [www.iunera.com](https://www.iunera.com).
+For more information about our enterprise solutions and professional services, visit https://www.iunera.com.
 
 ---
 

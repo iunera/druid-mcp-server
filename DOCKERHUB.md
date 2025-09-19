@@ -3,7 +3,7 @@
 [![Docker Image](https://img.shields.io/badge/docker-available-blue.svg)](https://hub.docker.com/r/iunera/druid-mcp-server)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Java](https://img.shields.io/badge/Java-24-orange.svg)](https://openjdk.java.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-green.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-green.svg)](https://spring.io/projects/spring-boot)
 
 A comprehensive **Model Context Protocol (MCP) server** for Apache Druid that provides extensive tools, resources, and AI-assisted prompts for managing and analyzing Druid clusters. Built with enterprise-grade reliability and performance in mind.
 
@@ -35,7 +35,6 @@ services:
       - DRUID_BROKER_URL=http://druid-broker:8082
       - DRUID_COORDINATOR_URL=http://druid-coordinator:8081
       - SPRING_AI_MCP_SERVER_NAME=druid-mcp-server
-      - SPRING_AI_MCP_SERVER_VERSION=1.0.0
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/mcp/health"]
       interval: 30s
@@ -142,6 +141,7 @@ Intelligent guidance for common Druid operations:
 docker run --rm -i \
   -e SPRING_AI_MCP_SERVER_STDIO=true \
   -e SPRING_MAIN_WEB_APPLICATION_TYPE=none \
+  -e SPRING_MAIN_BANNER_MODE=off \
   -e LOGGING_PATTERN_CONSOLE= \
   -e DRUID_BROKER_URL=http://your-druid:8082 \
   iunera/druid-mcp-server:latest
@@ -164,7 +164,6 @@ docker run -p 8080:8080 \
 | `DRUID_BROKER_URL` | Druid broker endpoint | `http://localhost:8082` |
 | `DRUID_COORDINATOR_URL` | Druid coordinator endpoint | `http://localhost:8081` |
 | `SPRING_AI_MCP_SERVER_NAME` | MCP server identifier | `druid-mcp-server` |
-| `SPRING_AI_MCP_SERVER_VERSION` | Server version | `1.0.0` |
 | `SERVER_PORT` | HTTP server port | `8080` |
 
 ### Volume Mounts
@@ -181,7 +180,7 @@ docker run -v /path/to/logs:/app/logs \
 ## 🏗️ Architecture
 
 Built on enterprise-grade technologies:
-- **Spring Boot 3.5.3** - Production-ready framework
+- **Spring Boot 3.5.6** - Production-ready framework
 - **Spring AI MCP Server** - Native MCP protocol support
 - **Java 24** - Latest performance optimizations
 - **Maven** - Reliable dependency management
@@ -228,7 +227,7 @@ Built on enterprise-grade technologies:
       "args": [
         "run", "--rm", "-i",
         "-e", "SPRING_AI_MCP_SERVER_STDIO=true",
-        "-e", "DRUID_BROKER_URL=http://your-druid:8082",
+        "-e", "DRUID_ROUTER_URL=http://your-druid-router:8888",
         "iunera/druid-mcp-server:latest"
       ]
     }
