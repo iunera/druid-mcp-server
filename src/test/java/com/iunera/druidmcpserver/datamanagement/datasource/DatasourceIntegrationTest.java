@@ -42,7 +42,10 @@ class DatasourceIntegrationTest {
     private DatasourceResources datasourceResourceProvider;
 
     @Autowired
-    private DatasourceToolProvider datasourceToolProvider;
+    private WriteDatasourceTools writeDatasourceTools;
+
+    @Autowired
+    private ReadDatasourceTools readDatasourceTools;
 
     @Autowired
     private QueryToolProvider queryToolProvider;
@@ -50,7 +53,7 @@ class DatasourceIntegrationTest {
     @Test
     void testServicesAreInjected() {
         assertNotNull(datasourceResourceProvider, "DatasourceResourceProvider should be injected");
-        assertNotNull(datasourceToolProvider, "DatasourceToolProvider should be injected");
+        assertNotNull(writeDatasourceTools, "WriteDatasourceTools should be injected");
         assertNotNull(queryToolProvider, "QueryToolProvider should be injected");
     }
 
@@ -116,7 +119,7 @@ class DatasourceIntegrationTest {
     @Test
     void testDatasourceToolMethod() {
         // Test the new @Tool method for listing datasources
-        String toolResult = datasourceToolProvider.listDatasources();
+        String toolResult = readDatasourceTools.listDatasources();
         assertNotNull(toolResult, "listDatasources tool method should return a non-null result");
         assertFalse(toolResult.trim().isEmpty(), "listDatasources tool method should return a non-empty result");
 
@@ -131,7 +134,7 @@ class DatasourceIntegrationTest {
     @Test
     void testKillDatasourceToolMethod() {
         // Test the kill datasource @Tool method
-        String killResult = datasourceToolProvider.killDatasource("test_datasource", "1000-01-01/2025-07-06");
+        String killResult = writeDatasourceTools.killDatasource("test_datasource", "1000-01-01/2025-07-06");
         assertNotNull(killResult, "killDatasource tool method should return a non-null result");
         assertFalse(killResult.trim().isEmpty(), "killDatasource tool method should return a non-empty result");
 

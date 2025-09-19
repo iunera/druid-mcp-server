@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class DatasourceToolProvider {
+public class ReadDatasourceTools {
 
     private final DatasourceRepository datasourceRepository;
     private final ObjectMapper objectMapper;
 
-    public DatasourceToolProvider(DatasourceRepository datasourceRepository,
-                                  ObjectMapper objectMapper) {
+    public ReadDatasourceTools(DatasourceRepository datasourceRepository,
+                               ObjectMapper objectMapper) {
         this.datasourceRepository = datasourceRepository;
         this.objectMapper = objectMapper;
     }
@@ -90,24 +90,6 @@ public class DatasourceToolProvider {
             return String.format("Error showing datasource '%s': %s", datasourceName, e.getMessage());
         } catch (Exception e) {
             return String.format("Failed to process datasource '%s' response: %s", datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * Kill a datasource permanently with all its data and metadata
-     */
-    @McpTool(description = "Kill a Druid datasource permanently, removing all data and metadata for the specified time interval. Use with extreme caution as this operation is irreversible.")
-    public String killDatasource(String datasourceName, String interval) {
-        try {
-            JsonNode result = datasourceRepository.killDatasource(datasourceName, interval);
-            if (result == null) {
-                return String.format("Kill task for datasource '%s' was submitted successfully (no response body)", datasourceName);
-            }
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error killing datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process kill datasource '%s' response: %s", datasourceName, e.getMessage());
         }
     }
 }
