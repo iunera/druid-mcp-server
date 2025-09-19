@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegularQueryIntegrationTest {
 
     @Autowired
-    private QueryToolProvider queryToolProvider;
+    private QueryTools queryTools;
 
     @Autowired
     private DruidConfig druidConfig;
@@ -44,7 +44,7 @@ class RegularQueryIntegrationTest {
     @Test
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing regular query context loading");
-        assertNotNull(queryToolProvider);
+        assertNotNull(queryTools);
         assertNotNull(druidConfig);
         System.out.println("[DEBUG_LOG] All regular query beans loaded successfully");
     }
@@ -54,7 +54,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing basic SQL query execution");
         String testQuery = "SELECT 1 as test_value";
 
-        String result = queryToolProvider.queryDruidSql(testQuery);
+        String result = queryTools.queryDruidSql(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Basic SQL query result: " + result);
 
@@ -68,7 +68,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing COUNT query execution");
         String testQuery = "SELECT COUNT(*) FROM test_datasource";
 
-        String result = queryToolProvider.queryDruidSql(testQuery);
+        String result = queryTools.queryDruidSql(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] COUNT query result: " + result);
 
@@ -82,7 +82,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing SELECT with WHERE clause");
         String testQuery = "SELECT * FROM test_datasource WHERE __time >= CURRENT_TIMESTAMP - INTERVAL '1' DAY";
 
-        String result = queryToolProvider.queryDruidSql(testQuery);
+        String result = queryTools.queryDruidSql(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] SELECT with WHERE query result: " + result);
 
@@ -96,7 +96,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing GROUP BY query execution");
         String testQuery = "SELECT dimension_column, COUNT(*) FROM test_datasource GROUP BY dimension_column";
 
-        String result = queryToolProvider.queryDruidSql(testQuery);
+        String result = queryTools.queryDruidSql(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] GROUP BY query result: " + result);
 
@@ -110,7 +110,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing ORDER BY query execution");
         String testQuery = "SELECT * FROM test_datasource ORDER BY __time DESC LIMIT 10";
 
-        String result = queryToolProvider.queryDruidSql(testQuery);
+        String result = queryTools.queryDruidSql(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] ORDER BY query result: " + result);
 
@@ -124,7 +124,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing aggregation query execution");
         String testQuery = "SELECT SUM(metric_column), AVG(metric_column), MAX(metric_column) FROM test_datasource";
 
-        String result = queryToolProvider.queryDruidSql(testQuery);
+        String result = queryTools.queryDruidSql(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Aggregation query result: " + result);
 
@@ -138,7 +138,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing INFORMATION_SCHEMA query execution");
         String testQuery = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'druid'";
 
-        String result = queryToolProvider.queryDruidSql(testQuery);
+        String result = queryTools.queryDruidSql(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] INFORMATION_SCHEMA query result: " + result);
 
@@ -152,7 +152,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing empty query handling");
         String emptyQuery = "";
 
-        String result = queryToolProvider.queryDruidSql(emptyQuery);
+        String result = queryTools.queryDruidSql(emptyQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Empty query result: " + result);
 
@@ -165,7 +165,7 @@ class RegularQueryIntegrationTest {
     void testNullQuery() {
         System.out.println("[DEBUG_LOG] Testing null query handling");
 
-        String result = queryToolProvider.queryDruidSql(null);
+        String result = queryTools.queryDruidSql(null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Null query result: " + result);
 
@@ -179,7 +179,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing invalid SQL query handling");
         String invalidQuery = "INVALID SQL SYNTAX HERE";
 
-        String result = queryToolProvider.queryDruidSql(invalidQuery);
+        String result = queryTools.queryDruidSql(invalidQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Invalid SQL query result: " + result);
 
@@ -201,7 +201,7 @@ class RegularQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing query with special characters");
         String testQuery = "SELECT 'test with spaces and \"quotes\"' as test_column FROM test_datasource";
 
-        String result = queryToolProvider.queryDruidSql(testQuery);
+        String result = queryTools.queryDruidSql(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Query with special characters result: " + result);
 

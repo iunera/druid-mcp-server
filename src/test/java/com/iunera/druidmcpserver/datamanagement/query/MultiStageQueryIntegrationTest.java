@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MultiStageQueryIntegrationTest {
 
     @Autowired
-    private QueryToolProvider queryToolProvider;
+    private MsqQueryTools msqQueryTools;
 
     @Autowired
     private DruidConfig druidConfig;
@@ -39,7 +39,7 @@ class MultiStageQueryIntegrationTest {
     @Test
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing multi-stage query context loading");
-        assertNotNull(queryToolProvider);
+        assertNotNull(msqQueryTools);
         assertNotNull(druidConfig);
         System.out.println("[DEBUG_LOG] All multi-stage query beans loaded successfully");
     }
@@ -49,7 +49,7 @@ class MultiStageQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing multi-stage query execution");
         String testQuery = "SELECT COUNT(*) FROM test_datasource";
 
-        String result = queryToolProvider.queryDruidMultiStage(testQuery);
+        String result = msqQueryTools.queryDruidMultiStage(testQuery);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Multi-stage query result: " + result);
 
@@ -64,7 +64,7 @@ class MultiStageQueryIntegrationTest {
         String testQuery = "SELECT COUNT(*) FROM test_datasource";
         String testContext = "{\"maxNumTasks\":2,\"finalizeAggregations\":true}";
 
-        String result = queryToolProvider.queryDruidMultiStageWithContext(testQuery, testContext);
+        String result = msqQueryTools.queryDruidMultiStageWithContext(testQuery, testContext);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Multi-stage query with context result: " + result);
 
@@ -79,7 +79,7 @@ class MultiStageQueryIntegrationTest {
         String testQuery = "SELECT COUNT(*) FROM test_datasource";
         String emptyContext = "";
 
-        String result = queryToolProvider.queryDruidMultiStageWithContext(testQuery, emptyContext);
+        String result = msqQueryTools.queryDruidMultiStageWithContext(testQuery, emptyContext);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Multi-stage query with empty context result: " + result);
 
@@ -93,7 +93,7 @@ class MultiStageQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing multi-stage query with null context");
         String testQuery = "SELECT COUNT(*) FROM test_datasource";
 
-        String result = queryToolProvider.queryDruidMultiStageWithContext(testQuery, null);
+        String result = msqQueryTools.queryDruidMultiStageWithContext(testQuery, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Multi-stage query with null context result: " + result);
 
@@ -107,7 +107,7 @@ class MultiStageQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing multi-stage query task status");
         String testTaskId = "test-task-id-12345";
 
-        String result = queryToolProvider.getMultiStageQueryTaskStatus(testTaskId);
+        String result = msqQueryTools.getMultiStageQueryTaskStatus(testTaskId);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Multi-stage query task status result: " + result);
 
@@ -121,7 +121,7 @@ class MultiStageQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing multi-stage query task cancellation");
         String testTaskId = "test-task-id-12345";
 
-        String result = queryToolProvider.cancelMultiStageQueryTask(testTaskId);
+        String result = msqQueryTools.cancelMultiStageQueryTask(testTaskId);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Multi-stage query task cancellation result: " + result);
 
@@ -130,19 +130,6 @@ class MultiStageQueryIntegrationTest {
         System.out.println("[DEBUG_LOG] Multi-stage query task cancellation handles errors gracefully");
     }
 
-    @Test
-    void testRegularQueryStillWorks() {
-        System.out.println("[DEBUG_LOG] Testing that regular SQL query still works");
-        String testQuery = "SELECT COUNT(*) FROM test_datasource";
-
-        String result = queryToolProvider.queryDruidSql(testQuery);
-        assertNotNull(result);
-        System.out.println("[DEBUG_LOG] Regular SQL query result: " + result);
-
-        // Should return an error message since we're not connected to a real Druid instance
-        assertTrue(result.contains("Error") || result.contains("Failed") || result.contains("{") || result.contains("["));
-        System.out.println("[DEBUG_LOG] Regular SQL query handles errors gracefully");
-    }
 
     @Test
     void testDruidConfigurationForQueries() {
@@ -158,7 +145,7 @@ class MultiStageQueryIntegrationTest {
         String testQuery = "SELECT COUNT(*) FROM test_datasource";
         String invalidContext = "{invalid json}";
 
-        String result = queryToolProvider.queryDruidMultiStageWithContext(testQuery, invalidContext);
+        String result = msqQueryTools.queryDruidMultiStageWithContext(testQuery, invalidContext);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Multi-stage query with invalid context result: " + result);
 

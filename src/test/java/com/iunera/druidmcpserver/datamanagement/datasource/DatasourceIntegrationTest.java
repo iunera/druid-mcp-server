@@ -16,7 +16,8 @@
 
 package com.iunera.druidmcpserver.datamanagement.datasource;
 
-import com.iunera.druidmcpserver.datamanagement.query.QueryToolProvider;
+import com.iunera.druidmcpserver.datamanagement.query.MsqQueryTools;
+import com.iunera.druidmcpserver.datamanagement.query.QueryTools;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
@@ -48,13 +49,17 @@ class DatasourceIntegrationTest {
     private ReadDatasourceTools readDatasourceTools;
 
     @Autowired
-    private QueryToolProvider queryToolProvider;
+    private MsqQueryTools msqQueryTools;
+
+    @Autowired
+    private QueryTools queryTools;
 
     @Test
     void testServicesAreInjected() {
         assertNotNull(datasourceResourceProvider, "DatasourceResourceProvider should be injected");
         assertNotNull(writeDatasourceTools, "WriteDatasourceTools should be injected");
-        assertNotNull(queryToolProvider, "QueryToolProvider should be injected");
+        assertNotNull(msqQueryTools, "MsqQueryTools should be injected");
+        assertNotNull(queryTools, "QueryTools should be injected");
     }
 
 
@@ -84,7 +89,7 @@ class DatasourceIntegrationTest {
 
     @Test
     void testQueryServiceMethodsExist() {
-        String result = queryToolProvider.queryDruidSql("SELECT 1");
+        String result = queryTools.queryDruidSql("SELECT 1");
         assertNotNull(result, "queryDruidSql should return a non-null result");
         assertFalse(result.trim().isEmpty(), "queryDruidSql should return a non-empty result");
 
@@ -102,7 +107,7 @@ class DatasourceIntegrationTest {
         String testDatasourceName = "test-datasource";
         ReadResourceRequest datasourceRequest = new ReadResourceRequest("datasource://" + testDatasourceName);
         ReadResourceResult datasourceResult = datasourceResourceProvider.getDatasource(datasourceRequest, testDatasourceName);
-        String queryResult = queryToolProvider.queryDruidSql("SELECT 1");
+        String queryResult = queryTools.queryDruidSql("SELECT 1");
 
 
         assertNotNull(datasourceResult);
