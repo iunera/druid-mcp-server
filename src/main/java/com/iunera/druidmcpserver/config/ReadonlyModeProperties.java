@@ -28,25 +28,11 @@ public class ReadonlyModeProperties {
      */
     private boolean enabled = false;
 
-    /**
-     * Explicit allowlist of MCP tool method names that are permitted in read-only mode.
-     * If empty, no MCP tools are allowed to execute and none will be advertised.
-     */
-    private java.util.List<String> allowedTools = new java.util.ArrayList<>();
-
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public java.util.List<String> getAllowedTools() {
-        return allowedTools;
-    }
-
-    public void setAllowedTools(java.util.List<String> allowedTools) {
-        this.allowedTools = allowedTools;
     }
 }
