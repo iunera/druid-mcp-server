@@ -135,3 +135,18 @@ services:
       - environment
     networks:
       - druid-network
+
+# uncomment to run Druid MCP Server Application with the above services together
+#  # Your Druid MCP Server Application
+#  druid-mcp-server:
+#    build: ../../
+#    container_name: druid-mcp-server
+#    environment:
+#      - druid.router.url=http://router:8888
+#      - server.port=8080
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - druid-network
+#    depends_on:
+#      - router
