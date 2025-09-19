@@ -719,3 +719,10 @@ Need help? Let
 ---
 
 *© 2024 [iunera](https://www.iunera.com). Licensed under the Apache License 2.0.*
+
+
+## Known Issues
+
+- MCP Inspector v0.16.8 protocol downgrade warning
+  - Message: "Client requested unsupported protocol version: 2025-06-18, so the server will suggest the 2025-03-26 version instead"
+  - Status: This was caused by spring-ai-1.1.0-M1 not supporting the 2025-06-18 MCP protocol fully yet. 
