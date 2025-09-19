@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.config;
+package com.iunera.druidmcpserver.readonly;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

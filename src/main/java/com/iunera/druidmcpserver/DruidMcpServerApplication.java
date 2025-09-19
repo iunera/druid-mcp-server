@@ -25,5 +25,4 @@ public class DruidMcpServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(DruidMcpServerApplication.class, args);
     }
-
 }

@@ -16,6 +16,8 @@
 
 package com.iunera.druidmcpserver.config;
 
+import com.iunera.druidmcpserver.readonly.ReadonlyModeProperties;
+import com.iunera.druidmcpserver.readonly.ReadonlyRestClientInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +50,12 @@ public class DruidConfig {
     @Value("${druid.ssl.enabled:false}")
     private boolean sslEnabled;
 
+    private final ReadonlyModeProperties readonlyModeProperties;
+
+    public DruidConfig(ReadonlyModeProperties readonlyModeProperties) {
+        this.readonlyModeProperties = readonlyModeProperties;
+    }
+
     @Bean("druidRouterRestClient")
     public RestClient druidRouterRestClient() {
         return createRestClient(druidRouterUrl);
@@ -62,6 +70,9 @@ public class DruidConfig {
             HttpClient httpClient = createHttpClient();
             builder = builder.requestFactory(new org.springframework.http.client.JdkClientHttpRequestFactory(httpClient));
         }
+
+        // Enforce read-only rules via interceptor
+        builder = builder.requestInterceptor(new ReadonlyRestClientInterceptor(readonlyModeProperties));
 
         // Add basic authentication if credentials are provided
         if (druidUsername != null && druidPassword != null) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.config;
+package com.iunera.druidmcpserver.readonly;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
