@@ -23,13 +23,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 @Component
-public class SegmentToolProvider {
+public class ReadSegmentTools {
 
     private final SegmentRepository segmentRepository;
     private final ObjectMapper objectMapper;
 
-    public SegmentToolProvider(SegmentRepository segmentRepository,
-                               ObjectMapper objectMapper) {
+    public ReadSegmentTools(SegmentRepository segmentRepository,
+                            ObjectMapper objectMapper) {
         this.segmentRepository = segmentRepository;
         this.objectMapper = objectMapper;
     }
@@ -91,36 +91,6 @@ public class SegmentToolProvider {
             return String.format("Error getting segment details for '%s' in datasource '%s': %s", segmentId, datasourceName, e.getMessage());
         } catch (Exception e) {
             return String.format("Failed to process segment details for '%s' in datasource '%s': %s", segmentId, datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * Enable a segment
-     */
-    @McpTool(description = "Enable a specific segment by datasource and segment ID")
-    public String enableSegment(String datasourceName, String segmentId) {
-        try {
-            JsonNode result = segmentRepository.enableSegment(datasourceName, segmentId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error enabling segment '%s' in datasource '%s': %s", segmentId, datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to enable segment '%s' in datasource '%s': %s", segmentId, datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * Disable a segment
-     */
-    @McpTool(description = "Disable a specific segment by datasource and segment ID")
-    public String disableSegment(String datasourceName, String segmentId) {
-        try {
-            JsonNode result = segmentRepository.disableSegment(datasourceName, segmentId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error disabling segment '%s' in datasource '%s': %s", segmentId, datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to disable segment '%s' in datasource '%s': %s", segmentId, datasourceName, e.getMessage());
         }
     }
 
