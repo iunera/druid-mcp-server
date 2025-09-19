@@ -19,20 +19,22 @@ package com.iunera.druidmcpserver.ingestion.spec;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ConditionalOnProperty(prefix = "druid.mcp.readonly", name = "enabled", havingValue = "false", matchIfMissing = true)
 @Component
-public class IngestionSpecToolProvider {
+public class IngestionSpecTools {
 
     private final IngestionSpecRepository ingestionSpecRepository;
     private final ObjectMapper objectMapper;
 
-    public IngestionSpecToolProvider(IngestionSpecRepository ingestionSpecRepository,
-                                     ObjectMapper objectMapper) {
+    public IngestionSpecTools(IngestionSpecRepository ingestionSpecRepository,
+                              ObjectMapper objectMapper) {
         this.ingestionSpecRepository = ingestionSpecRepository;
         this.objectMapper = objectMapper;
     }
