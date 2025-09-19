@@ -33,11 +33,11 @@ import java.util.Map;
  * Based on Apache Druid compaction best practices and recommendations
  */
 @Service
-public class CompactionPromptProvider {
+public class CompactionPrompts {
 
     private final PromptTemplateService promptTemplateService;
 
-    public CompactionPromptProvider(PromptTemplateService promptTemplateService) {
+    public CompactionPrompts(PromptTemplateService promptTemplateService) {
         this.promptTemplateService = promptTemplateService;
     }
 

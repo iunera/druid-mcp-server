@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class RetentionRulesToolProvider {
+public class ReadRetentionRulesTools {
 
     private final RetentionRulesRepository retentionRulesRepository;
     private final ObjectMapper objectMapper;
 
-    public RetentionRulesToolProvider(RetentionRulesRepository retentionRulesRepository,
-                                      ObjectMapper objectMapper) {
+    public ReadRetentionRulesTools(RetentionRulesRepository retentionRulesRepository,
+                                   ObjectMapper objectMapper) {
         this.retentionRulesRepository = retentionRulesRepository;
         this.objectMapper = objectMapper;
     }
@@ -64,26 +64,6 @@ public class RetentionRulesToolProvider {
             return String.format("Error retrieving retention rules for datasource '%s': %s", datasourceName, e.getMessage());
         } catch (Exception e) {
             return String.format("Failed to process retention rules response for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * Edit retention rules for a specific datasource
-     */
-    @McpTool(description = "Edit retention rules for a specific Druid datasource. Provide the datasource name and rules as JSON string. Rules should be an array of rule objects with type, period, and other properties.")
-    public String editRetentionRulesForDatasource(String datasourceName, String rulesJson) {
-        try {
-            // Parse the rules JSON string into a List of Maps
-            List<Map<String, Object>> rules = objectMapper.readValue(rulesJson,
-                    objectMapper.getTypeFactory().constructCollectionType(List.class,
-                            objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)));
-
-            JsonNode result = retentionRulesRepository.setRetentionRulesForDatasource(datasourceName, rules);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error setting retention rules for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process retention rules update for datasource '%s': %s", datasourceName, e.getMessage());
         }
     }
 

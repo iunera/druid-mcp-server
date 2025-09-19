@@ -32,11 +32,11 @@ import java.util.Map;
  * Data Ingestion Management Prompts for Druid MCP Server
  */
 @Service
-public class IngestionManagementPromptProvider {
+public class IngestionManagementPrompts {
 
     private final PromptTemplateService promptTemplateService;
 
-    public IngestionManagementPromptProvider(PromptTemplateService promptTemplateService) {
+    public IngestionManagementPrompts(PromptTemplateService promptTemplateService) {
         this.promptTemplateService = promptTemplateService;
     }
 

@@ -16,11 +16,11 @@
 
 package com.iunera.druidmcpserver;
 
-import com.iunera.druidmcpserver.datamanagement.query.DataAnalysisPromptProvider;
-import com.iunera.druidmcpserver.datamanagement.retention.RetentionPromptProvider;
-import com.iunera.druidmcpserver.ingestion.IngestionManagementPromptProvider;
-import com.iunera.druidmcpserver.monitoring.health.prompts.ClusterManagementPromptProvider;
-import com.iunera.druidmcpserver.operations.OperationalPromptProvider;
+import com.iunera.druidmcpserver.datamanagement.query.DataAnalysisPrompts;
+import com.iunera.druidmcpserver.datamanagement.retention.RetentionPrompts;
+import com.iunera.druidmcpserver.ingestion.IngestionManagementPrompts;
+import com.iunera.druidmcpserver.monitoring.health.prompts.ClusterManagementPrompts;
+import com.iunera.druidmcpserver.operations.OperationalPrompts;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
@@ -43,19 +43,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class DruidPromptProvidersTest {
 
     @Autowired
-    private DataAnalysisPromptProvider dataAnalysisPromptProvider;
+    private DataAnalysisPrompts dataAnalysisPromptProvider;
 
     @Autowired
-    private ClusterManagementPromptProvider clusterManagementPromptProvider;
+    private ClusterManagementPrompts clusterManagementPromptProvider;
 
     @Autowired
-    private IngestionManagementPromptProvider ingestionManagementPromptProvider;
+    private IngestionManagementPrompts ingestionManagementPromptProvider;
 
     @Autowired
-    private RetentionPromptProvider retentionPromptProvider;
+    private RetentionPrompts retentionPromptProvider;
 
     @Autowired
-    private OperationalPromptProvider operationalPromptProvider;
+    private OperationalPrompts operationalPromptProvider;
 
     @Test
     void contextLoads() {

@@ -34,7 +34,7 @@ class IngestionSpecIntegrationTest {
     private IngestionSpecRepository ingestionSpecRepository;
 
     @Autowired
-    private IngestionSpecToolProvider ingestionSpecToolProvider;
+    private IngestionSpecTools ingestionSpecTools;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -43,7 +43,7 @@ class IngestionSpecIntegrationTest {
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing context loading for ingestion spec components");
         assertNotNull(ingestionSpecRepository);
-        assertNotNull(ingestionSpecToolProvider);
+        assertNotNull(ingestionSpecTools);
         assertNotNull(objectMapper);
         System.out.println("[DEBUG_LOG] All ingestion spec components loaded successfully");
     }
@@ -52,7 +52,7 @@ class IngestionSpecIntegrationTest {
     void testCreateBatchIngestionTemplate() {
         System.out.println("[DEBUG_LOG] Testing batch ingestion template creation");
 
-        String template = ingestionSpecToolProvider.createBatchIngestionTemplate(
+        String template = ingestionSpecTools.createBatchIngestionTemplate(
                 "test-datasource",
                 "local",
                 "/path/to/data"
@@ -78,7 +78,7 @@ class IngestionSpecIntegrationTest {
     void testCreateIngestionSpecWithInvalidJson() {
         System.out.println("[DEBUG_LOG] Testing ingestion spec creation with invalid JSON");
 
-        String result = ingestionSpecToolProvider.createIngestionSpec("invalid json");
+        String result = ingestionSpecTools.createIngestionSpec("invalid json");
 
         assertNotNull(result);
         assertTrue(result.startsWith("Failed to process ingestion spec"));
@@ -92,7 +92,7 @@ class IngestionSpecIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing ingestion spec creation with missing type field");
 
         String invalidSpec = "{\"spec\": {\"dataSchema\": {}}}";
-        String result = ingestionSpecToolProvider.createIngestionSpec(invalidSpec);
+        String result = ingestionSpecTools.createIngestionSpec(invalidSpec);
 
         assertNotNull(result);
         assertTrue(result.contains("must contain a 'type' field"));
@@ -106,7 +106,7 @@ class IngestionSpecIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing ingestion spec creation with missing spec field");
 
         String invalidSpec = "{\"type\": \"index_parallel\"}";
-        String result = ingestionSpecToolProvider.createIngestionSpec(invalidSpec);
+        String result = ingestionSpecTools.createIngestionSpec(invalidSpec);
 
         assertNotNull(result);
         assertTrue(result.contains("must contain a 'spec' field"));
@@ -161,7 +161,7 @@ class IngestionSpecIntegrationTest {
                 }
                 """;
 
-        String result = ingestionSpecToolProvider.createIngestionSpec(validSpec);
+        String result = ingestionSpecTools.createIngestionSpec(validSpec);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Valid spec submission result: " + result);
 

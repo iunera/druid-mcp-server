@@ -20,39 +20,26 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
 import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import java.util.Map;
 
+@ConditionalOnProperty(prefix = "druid.mcp.readonly", name = "enabled", havingValue = "false", matchIfMissing = true)
 @Component
-public class QueryToolProvider {
+public class MsqQueryTools {
 
     private final QueryRepository queryRepository;
     private final TasksRepository tasksRepository;
     private final ObjectMapper objectMapper;
 
-    public QueryToolProvider(QueryRepository queryRepository,
-                             TasksRepository tasksRepository,
-                             ObjectMapper objectMapper) {
+    public MsqQueryTools(QueryRepository queryRepository,
+                         TasksRepository tasksRepository,
+                         ObjectMapper objectMapper) {
         this.queryRepository = queryRepository;
         this.tasksRepository = tasksRepository;
         this.objectMapper = objectMapper;
-    }
-
-    /**
-     * Execute a Druid SQL query against a datasource
-     */
-    @McpTool(description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter.")
-    public String queryDruidSql(String sqlQuery) {
-        try {
-            JsonNode result = queryRepository.executeSqlQuery(sqlQuery);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error executing SQL query '%s': %s", sqlQuery, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process query response for '%s': %s", sqlQuery, e.getMessage());
-        }
     }
 
     /**

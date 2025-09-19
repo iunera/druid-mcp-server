@@ -29,6 +29,9 @@ import java.util.Map;
 @Repository
 public class QueryRepository {
 
+    public static final String SQL_ENDPOINT = "/druid/v2/sql";
+    public static final String SQL_TASK_ENDPOINT = "/druid/v2/sql/task";
+
     private final RestClient druidRouterRestClient;
     private final ObjectMapper objectMapper;
 
@@ -48,7 +51,7 @@ public class QueryRepository {
 
         return druidRouterRestClient
                 .post()
-                .uri("/druid/v2/sql")
+                .uri(SQL_ENDPOINT)
                 .header("Content-Type", "application/json")
                 .body(query)
                 .retrieve()
@@ -65,7 +68,7 @@ public class QueryRepository {
 
         return druidRouterRestClient
                 .post()
-                .uri("/druid/v2/sql/task")
+                .uri(SQL_TASK_ENDPOINT)
                 .header("Content-Type", "application/json")
                 .body(query)
                 .retrieve()
@@ -86,7 +89,7 @@ public class QueryRepository {
 
         return druidRouterRestClient
                 .post()
-                .uri("/druid/v2/sql/task")
+                .uri(SQL_TASK_ENDPOINT)
                 .header("Content-Type", "application/json")
                 .body(query)
                 .retrieve()

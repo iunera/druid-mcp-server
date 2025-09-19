@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RetentionPromptProviderTest {
 
     @Autowired
-    private RetentionPromptProvider retentionPromptProvider;
+    private RetentionPrompts retentionPromptProvider;
 
     @Test
     void testRetentionManagementPromptWithoutDatasource() {

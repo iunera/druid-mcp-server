@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver;
+package com.iunera.druidmcpserver.readonly;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-@SpringBootApplication
-public class DruidMcpServerApplication {
+@Component
+@ConfigurationProperties(prefix = "druid.mcp.readonly")
+public class ReadonlyModeProperties {
 
-    public static void main(String[] args) {
-        SpringApplication.run(DruidMcpServerApplication.class, args);
+    /**
+     * Enable read-only mode for the HTTP API and MCP tools.
+     */
+    private boolean enabled = false;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

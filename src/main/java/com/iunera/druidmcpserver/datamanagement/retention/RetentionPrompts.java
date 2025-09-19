@@ -32,11 +32,11 @@ import java.util.Map;
  * Data Retention Management Prompts for Druid MCP Server
  */
 @Service
-public class RetentionPromptProvider {
+public class RetentionPrompts {
 
     private final PromptTemplateService promptTemplateService;
 
-    public RetentionPromptProvider(PromptTemplateService promptTemplateService) {
+    public RetentionPrompts(PromptTemplateService promptTemplateService) {
         this.promptTemplateService = promptTemplateService;
     }
 

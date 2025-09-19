@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CompactionPromptProviderTest {
 
     @Autowired
-    private CompactionPromptProvider compactionPromptProvider;
+    private CompactionPrompts compactionPromptProvider;
 
     @Test
     void testCompactionSuggestionsPromptWithoutParameters() {

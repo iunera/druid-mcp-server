@@ -144,6 +144,8 @@ For detailed development information including build instructions, testing guide
 
 ## Available Tools by Feature
 
+The MCP server auto-discovers all tools via annotations. In Read-only mode, any tool that would modify the Druid cluster is not registered and will not appear in the MCP client. The lists below reflect the current implementation and indicate which tools are disabled when read-only is enabled.
+
 ### Data Management
 
 | Feature | Tool | Description | Parameters |
@@ -521,7 +523,7 @@ This server uses Spring AI's MCP Server framework and supports both STDIO and SS
 
 The Druid MCP Server supports multiple transport modes compliant with MCP 2025-06-18 specification:
 
-#### Streamable HTTP Transport (Recommended - New in MCP 2025-06-18)
+#### Streamable HTTP Transport (Recommended and Default - New in MCP 2025-06-18)
 The new **Streamable HTTP** transport provides enhanced performance and scalability with support for multiple concurrent clients:
 
 ```bash
@@ -529,11 +531,12 @@ The new **Streamable HTTP** transport provides enhanced performance and scalabil
 
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
-     -Dspring.ai.mcp.server.protocol=STREAMABLE \
      -Dlogging.pattern.console= \
      -jar target/druid-mcp-server-1.0.0.jar
 # Server available at http://localhost:8080/mcp (configurable endpoint)
 ```
+
+Note: The `-Dspring.ai.mcp.server.protocol` option is deprecated and no longer required. `STREAMABLE` is the default protocol and is configured in `application.properties`. If you previously set this flag, you can safely remove it.
 
 **Features:**
 - **Single Endpoint**: One HTTP endpoint handles both POST and GET requests
@@ -553,8 +556,8 @@ java -Dspring.ai.mcp.server.stdio=true \
      -jar target/druid-mcp-server-1.0.0.jar
 ```
 
-#### Legacy SSE Transport (Default)
-Still supported for backwards compatibility kept as Default. Will be deprecated in the next version.
+#### Legacy SSE Transport (Deprecated)
+Still supported for backwards compatibility. It is no longer the default and may be removed in a future version.
 
 ```bash
 java -jar target/druid-mcp-server-1.0.0.jar
@@ -681,8 +684,8 @@ A specialized Apache Druid extension for ingesting and analyzing code-related da
 
 ## Roadmap
 
-- **Readonly Mode**: Implement a Readonly Mode (R) for Druid and disallow the Create, Update, Delete on all tools.
 - **Authentication on SSE Mode**: Introduce Oauth Authentication
+- **MCP 2025-06-18 MCP**: Fully support the latest MCP Protocol 
 - **Druid Auto Compaction**: Intelligent automatic compaction configuration
 - **MCP Auto Completion**: Enhanced autocomplete functionality with sampling
 - **Proper Observability**: Comprehensive metrics and tracing
@@ -718,3 +721,62 @@ Need help? Let
 ---
 
 *© 2024 [iunera](https://www.iunera.com). Licensed under the Apache License 2.0.*
+
+
+## Known Issues
+
+- MCP Inspector v0.16.8 protocol downgrade warning
+  - Message: "Client requested unsupported protocol version: 2025-06-18, so the server will suggest the 2025-03-26 version instead"
+  - Status: This was caused by spring-ai-1.1.0-M1 not supporting the 2025-06-18 MCP protocol fully yet. 
+
+## Read-only Mode
+
+Read-only mode prevents any operation that could mutate your Druid cluster while still allowing safe read operations and SQL queries. When enabled:
+- All HTTP GET requests are allowed
+- HTTP POST is allowed only to the exact path /druid/v2/sql (for SELECT and other read-only SQL)
+- Any other HTTP method (PUT, PATCH, DELETE) is blocked
+- Any other POST endpoint (e.g. ingestion/task endpoints) is blocked
+- MCP write tools are not registered, so they will not appear in your MCP client’s tool list
+
+### Enable Read-only Mode
+You can enable it using any of the following methods:
+
+1) application.properties
+
+```
+druid.mcp.readonly.enabled=true
+```
+
+2) Environment variable
+
+```bash
+export DRUID_MCP_READONLY_ENABLED=true
+```
+
+3) JVM system property
+
+```bash
+java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.2.0.jar
+```
+
+4) Docker
+
+```bash
+docker run --rm -p 8080:8080 \
+  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  -e DRUID_MCP_READONLY_ENABLED=true \
+  iunera/druid-mcp-server:latest
+```
+
+### What changes in read-only mode?
+- Tools that would modify the cluster are disabled and won’t be listed by the MCP client. Examples include:
+  - Segment state changes (enableSegment, disableSegment)
+  - Datasource deletion (killDatasource)
+  - Retention rule edits (editRetentionRulesForDatasource)
+  - Compaction config edits (editCompactionConfigForDatasource, deleteCompactionConfigForDatasource)
+  - Lookup changes (createOrUpdateLookup, deleteLookup)
+  - Supervisor control (suspendSupervisor, startSupervisor, terminateSupervisor)
+  - Task control (killTask)
+  - Multi-stage SQL task operations (queryDruidMultiStage, queryDruidMultiStageWithContext, getMultiStageQueryTaskStatus, cancelMultiStageQueryTask)
+  - Ingestion spec submission and templates (createIngestionSpec, createBatchIngestionTemplate)
+- Read-only-safe tools remain available, including SQL queries (queryDruidSql), metadata and status lookups, health diagnostics, task and segment inspection, etc.

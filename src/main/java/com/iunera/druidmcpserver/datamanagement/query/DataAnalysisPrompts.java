@@ -32,11 +32,11 @@ import java.util.Map;
  * Data Analysis & Query Prompts for Druid MCP Server
  */
 @Service
-public class DataAnalysisPromptProvider {
+public class DataAnalysisPrompts {
 
     private final PromptTemplateService promptTemplateService;
 
-    public DataAnalysisPromptProvider(PromptTemplateService promptTemplateService) {
+    public DataAnalysisPrompts(PromptTemplateService promptTemplateService) {
         this.promptTemplateService = promptTemplateService;
     }
 

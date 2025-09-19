@@ -22,16 +22,14 @@ import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
-import java.util.Map;
-
 @Component
-public class CompactionConfigToolProvider {
+public class ReadCompactionConfigTools {
 
     private final CompactionConfigRepository compactionConfigRepository;
     private final ObjectMapper objectMapper;
 
-    public CompactionConfigToolProvider(CompactionConfigRepository compactionConfigRepository,
-                                        ObjectMapper objectMapper) {
+    public ReadCompactionConfigTools(CompactionConfigRepository compactionConfigRepository,
+                                     ObjectMapper objectMapper) {
         this.compactionConfigRepository = compactionConfigRepository;
         this.objectMapper = objectMapper;
     }
@@ -63,43 +61,6 @@ public class CompactionConfigToolProvider {
             return String.format("Error retrieving compaction configuration for datasource '%s': %s", datasourceName, e.getMessage());
         } catch (Exception e) {
             return String.format("Failed to process compaction configuration response for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * Edit compaction configuration for a specific datasource
-     */
-    @McpTool(description = "Edit compaction configuration for a specific Druid datasource. Provide the datasource name and configuration as JSON string. Configuration should include dataSource, taskPriority, inputSegmentSizeBytes, maxRowsPerSegment, skipOffsetFromLatest, tuningConfig, taskContext, granularitySpec, dimensionsSpec, metricsSpec, and transformSpec.")
-    public String editCompactionConfigForDatasource(String datasourceName, String configJson) {
-        try {
-            // Parse the configuration JSON string into a Map
-            Map<String, Object> config = objectMapper.readValue(configJson,
-                    objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
-
-            // Ensure the datasource name is set in the config
-            config.put("dataSource", datasourceName);
-
-            JsonNode result = compactionConfigRepository.setCompactionConfigForDatasource(datasourceName, config);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error setting compaction configuration for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process compaction configuration update for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * Delete compaction configuration for a specific datasource
-     */
-    @McpTool(description = "Delete compaction configuration for a specific Druid datasource. Provide the datasource name as parameter.")
-    public String deleteCompactionConfigForDatasource(String datasourceName) {
-        try {
-            JsonNode result = compactionConfigRepository.deleteCompactionConfigForDatasource(datasourceName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error deleting compaction configuration for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process compaction configuration deletion for datasource '%s': %s", datasourceName, e.getMessage());
         }
     }
 

@@ -23,12 +23,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 @Component
-public class SupervisorsToolProvider {
+public class ReadSupervisorsTools {
 
     private final SupervisorsRepository supervisorsRepository;
     private final ObjectMapper objectMapper;
 
-    public SupervisorsToolProvider(SupervisorsRepository supervisorsRepository, ObjectMapper objectMapper) {
+    public ReadSupervisorsTools(SupervisorsRepository supervisorsRepository, ObjectMapper objectMapper) {
         this.supervisorsRepository = supervisorsRepository;
         this.objectMapper = objectMapper;
     }
@@ -60,51 +60,6 @@ public class SupervisorsToolProvider {
             return String.format("Error getting supervisor status: %s", e.getMessage());
         } catch (Exception e) {
             return String.format("Failed to get supervisor status: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Suspend a supervisor
-     */
-    @McpTool(description = "Suspend a Druid supervisor by supervisor ID")
-    public String suspendSupervisor(String supervisorId) {
-        try {
-            JsonNode result = supervisorsRepository.suspendSupervisor(supervisorId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error suspending supervisor: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to suspend supervisor: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Start/Resume a supervisor
-     */
-    @McpTool(description = "Start or resume a Druid supervisor by supervisor ID")
-    public String startSupervisor(String supervisorId) {
-        try {
-            JsonNode result = supervisorsRepository.resumeSupervisor(supervisorId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error starting supervisor: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to start supervisor: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Terminate a supervisor
-     */
-    @McpTool(description = "Terminate a Druid supervisor by supervisor ID. Use with extreme caution as this operation is irreversible.")
-    public String terminateSupervisor(String supervisorId) {
-        try {
-            JsonNode result = supervisorsRepository.terminateSupervisor(supervisorId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error terminating supervisor: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to terminate supervisor: %s", e.getMessage());
         }
     }
 }

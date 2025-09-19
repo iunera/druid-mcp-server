@@ -44,14 +44,18 @@ class LookupIntegrationTest {
     private LookupResources lookupResources;
 
     @Autowired
-    private LookupToolProvider lookupToolProvider;
+    private ReadLookupTools readLookupTools;
+
+    @Autowired
+    private WriteLookupTools writeLookupTools;
 
     @Test
     void testLookupServicesAreInjected() {
         System.out.println("[DEBUG_LOG] Testing lookup services injection");
 
         assertNotNull(lookupResources, "LookupResources should be injected");
-        assertNotNull(lookupToolProvider, "LookupToolProvider should be injected");
+        assertNotNull(readLookupTools, "ReadLookupTools should be injected");
+        assertNotNull(writeLookupTools, "WriteLookupTools should be injected");
 
         System.out.println("[DEBUG_LOG] All lookup services are properly injected");
     }
@@ -84,19 +88,29 @@ class LookupIntegrationTest {
 
     @Test
     void testLookupToolProviderMethods() {
-        System.out.println("[DEBUG_LOG] Testing LookupToolProvider methods");
+        System.out.println("[DEBUG_LOG] Testing LookupTools methods after refactor");
 
-        // Check that key methods exist
-        Method[] methods = lookupToolProvider.getClass().getDeclaredMethods();
-        boolean hasListLookups = Arrays.stream(methods)
+        // ReadLookupTools should contain read-only operations
+        Method[] readMethods = readLookupTools.getClass().getDeclaredMethods();
+        boolean hasListLookups = Arrays.stream(readMethods)
                 .anyMatch(m -> m.getName().equals("listLookups"));
-        boolean hasGetLookupStatus = Arrays.stream(methods)
+        boolean hasGetLookupStatus = Arrays.stream(readMethods)
                 .anyMatch(m -> m.getName().equals("getLookupStatus"));
 
-        assertTrue(hasListLookups, "LookupToolProvider should have listLookups method");
-        assertTrue(hasGetLookupStatus, "LookupToolProvider should have getLookupStatus method");
+        assertTrue(hasListLookups, "ReadLookupTools should have listLookups method");
+        assertTrue(hasGetLookupStatus, "ReadLookupTools should have getLookupStatus method");
 
-        System.out.println("[DEBUG_LOG] LookupToolProvider methods verified");
+        // WriteLookupTools should contain write operations
+        Method[] writeMethods = writeLookupTools.getClass().getDeclaredMethods();
+        boolean hasCreateOrUpdateLookup = Arrays.stream(writeMethods)
+                .anyMatch(m -> m.getName().equals("createOrUpdateLookup"));
+        boolean hasDeleteLookup = Arrays.stream(writeMethods)
+                .anyMatch(m -> m.getName().equals("deleteLookup"));
+
+        assertTrue(hasCreateOrUpdateLookup, "WriteLookupTools should have createOrUpdateLookup method");
+        assertTrue(hasDeleteLookup, "WriteLookupTools should have deleteLookup method");
+
+        System.out.println("[DEBUG_LOG] ReadLookupTools and WriteLookupTools methods verified");
     }
 
     @Test
@@ -119,13 +133,13 @@ class LookupIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing lookup tool return correct types");
 
         // Test that methods return String (as required by MCP tools)
-        Method[] lookupMethods = lookupToolProvider.getClass().getDeclaredMethods();
+        Method[] lookupMethods = writeLookupTools.getClass().getDeclaredMethods();
 
         // Check that public methods return String
         for (Method method : lookupMethods) {
             if (method.getName().startsWith("list") || method.getName().startsWith("get") || method.getName().startsWith("create") || method.getName().startsWith("delete")) {
                 assertEquals(String.class, method.getReturnType(),
-                        "LookupToolProvider method " + method.getName() + " should return String");
+                        "WriteLookupTools method " + method.getName() + " should return String");
             }
         }
 
