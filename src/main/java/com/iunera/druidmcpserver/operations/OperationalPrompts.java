@@ -31,11 +31,11 @@ import java.util.Map;
  * Operational Prompts for Druid MCP Server
  */
 @Service
-public class OperationalPromptProvider {
+public class OperationalPrompts {
 
     private final PromptTemplateService promptTemplateService;
 
-    public OperationalPromptProvider(PromptTemplateService promptTemplateService) {
+    public OperationalPrompts(PromptTemplateService promptTemplateService) {
         this.promptTemplateService = promptTemplateService;
     }
 

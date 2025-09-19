@@ -16,7 +16,7 @@
 
 package com.iunera.druidmcpserver.config;
 
-import com.iunera.druidmcpserver.datamanagement.query.DataAnalysisPromptProvider;
+import com.iunera.druidmcpserver.datamanagement.query.DataAnalysisPrompts;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ class PromptTemplateServiceTest {
     private PromptTemplateService promptTemplateService;
 
     @Autowired
-    private DataAnalysisPromptProvider dataAnalysisPromptProvider;
+    private DataAnalysisPrompts dataAnalysisPromptProvider;
 
     @Test
     void testPropertyOverrides() {

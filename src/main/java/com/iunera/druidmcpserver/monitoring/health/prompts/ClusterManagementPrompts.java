@@ -31,11 +31,11 @@ import java.util.Map;
  * Cluster Management Prompts for Druid MCP Server
  */
 @Service
-public class ClusterManagementPromptProvider {
+public class ClusterManagementPrompts {
 
     private final PromptTemplateService promptTemplateService;
 
-    public ClusterManagementPromptProvider(PromptTemplateService promptTemplateService) {
+    public ClusterManagementPrompts(PromptTemplateService promptTemplateService) {
         this.promptTemplateService = promptTemplateService;
     }
 
