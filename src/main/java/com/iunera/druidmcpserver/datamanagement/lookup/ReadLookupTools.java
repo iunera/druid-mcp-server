@@ -25,13 +25,13 @@ import org.springframework.web.client.RestClientException;
 import java.util.Map;
 
 @Component
-public class LookupToolProvider {
+public class ReadLookupTools {
 
     private final LookupRepository lookupRepository;
     private final ObjectMapper objectMapper;
 
-    public LookupToolProvider(LookupRepository lookupRepository,
-                              ObjectMapper objectMapper) {
+    public ReadLookupTools(LookupRepository lookupRepository,
+                           ObjectMapper objectMapper) {
         this.lookupRepository = lookupRepository;
         this.objectMapper = objectMapper;
     }
@@ -78,37 +78,6 @@ public class LookupToolProvider {
             return String.format("Error getting lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
         } catch (Exception e) {
             return String.format("Failed to process lookup response for '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        }
-    }
-
-    /**
-     * Create or update a lookup configuration
-     */
-    @McpTool(description = "Create or update a lookup configuration. Provide tier, lookup name, and configuration as JSON string")
-    public String createOrUpdateLookup(String tier, String lookupName, String configJson) {
-        try {
-            Map<String, Object> config = objectMapper.readValue(configJson, Map.class);
-            JsonNode result = lookupRepository.createOrUpdateLookup(tier, lookupName, config);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error creating/updating lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to create/update lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        }
-    }
-
-    /**
-     * Delete a lookup configuration
-     */
-    @McpTool(description = "Delete a lookup configuration by tier and name")
-    public String deleteLookup(String tier, String lookupName) {
-        try {
-            JsonNode result = lookupRepository.deleteLookup(tier, lookupName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error deleting lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to delete lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
         }
     }
 
