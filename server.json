@@ -39,8 +39,7 @@
           "-e",
           "DRUID_SSL_SKIP_VERIFICATION",
           "-e",
-          "DRUID_MCP_READONLY",
-          "iunera/druid-mcp-server:1.2.0"
+          "DRUID_MCP_READONLY"
         ]
       },
       "environmentVariables": [
