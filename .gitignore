@@ -34,3 +34,4 @@ build/
 
 ### Environment files ###
 .env
+key.pem
