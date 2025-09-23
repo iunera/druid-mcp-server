@@ -56,6 +56,11 @@ show_usage() {
     echo "  - server.json (MCP registry version and Docker image tag)"
     echo "  - mcpservers-stdio.json (Docker image tag)"
     echo "  - README.md (JAR file references)"
+    echo "  - examples/sse/README.md (JAR file references)"
+    echo "  - examples/stdio/README.md (JAR file references)"
+    echo "  - examples/stdio-docker/README.md (Docker image tag references)"
+    echo "  - development.md (version references in documentation)"
+    echo "  - mcp-registry.md (Docker image tag references)"
     echo ""
     echo "Examples:"
     echo "  $0 1.3.0       # Update to version 1.3.0"
@@ -153,21 +158,78 @@ update_mcpservers_stdio_json() {
     print_success "Updated $file"
 }
 
-# Function to update README.md
-update_readme() {
+# Function to update development.md
+update_development_md() {
     local new_version="$1"
-    local file="README.md"
+    local file="development.md"
     
     if [ ! -f "$file" ]; then
         print_error "$file not found"
         return 1
     fi
-    
+
+    # Update spring.ai.mcp.server.version reference in configuration examples
+    sed -i.tmp "s/spring\.ai\.mcp\.server\.version=.*/spring.ai.mcp.server.version=$new_version/" "$file"
     # Update JAR file references
-    sed -i.tmp "s/druid-mcp-server-[0-9]\+\.[0-9]\+\.[0-9]\+\(-[A-Za-z0-9]\+\)\?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
+    sed -i.tmp -E "s/druid-mcp-server-[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
     rm -f "${file}.tmp"
     
     print_success "Updated $file"
+}
+
+# Function to update mcp-registry.md
+update_mcp_registry_md() {
+    local new_version="$1"
+    local file="mcp-registry.md"
+    
+    if [ ! -f "$file" ]; then
+        print_error "$file not found"
+        return 1
+    fi
+
+    # Update Docker image tag references
+    sed -i.tmp -E "s/iunera\/druid-mcp-server:[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?/iunera\/druid-mcp-server:$new_version/g" "$file"
+    rm -f "${file}.tmp"
+    
+    print_success "Updated $file"
+}
+
+# Function to update all README files
+update_all_readmes() {
+    local new_version="$1"
+    
+    # Update main README.md (JAR references)
+    local file="README.md"
+    if [ -f "$file" ]; then
+        sed -i.tmp -E "s/druid-mcp-server-[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
+        rm -f "${file}.tmp"
+        print_success "Updated $file"
+    fi
+    
+    # Update examples/sse/README.md (JAR references)
+    file="examples/sse/README.md"
+    if [ -f "$file" ]; then
+        sed -i.tmp -E "s/druid-mcp-server-[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
+        rm -f "${file}.tmp"
+        print_success "Updated $file"
+    fi
+    
+    # Update examples/stdio/README.md (JAR references)
+    file="examples/stdio/README.md"
+    if [ -f "$file" ]; then
+        sed -i.tmp -E "s/druid-mcp-server-[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
+        rm -f "${file}.tmp"
+        print_success "Updated $file"
+    fi
+    
+    # Update examples/stdio-docker/README.md (Docker image references)
+    file="examples/stdio-docker/README.md"
+    if [ -f "$file" ]; then
+        sed -i.tmp -E "s/iunera\/druid-mcp-server:[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?/iunera\/druid-mcp-server:$new_version/g" "$file"
+        sed -i.tmp "s/iunera\/druid-mcp-server:latest/iunera\/druid-mcp-server:$new_version/g" "$file"
+        rm -f "${file}.tmp"
+        print_success "Updated $file"
+    fi
 }
 
 # Function to show summary of changes
@@ -186,6 +248,11 @@ show_summary() {
     echo "  ✓ server.json"
     echo "  ✓ mcpservers-stdio.json"
     echo "  ✓ README.md"
+    echo "  ✓ examples/sse/README.md"
+    echo "  ✓ examples/stdio/README.md"
+    echo "  ✓ examples/stdio-docker/README.md"
+    echo "  ✓ development.md"
+    echo "  ✓ mcp-registry.md"
     echo ""
     print_warning "Next steps:"
     echo "  1. Review the changes: git diff"
@@ -243,7 +310,9 @@ main() {
     update_application_properties "$new_version"
     update_server_json "$new_version"
     update_mcpservers_stdio_json "$new_version"
-    update_readme "$new_version"
+    update_development_md "$new_version"
+    update_mcp_registry_md "$new_version"
+    update_all_readmes "$new_version"
     
     # Show summary
     show_summary "$new_version" "$current_version"

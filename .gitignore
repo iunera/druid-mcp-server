@@ -35,3 +35,4 @@ build/
 ### Environment files ###
 .env
 key.pem
+/mcp-publisher
