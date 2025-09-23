@@ -16,6 +16,12 @@ RUN mvn clean package
 # Runtime stage
 FROM eclipse-temurin:24-jre
 
+# Add MCP server metadata labels
+LABEL io.modelcontextprotocol.server.name="com.iunera/druid-mcp-server"
+LABEL io.modelcontextprotocol.server.description="A comprehensive Model Context Protocol (MCP) server for Apache Druid that provides AI-assisted tools, resources, and prompts for managing and analyzing Druid clusters. Built with Spring Boot and Spring AI, this server enables seamless integration between Large Language Models and Apache Druid through standardized MCP protocol, offering extensive data management, ingestion control, monitoring capabilities, and automated cluster operations for modern data analytics workflows. Developed by iunera (https://www.iunera.com)."
+LABEL org.opencontainers.image.source="https://github.com/iunera/druid-mcp-server"
+LABEL org.opencontainers.image.description="MCP server providing tools for Apache Druid cluster management, monitoring, and data querying"
+LABEL org.opencontainers.image.vendor="iunera"
 # Set working directory
 WORKDIR /app
 
