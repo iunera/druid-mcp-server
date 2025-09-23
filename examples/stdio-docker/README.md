@@ -70,7 +70,7 @@ docker run --rm -i \
   -e SPRING_MAIN_WEB_APPLICATION_TYPE=none \
   -e LOGGING_PATTERN_CONSOLE= \
   -e DRUID_ROUTER_URL=http://host.docker.internal:8888 \
-  iunera/druid-mcp-server:latest
+  iunera/druid-mcp-server:1.2.1
 ```
 
 #### Production
@@ -83,7 +83,7 @@ docker run --rm -i \
   -e DRUID_AUTH_USERNAME=your-username \
   -e DRUID_AUTH_PASSWORD=your-password \
   -e DRUID_SSL_ENABLED=true \
-  iunera/druid-mcp-server:latest
+  iunera/druid-mcp-server:1.2.1
 ```
 
 ## Configuration Structure
@@ -101,7 +101,7 @@ The MCP configuration files follow the standard MCP server configuration format 
         "-e", "SPRING_MAIN_WEB_APPLICATION_TYPE=none",
         "-e", "LOGGING_PATTERN_CONSOLE=",
         "-e", "DRUID_ROUTER_URL=http://host.docker.internal:8888",
-        "iunera/druid-mcp-server:latest"
+        "iunera/druid-mcp-server:1.2.1"
       ]
     }
   }
@@ -140,7 +140,7 @@ All configuration is done through environment variables, making it easy to:
 
 1. **Docker image not found**: Ensure you have internet connectivity to pull from Docker Hub
    ```bash
-   docker pull iunera/druid-mcp-server:latest
+   docker pull iunera/druid-mcp-server:1.2.1
    ```
 
 2. **Connection refused**: Verify your Druid cluster is running and accessible

@@ -73,7 +73,7 @@ The prompts interface shows all AI-assisted guidance templates available for var
 mvn clean package -DskipTests
 
 # Run the application
-java -jar target/druid-mcp-server-1.0.0.jar
+java -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 The server will start on port 8080 by default.
@@ -94,17 +94,17 @@ If you prefer to use the pre-built JAR without building from source, you can dow
 mkdir druid-mcp-server && cd druid-mcp-server
 
 # Download the JAR from Maven Central
-curl -L -o druid-mcp-server-1.0.0.jar \
-  "https://repo.maven.apache.org/maven2/com/iunera/druid-mcp-server/1.0.0/druid-mcp-server-1.0.0.jar"
+curl -L -o druid-mcp-server-1.2.1.jar \
+  "https://repo.maven.apache.org/maven2/com/iunera/druid-mcp-server/1.0.0/druid-mcp-server-1.2.1.jar"
 
 # Run with SSE Transport (HTTP-based, default)
-java -jar druid-mcp-server-1.0.0.jar
+java -jar druid-mcp-server-1.2.1.jar
 
 # OR run with STDIO Transport (recommended for LLM clients)
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar druid-mcp-server-1.1.0.jar
+     -jar druid-mcp-server-1.2.1.jar
 ```
 
 ## Installation with Docker
@@ -283,7 +283,7 @@ export DRUID_SSL_ENABLED="true"
 export DRUID_SSL_SKIP_VERIFICATION="false"  # Use "true" only for testing
 
 # Start the MCP server
-java -jar target/druid-mcp-server-1.0.0.jar
+java -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 ##### Method 2: Application Properties
@@ -313,7 +313,7 @@ java -Ddruid.router.url="https://your-druid-cluster.example.com:8888" \
      -Ddruid.auth.password="your-password" \
      -Ddruid.ssl.enabled=true \
      -Ddruid.ssl.skip-verification=false \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 #### SSL Configuration Options
@@ -371,7 +371,7 @@ export DRUID_SSL_ENABLED="true"
 export DRUID_SSL_SKIP_VERIFICATION="false"
 
 # Start MCP server
-java -jar target/druid-mcp-server-1.0.0.jar
+java -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 ##### Example 2: Development Environment
@@ -392,7 +392,7 @@ export DRUID_SSL_ENABLED="true"
 export DRUID_SSL_SKIP_VERIFICATION="true"
 
 # Start MCP server
-java -jar target/druid-mcp-server-1.0.0.jar
+java -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 ##### Example 3: MCP Client Configuration with SSL
@@ -409,7 +409,7 @@ Update your `mcp-servers-config.json` to include environment variables:
         "-Dspring.main.web-application-type=none",
         "-Dlogging.pattern.console=",
         "-jar",
-        "target/druid-mcp-server-1.0.0.jar"
+        "target/druid-mcp-server-1.2.1.jar"
       ],
       "env": {
         "DRUID_ROUTER_URL": "https://your-druid-cluster.example.com:8888",
@@ -444,7 +444,7 @@ You can override any prompt template using Java system properties with the `-D` 
 
 ```bash
 java -Dprompts.druid-data-exploration.template="Your custom template here" \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 #### Method 2: Custom Properties File
@@ -462,7 +462,7 @@ Environment: {environment}
 2. Load it at runtime:
 ```bash
 java -Dspring.config.additional-location=classpath:custom-prompts.properties \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 ### Available Prompt Variables
@@ -532,7 +532,7 @@ The new **Streamable HTTP** transport provides enhanced performance and scalabil
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 # Server available at http://localhost:8080/mcp (configurable endpoint)
 ```
 
@@ -553,14 +553,14 @@ Perfect for LLM clients and desktop applications:
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 #### Legacy SSE Transport (Deprecated)
 Still supported for backwards compatibility. It is no longer the default and may be removed in a future version.
 
 ```bash
-java -jar target/druid-mcp-server-1.0.0.jar
+java -jar target/druid-mcp-server-1.2.1.jar
 # Server available at http://localhost:8080/sse
 ```
 
@@ -583,7 +583,7 @@ More details on this on [examples/stdio/README.md](examples/stdio/README.md).
         "-Dspring.main.web-application-type=none",
         "-Dlogging.pattern.console=",
         "-jar",
-        "target/druid-mcp-server-1.0.0.jar"
+        "target/druid-mcp-server-1.2.1.jar"
       ]
     }
   }
@@ -756,7 +756,7 @@ export DRUID_MCP_READONLY_ENABLED=true
 3) JVM system property
 
 ```bash
-java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.2.0.jar
+java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 4) Docker

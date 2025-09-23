@@ -42,7 +42,7 @@ Production-ready configuration with security and authentication settings.
    mvn clean package -DskipTests
    ```
 
-2. Ensure the JAR file exists at `target/druid-mcp-server-1.0.0.jar`
+2. Ensure the JAR file exists at `target/druid-mcp-server-1.2.1.jar`
 
 ### For Development
 1. Copy `stdio-mcp-servers-config.json` to your MCP client configuration
@@ -67,7 +67,7 @@ Both configuration files follow the MCP server configuration format:
       "command": "java",
       "args": [
         "-jar",
-        "target/druid-mcp-server-1.0.0.jar"
+        "target/druid-mcp-server-1.2.1.jar"
       ],
       "env": {
         "SPRING_AI_MCP_SERVER_STDIO": "true",

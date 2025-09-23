@@ -50,13 +50,13 @@ Basic SSE configuration for connecting to the Druid MCP Server via HTTP.
    mvn clean package -DskipTests
    ```
 
-2. Ensure the JAR file exists at `target/druid-mcp-server-1.0.0.jar`
+2. Ensure the JAR file exists at `target/druid-mcp-server-1.2.1.jar`
 
 ### Starting the SSE Server
 
 Run the server in SSE mode (default web server mode):
 ```bash
-java -jar target/druid-mcp-server-1.0.0.jar
+java -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 The server will start on port 8080 by default and provide SSE endpoints at:
@@ -67,7 +67,7 @@ The server will start on port 8080 by default and provide SSE endpoints at:
 
 To run on a different port:
 ```bash
-java -Dserver.port=9090 -jar target/druid-mcp-server-1.0.0.jar
+java -Dserver.port=9090 -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 Then update your configuration to use `http://localhost:9090/sse`
@@ -82,7 +82,7 @@ java -Dserver.port=8080 \
      -Ddruid.auth.username=your-username \
      -Ddruid.auth.password=your-password \
      -Ddruid.ssl.enabled=true \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 ## Configuration Structure
@@ -138,7 +138,7 @@ When running in SSE mode, the server provides several endpoints:
 ### Common Issues
 
 1. **Connection Refused**
-   - Ensure the server is running: `java -jar target/druid-mcp-server-1.0.0.jar`
+   - Ensure the server is running: `java -jar target/druid-mcp-server-1.2.1.jar`
    - Check if port 8080 is available or use a different port
    - Verify firewall settings allow connections to the port
 
@@ -161,7 +161,7 @@ When running in SSE mode, the server provides several endpoints:
 Enable debug logging:
 ```bash
 java -Dlogging.level.com.iunera.druidmcpserver=DEBUG \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 ### Testing the Connection
@@ -192,7 +192,7 @@ java -Dserver.port=8443 \
      -Dserver.ssl.key-store=path/to/keystore.p12 \
      -Dserver.ssl.key-store-password=your-password \
      -Ddruid.broker.url=https://secure-druid-broker.com:8082 \
-     -jar target/druid-mcp-server-1.0.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 ## Performance Considerations
