@@ -170,7 +170,7 @@ Check if your server was published successfully:
 
 ```bash
 # Search for your server
-curl "https://registry.modelcontextprotocol.io/v0/servers?search=com.iunera/druid-mcp-server"
+curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=com.iunera/druid-mcp-server" | jq . 
 
 # Get server details by ID (if you have the ID)
 curl "https://registry.modelcontextprotocol.io/v0/servers/{server-id}"

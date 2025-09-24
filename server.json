@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-16/server.schema.json",
   "name": "com.iunera/druid-mcp-server",
-  "description": "A comprehensive Model Context Protocol (MCP) server for Apache Druid that provides AI-assisted tools, resources, and prompts for managing and analyzing Druid clusters. Built with Spring Boot and Spring AI, this server enables seamless integration between Large Language Models and Apache Druid through standardized MCP protocol, offering extensive data management, ingestion control, monitoring capabilities, and automated cluster operations for modern data analytics workflows. Developed by iunera (https://www.iunera.com).",
+  "description": "AI-powered MCP server for Apache Druid cluster management and analytic",
   "status": "active",
   "repository": {
     "url": "https://github.com/iunera/druid-mcp-server",
