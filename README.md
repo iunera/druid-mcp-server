@@ -481,12 +481,6 @@ java -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 
-### Known Issues
-
-- MCP Inspector v0.16.8 protocol downgrade warning
-    - Message: "Client requested unsupported protocol version: 2025-06-18, so the server will suggest the 2025-03-26 version instead"
-    - Status: This was caused by spring-ai-1.1.0-M1 not supporting the 2025-06-18 MCP protocol fully yet.
-
 ### Read-only Mode
 
 Read-only mode prevents any operation that could mutate your Druid cluster while still allowing safe read operations and SQL queries. When enabled:
@@ -583,7 +577,6 @@ A specialized Apache Druid extension for ingesting and analyzing code-related da
 ## Roadmap
 
 - **Authentication on SSE Mode**: Introduce Oauth Authentication
-- **MCP 2025-06-18 MCP**: Fully support the latest MCP Protocol 
 - **Druid Auto Compaction**: Intelligent automatic compaction configuration
 - **MCP Auto Completion**: Enhanced autocomplete functionality with sampling
 - **Proper Observability**: Comprehensive metrics and tracing
