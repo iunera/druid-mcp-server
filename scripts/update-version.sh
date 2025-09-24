@@ -97,8 +97,9 @@ update_pom_xml() {
         return 1
     fi
 
-    # Update the project version (first occurrence)
-    sed -i.tmp "0,/<version>.*<\/version>/s/<version>.*<\/version>/<version>$new_version<\/version>/" "$file"
+    # Update the project version (the <version> that follows the project's artifactId, not the parent)
+    # Replace only the first <version> after <artifactId>druid-mcp-server</artifactId>
+    sed -i.tmp "/<artifactId>druid-mcp-server<\/artifactId>/,/<version>[^<]*<\/version>/s/<version>[^<]*<\/version>/<version>$new_version<\/version>/" "$file"
     rm -f "${file}.tmp"
     
     print_success "Updated $file"
