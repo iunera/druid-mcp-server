@@ -576,9 +576,10 @@ A specialized Apache Druid extension for ingesting and analyzing code-related da
 
 ## Roadmap
 
-- **Authentication on SSE Mode**: Introduce Oauth Authentication
+- **Authentication on SSE/HTTP Mode**: Introduce Oauth Authentication
 - **Druid Auto Compaction**: Intelligent automatic compaction configuration
-- **MCP Auto Completion**: Enhanced autocomplete functionality with sampling
+- **MCP Auto Completion**: Enhanced autocomplete functionality with sampling using McpComplete
+- **MCP Notifications**: Real-time notifications for MCP operations
 - **Proper Observability**: Comprehensive metrics and tracing
 - **Enhanced Monitoring**: Advanced cluster monitoring and alerting capabilities
 - **Advanced Analytics**: Machine learning-powered insights and recommendations
