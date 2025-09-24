@@ -56,9 +56,7 @@ show_usage() {
     echo "  - server.json (MCP registry version and Docker image tag)"
     echo "  - mcpservers-stdio.json (Docker image tag)"
     echo "  - README.md (JAR file references)"
-    echo "  - examples/sse/README.md (JAR file references)"
-    echo "  - examples/stdio/README.md (JAR file references)"
-    echo "  - examples/stdio-docker/README.md (Docker image tag references)"
+    echo "  - All README files under examples/ (JAR and Docker image tag references)"
     echo "  - development.md (version references in documentation)"
     echo "  - mcp-registry.md (Docker image tag references)"
     echo ""
@@ -135,7 +133,7 @@ update_server_json() {
 
     # Update version fields and Docker image tag
     sed -i.tmp "s/\"version\": \"[^\"]*\"/\"version\": \"$new_version\"/g" "$file"
-    sed -i.tmp "s/iunera\/druid-mcp-server:[^\"]*\"/iunera\/druid-mcp-server:$new_version\"/g" "$file"
+    sed -i.tmp -E "s/iunera\/druid-mcp-server:[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\"/iunera\/druid-mcp-server:$new_version\"/g" "$file"
     rm -f "${file}.tmp"
     
     print_success "Updated $file"
@@ -151,8 +149,8 @@ update_mcpservers_stdio_json() {
         return 1
     fi
 
-    # Update Docker image tag
-    sed -i.tmp "s/iunera\/druid-mcp-server:[^\"]*\"/iunera\/druid-mcp-server:$new_version\"/" "$file"
+    # Update Docker image tag (skip :latest)
+    sed -i.tmp -E "s/iunera\/druid-mcp-server:[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\"/iunera\/druid-mcp-server:$new_version\"/g" "$file"
     rm -f "${file}.tmp"
     
     print_success "Updated $file"
@@ -197,39 +195,26 @@ update_mcp_registry_md() {
 # Function to update all README files
 update_all_readmes() {
     local new_version="$1"
-    
+
     # Update main README.md (JAR references)
     local file="README.md"
     if [ -f "$file" ]; then
         sed -i.tmp -E "s/druid-mcp-server-[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
-        rm -f "${file}.tmp"
-        print_success "Updated $file"
-    fi
-    
-    # Update examples/sse/README.md (JAR references)
-    file="examples/sse/README.md"
-    if [ -f "$file" ]; then
-        sed -i.tmp -E "s/druid-mcp-server-[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
-        rm -f "${file}.tmp"
-        print_success "Updated $file"
-    fi
-    
-    # Update examples/stdio/README.md (JAR references)
-    file="examples/stdio/README.md"
-    if [ -f "$file" ]; then
-        sed -i.tmp -E "s/druid-mcp-server-[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
-        rm -f "${file}.tmp"
-        print_success "Updated $file"
-    fi
-    
-    # Update examples/stdio-docker/README.md (Docker image references)
-    file="examples/stdio-docker/README.md"
-    if [ -f "$file" ]; then
+        # Also update Docker image tag if present in root README (skip :latest)
         sed -i.tmp -E "s/iunera\/druid-mcp-server:[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?/iunera\/druid-mcp-server:$new_version/g" "$file"
-        sed -i.tmp "s/iunera\/druid-mcp-server:latest/iunera\/druid-mcp-server:$new_version/g" "$file"
         rm -f "${file}.tmp"
         print_success "Updated $file"
     fi
+
+    # Update all README files under examples/ using find from repository root
+    while IFS= read -r -d '' file; do
+        # Update JAR references
+        sed -i.tmp -E "s/druid-mcp-server-[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\.jar/druid-mcp-server-$new_version.jar/g" "$file"
+        # Update Docker image tag references (skip :latest)
+        sed -i.tmp -E "s/iunera\/druid-mcp-server:[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?/iunera\/druid-mcp-server:$new_version/g" "$file"
+        rm -f "${file}.tmp"
+        print_success "Updated $file"
+    done < <(find ./examples -type f \( -iname 'readme.md' -o -iname 'readme' \) -print0)
 }
 
 # Function to show summary of changes
@@ -248,9 +233,7 @@ show_summary() {
     echo "  ✓ server.json"
     echo "  ✓ mcpservers-stdio.json"
     echo "  ✓ README.md"
-    echo "  ✓ examples/sse/README.md"
-    echo "  ✓ examples/stdio/README.md"
-    echo "  ✓ examples/stdio-docker/README.md"
+    echo "  ✓ all README files under examples/"
     echo "  ✓ development.md"
     echo "  ✓ mcp-registry.md"
     echo ""
