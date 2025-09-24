@@ -40,7 +40,7 @@ Add these essentials to `src/main/resources/application.properties` (or as env v
 ```properties
 # MCP Server identification
 spring.ai.mcp.server.name=druid-mcp-server
-spring.ai.mcp.server.version=1.2.1
+spring.ai.mcp.server.version=1.2.2
 
 # Druid connection
 druid.broker.url=http://localhost:8082
@@ -306,12 +306,12 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.2.1.jar
+     -jar target/druid-mcp-server-1.2.2.jar
 ```
 
 #### SSE Transport (HTTP-based)
 ```bash
-java -jar target/druid-mcp-server-1.2.1.jar
+java -jar target/druid-mcp-server-1.2.2.jar
 # Server available at http://localhost:8080
 ```
 

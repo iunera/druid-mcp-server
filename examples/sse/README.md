@@ -18,7 +18,7 @@ Expose the HTTP port and configure Druid access via environment variables:
 ```bash
 docker run --rm -p 8080:8080 \
   -e DRUID_ROUTER_URL=http://host.docker.internal:8888 \
-  iunera/druid-mcp-server:1.2.1
+  iunera/druid-mcp-server:1.2.2
 ```
 
 Common environment variables:

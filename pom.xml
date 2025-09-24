@@ -26,7 +26,7 @@
     </parent>
     <groupId>com.iunera</groupId>
     <artifactId>druid-mcp-server</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <name>druid-mcp-server</name>
     <description>A comprehensive Model Context Protocol (MCP) server for Apache Druid that provides AI-assisted tools, resources, and prompts for managing and
         analyzing Druid clusters. Built with Spring Boot and Spring AI, this server enables seamless integration between Large Language Models and Apache Druid

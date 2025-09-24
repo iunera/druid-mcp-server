@@ -142,7 +142,7 @@ Ensure your `server.json` is up-to-date with the latest version and metadata:
       "transport": {
         "type": "stdio",
         "command": "docker",
-        "args": ["run", "--rm", "-i", "iunera/druid-mcp-server:1.2.1"]
+        "args": ["run", "--rm", "-i", "iunera/druid-mcp-server:1.2.2"]
       }
     }
   ]
@@ -197,7 +197,7 @@ When releasing a new version:
 - [ ] `pom.xml` version: `1.2.1`
 - [ ] `server.json` version: `1.2.1`
 - [ ] `server.json` package version: `1.2.1`
-- [ ] Docker image tag: `iunera/druid-mcp-server:1.2.1`
+- [ ] Docker image tag: `iunera/druid-mcp-server:1.2.2`
 - [ ] All example configurations updated
 
 ## Troubleshooting
