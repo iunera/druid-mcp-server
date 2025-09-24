@@ -176,3 +176,40 @@ jobs:
         SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+  # MCP Registry publishing job
+  mcp-publish:
+    needs: [release, docker, maven-deploy]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write  # Required for OIDC authentication
+      contents: read
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Update server.json version
+      run: |
+        VERSION=${{ needs.release.outputs.version }}
+        jq --arg v "$VERSION" '.version = $v | .packages[].version = $v | .packages[] |= if .registryType == "docker" then .identifier = "iunera/druid-mcp-server:" + $v else . end' server.json > tmp && mv tmp server.json
+        echo "Updated server.json version to: $VERSION"
+        cat server.json
+
+    - name: Install MCP Publisher
+      run: |
+        curl -L "https://github.com/modelcontextprotocol/registry/releases/download/v1.1.0/mcp-publisher_1.1.0_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+    - name: Login to MCP Registry
+      run: |
+        echo "${{ secrets.MCP_PUBLISHER_KEY }}" > key.pem
+        chmod 600 key.pem
+        ./mcp-publisher login dns --domain iunera.com --private-key $(openssl pkey -in key.pem -noout -text | grep -A3 "priv:" | tail -n +2 | tr -d ' :\n')
+        rm key.pem
+
+    - name: Publish to MCP Registry
+      run: |
+        ./mcp-publisher publish
+

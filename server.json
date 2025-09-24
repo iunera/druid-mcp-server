@@ -1,0 +1,91 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-16/server.schema.json",
+  "name": "com.iunera/druid-mcp-server",
+  "description": "AI-powered MCP server for Apache Druid cluster management and analytic",
+  "status": "active",
+  "repository": {
+    "url": "https://github.com/iunera/druid-mcp-server",
+    "source": "github"
+  },
+  "version": "1.2.1",
+  "packages": [
+    {
+      "registryType": "oci",
+      "registryBaseUrl": "https://docker.io",
+      "identifier": "iunera/druid-mcp-server",
+      "runtimeHint": "docker",
+      "version": "1.2.1",
+      "transport": {
+        "type": "stdio",
+        "command": "docker",
+        "args": [
+          "run",
+          "--rm",
+          "-i",
+          "-e",
+          "SPRING_AI_MCP_SERVER_STDIO=true",
+          "-e",
+          "SPRING_MAIN_WEB_APPLICATION_TYPE=none",
+          "-e",
+          "LOGGING_PATTERN_CONSOLE=",
+          "-e",
+          "DRUID_ROUTER_URL",
+          "-e",
+          "DRUID_AUTH_USERNAME",
+          "-e",
+          "DRUID_AUTH_PASSWORD",
+          "-e",
+          "DRUID_SSL_ENABLED",
+          "-e",
+          "DRUID_SSL_SKIP_VERIFICATION",
+          "-e",
+          "DRUID_MCP_READONLY"
+        ]
+      },
+      "environmentVariables": [
+        {
+          "description": "Druid router URL for connecting to the Druid cluster",
+          "is_required": true,
+          "format": "string",
+          "is_secret": false,
+          "name": "DRUID_ROUTER_URL"
+        },
+        {
+          "description": "Username for Druid authentication (optional)",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "DRUID_AUTH_USERNAME"
+        },
+        {
+          "description": "Password for Druid authentication (optional)",
+          "is_required": false,
+          "format": "string",
+          "is_secret": true,
+          "name": "DRUID_AUTH_PASSWORD"
+        },
+        {
+          "description": "Enable SSL/TLS support for Druid connections",
+          "is_required": false,
+          "format": "boolean",
+          "is_secret": false,
+          "name": "DRUID_SSL_ENABLED"
+        },
+        {
+          "description": "Skip SSL certificate verification (for development/testing only)",
+          "is_required": false,
+          "format": "boolean",
+          "is_secret": false,
+          "name": "DRUID_SSL_SKIP_VERIFICATION"
+        },
+        {
+          "description": "Enable read-only mode (only GET requests and SQL queries allowed)",
+          "is_required": false,
+          "format": "boolean",
+          "is_secret": false,
+          "name": "DRUID_MCP_READONLY"
+        }
+      ]
+    }
+  ]
+}

@@ -40,7 +40,7 @@ Add these essentials to `src/main/resources/application.properties` (or as env v
 ```properties
 # MCP Server identification
 spring.ai.mcp.server.name=druid-mcp-server
-spring.ai.mcp.server.version=0.0.1-SNAPSHOT
+spring.ai.mcp.server.version=1.2.1
 
 # Druid connection
 druid.broker.url=http://localhost:8082
@@ -56,6 +56,41 @@ logging.pattern.console=
 
 ### Autowiring
 Features like Tools, Resources, Prompts and more are automatically discovered and registered by Spring AI 1.1.0-M1 auto-configuration through annotation scanning. Simply use `@Component` on classes with `@McpTool`, `@McpResource`, `@McpPrompt`, and `@McpComplete` annotated methods. No manual registration in the main application class is required.
+
+## Version Management
+
+### Updating Project Version
+
+The project includes an automated version update script that synchronizes version numbers across all documentation and configuration files.
+
+#### Version Update Script
+The `scripts/update-version.sh` script updates version numbers in the following files:
+- `pom.xml` (Maven project version)
+- `src/main/resources/application.properties` (MCP server version)
+- `server.json` (MCP registry version and Docker image tag)
+- `mcpservers-stdio.json` (Docker image tag)
+- `README.md` (JAR file references)
+
+#### Usage
+```bash
+# Update to a new version
+./scripts/update-version.sh 1.3.0
+
+# Update to a release candidate
+./scripts/update-version.sh 2.0.0-RC1
+```
+
+#### Features
+- **Validation**: Ensures version format follows semantic versioning (X.Y.Z or X.Y.Z-SUFFIX)
+- **Confirmation**: Prompts for user confirmation before proceeding
+- **Summary**: Shows detailed summary of all changes made
+
+#### Workflow
+1. Run the script with desired version number
+2. Review the changes: `git diff`
+3. Test the build: `mvn clean package`
+4. Commit changes: `git add . && git commit -m "Update version to X.Y.Z"`
+5. Push to trigger release: `git push origin main`
 
 ## Testing Information
 
@@ -271,12 +306,12 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.2.0.jar
+     -jar target/druid-mcp-server-1.2.1.jar
 ```
 
 #### SSE Transport (HTTP-based)
 ```bash
-java -jar target/druid-mcp-server-1.2.0.jar
+java -jar target/druid-mcp-server-1.2.1.jar
 # Server available at http://localhost:8080
 ```
 
