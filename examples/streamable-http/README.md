@@ -1,15 +1,15 @@
-# SSE (Docker) Examples
+# Streamable HTTP (Docker) Examples
 
-This folder contains Docker-focused examples for running the Druid MCP Server exposing the SSE endpoint (HTTP streaming). These examples are designed for clients that connect over HTTP to an already-running server.
+This folder contains Docker-focused examples for running the Druid MCP Server with the Streamable HTTP transport (MCP 2025-06-18). Clients connect over HTTP to a single /mcp endpoint.
 
 We focus on environment variable configuration. No Java/JAR commands are required.
 
 ## Quick use with MCP client
 
 Point your MCP client to this config file:
-- [mcpservers-sse.json](mcpservers-sse.json)
+- [mcpservers-streamable-http.json](mcpservers-streamable-http.json)
 
-This tells your client to connect to the SSE URL. You must run the server container separately (see below).
+This tells your client to connect to the Streamable HTTP endpoint. You must run the server container separately (see below).
 
 ## Run the server with Docker
 
@@ -29,7 +29,8 @@ Common environment variables:
 - DRUID_SSL_SKIP_VERIFICATION (true/false)
 - DRUID_MCP_READONLY (true/false)
 
-SSE endpoint will be available at:
-- http://localhost:8080/sse
+Streamable HTTP endpoint will be available at:
+- http://localhost:8080/mcp
 
 Adjust -p 8080:8080 if you need a different port.
+

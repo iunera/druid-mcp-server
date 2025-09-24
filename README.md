@@ -57,10 +57,36 @@ The resources interface displays all accessible Druid data sources and metadata 
 
 The prompts interface shows all AI-assisted guidance templates available for various Druid management tasks and data analysis workflows.
 
-
-
-
 ## Quick Start
+
+### MCP Configuration for LLMs
+
+A ready-to-use MCP configuration file is provided at `mcp-servers-config.json` that can be used with LLM clients to connect to this Druid MCP server.
+
+#### Examples
+The configuration includes both transport options:
+
+* [STDIO](examples/stdio/README.md): STDIO-based streaming connection via command-line.
+* [SSE](examples/sse/README.md): HTTP-based streaming connection via Server-Sent Events.
+* [Streamable HTTP Configuration](examples/streamable-http/README.md) Modern single-endpoint HTTP transport per MCP 2025-06-18.
+
+
+#### Docker examples using environment variables:
+
+```bash
+# Run with SSE Transport (HTTP-based, default)
+docker run -p 8080:8080 \
+  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  iunera/druid-mcp-server:latest
+
+# OR run with STDIO Transport (recommended for LLM clients)
+docker run --rm -i \
+  -e SPRING_AI_MCP_SERVER_STDIO=true \
+  -e SPRING_MAIN_WEB_APPLICATION_TYPE=none \
+  -e LOGGING_PATTERN_CONSOLE= \
+  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  iunera/druid-mcp-server:latest
+```
 
 ### Prerequisites
 - Java 24
@@ -89,14 +115,9 @@ If you prefer to use the pre-built JAR without building from source, you can dow
 
 ### Download and Run
 
+Download the JAR from Maven Central https://repo.maven.apache.org/maven2/com/iunera/druid-mcp-server/
+
 ```bash
-# Create a directory for the application
-mkdir druid-mcp-server && cd druid-mcp-server
-
-# Download the JAR from Maven Central
-curl -L -o druid-mcp-server-1.2.1.jar \
-  "https://repo.maven.apache.org/maven2/com/iunera/druid-mcp-server/1.0.0/druid-mcp-server-1.2.1.jar"
-
 # Run with SSE Transport (HTTP-based, default)
 java -jar druid-mcp-server-1.2.1.jar
 
@@ -107,44 +128,13 @@ java -Dspring.ai.mcp.server.stdio=true \
      -jar druid-mcp-server-1.2.1.jar
 ```
 
-## Installation with Docker
-
-If you prefer to use Docker, you can run the pre-built Docker image directly from Docker Hub without any local Java installation.
-
-### Prerequisites
-- Docker installed and running
-
-### Pull and Run
-
-```bash
-# Pull the latest Docker image
-docker pull iunera/druid-mcp-server:latest
-
-# Run with SSE Transport (HTTP-based, default)
-docker run -p 8080:8080 \
-  -e DRUID_BROKER_URL=http://your-druid-broker:8082 \
-  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
-  iunera/druid-mcp-server:latest
-
-# OR run with STDIO Transport (recommended for LLM clients)
-docker run --rm -i \
-  -e SPRING_AI_MCP_SERVER_STDIO=true \
-  -e SPRING_MAIN_WEB_APPLICATION_TYPE=none \
-  -e LOGGING_PATTERN_CONSOLE= \
-  -e DRUID_BROKER_URL=http://your-druid-broker:8082 \
-  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
-  iunera/druid-mcp-server:latest
-```
-
-Replace `your-druid-broker` and `your-druid-coordinator` with your actual Druid cluster endpoints.
-
 ## For Developers
 
 For detailed development information including build instructions, testing guidelines, architecture details, and contributing guidelines, see [development.md](development.md).
 
 ## Available Tools by Feature
 
-The MCP server auto-discovers all tools via annotations. In Read-only mode, any tool that would modify the Druid cluster is not registered and will not appear in the MCP client. The lists below reflect the current implementation and indicate which tools are disabled when read-only is enabled.
+The MCP server auto-discovers all tools via annotations. In Read-only mode, any tool that would modify the Druid cluster is not registered and will not appear in the MCP client. The lists below reflect the current implementation.
 
 ### Data Management
 
@@ -223,25 +213,6 @@ The MCP server auto-discovers all tools via annotations. In Read-only mode, any 
 | **Operations** | `emergency-response` | Emergency response procedures and guidance | None |
 | **Operations** | `maintenance-mode` | Cluster maintenance procedures | None |
 
-## Configuration
-
-Configure your Druid connection in `src/main/resources/application.properties`:
-
-```properties
-# Spring AI MCP Server configuration
-spring.ai.mcp.server.name=druid-mcp-server
-spring.ai.mcp.server.version=1.1.0
-
-# Druid configuration
-druid.router.url=http://localhost:8888
-
-# Server configuration
-server.port=8080
-
-# NOTE: Banner and console logging must be disabled for STDIO transport
-spring.main.banner-mode=off
-```
-
 ### Environment Variables Configuration
 
 For sensitive credentials like username and password, you can use environment variables instead of hardcoding them in properties files.
@@ -286,24 +257,7 @@ export DRUID_SSL_SKIP_VERIFICATION="false"  # Use "true" only for testing
 java -jar target/druid-mcp-server-1.2.1.jar
 ```
 
-##### Method 2: Application Properties
-
-Update `src/main/resources/application.properties`:
-
-```properties
-# Druid cluster configuration
-druid.router.url=https://your-druid-cluster.example.com:8888
-
-# Authentication
-druid.auth.username=your-username
-druid.auth.password=your-password
-
-# SSL configuration
-druid.ssl.enabled=true
-druid.ssl.skip-verification=false
-```
-
-##### Method 3: Runtime System Properties
+##### Method 2: Runtime System Properties
 
 Pass configuration as JVM system properties:
 
@@ -330,18 +284,6 @@ export DRUID_SSL_SKIP_VERIFICATION="false"
 
 The server will use the system's default truststore to validate SSL certificates.
 
-##### Development/Testing SSL Setup
-
-For development or testing with self-signed certificates:
-
-```bash
-export DRUID_ROUTER_URL="https://druid-dev.local:8888"
-export DRUID_SSL_ENABLED="true"
-export DRUID_SSL_SKIP_VERIFICATION="true"  # WARNING: Only for testing!
-```
-
-**⚠️ Security Warning**: Never use `DRUID_SSL_SKIP_VERIFICATION=true` in production environments as it disables SSL certificate validation.
-
 #### Authentication Methods
 
 The MCP server supports HTTP Basic Authentication with username and password:
@@ -351,51 +293,7 @@ The MCP server supports HTTP Basic Authentication with username and password:
 
 The credentials are automatically encoded using Base64 and sent with each request using the `Authorization: Basic` header.
 
-#### Complete Example Configurations
-
-##### Example 1: Production Environment
-
-```bash
-#!/bin/bash
-# Production configuration script
-
-# Druid cluster settings
-export DRUID_ROUTER_URL="https://druid.production.company.com:8888"
-
-# Authentication
-export DRUID_AUTH_USERNAME="druid-mcp-user"
-export DRUID_AUTH_PASSWORD="secure-password-123"
-
-# SSL settings (production)
-export DRUID_SSL_ENABLED="true"
-export DRUID_SSL_SKIP_VERIFICATION="false"
-
-# Start MCP server
-java -jar target/druid-mcp-server-1.2.1.jar
-```
-
-##### Example 2: Development Environment
-
-```bash
-#!/bin/bash
-# Development configuration script
-
-# Local Druid cluster with self-signed certificates
-export DRUID_ROUTER_URL="https://localhost:8888"
-
-# Test credentials
-export DRUID_AUTH_USERNAME="admin"
-export DRUID_AUTH_PASSWORD="admin123"
-
-# SSL settings (development - skip verification)
-export DRUID_SSL_ENABLED="true"
-export DRUID_SSL_SKIP_VERIFICATION="true"
-
-# Start MCP server
-java -jar target/druid-mcp-server-1.2.1.jar
-```
-
-##### Example 3: MCP Client Configuration with SSL
+##### MCP Client Configuration with SSL
 
 Update your `mcp-servers-config.json` to include environment variables:
 
@@ -403,20 +301,38 @@ Update your `mcp-servers-config.json` to include environment variables:
 {
   "mcpServers": {
     "druid-mcp-server": {
-      "command": "java",
+      "command": "docker",
       "args": [
-        "-Dspring.ai.mcp.server.stdio=true",
-        "-Dspring.main.web-application-type=none",
-        "-Dlogging.pattern.console=",
-        "-jar",
-        "target/druid-mcp-server-1.2.1.jar"
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "SPRING_AI_MCP_SERVER_STDIO=true",
+        "-e",
+        "SPRING_MAIN_WEB_APPLICATION_TYPE=none",
+        "-e",
+        "LOGGING_PATTERN_CONSOLE=",
+        "-e",
+        "DRUID_ROUTER_URL",
+        "-e",
+        "DRUID_AUTH_USERNAME",
+        "-e",
+        "DRUID_AUTH_PASSWORD",
+        "-e",
+        "DRUID_SSL_ENABLED",
+        "-e",
+        "DRUID_SSL_SKIP_VERIFICATION",
+        "-e",
+        "DRUID_MCP_READONLY",
+        "iunera/druid-mcp-server:1.2.1"
       ],
       "env": {
-        "DRUID_ROUTER_URL": "https://your-druid-cluster.example.com:8888",
-        "DRUID_AUTH_USERNAME": "your-username",
-        "DRUID_AUTH_PASSWORD": "your-password",
-        "DRUID_SSL_ENABLED": "true",
-        "DRUID_SSL_SKIP_VERIFICATION": "false"
+        "DRUID_ROUTER_URL": "http://host.docker.internal:8888",
+        "DRUID_AUTH_USERNAME": "",
+        "DRUID_AUTH_PASSWORD": "",
+        "DRUID_SSL_ENABLED": "false",
+        "DRUID_SSL_SKIP_VERIFICATION": "true",
+        "DRUID_MCP_READONLY": "false"
       }
     }
   }
@@ -564,54 +480,65 @@ java -jar target/druid-mcp-server-1.2.1.jar
 # Server available at http://localhost:8080/sse
 ```
 
-### MCP Configuration for LLMs
 
-A ready-to-use MCP configuration file is provided at `mcp-servers-config.json` that can be used with LLM clients to connect to this Druid MCP server. 
+### Known Issues
 
-The configuration includes both transport options:
+- MCP Inspector v0.16.8 protocol downgrade warning
+    - Message: "Client requested unsupported protocol version: 2025-06-18, so the server will suggest the 2025-03-26 version instead"
+    - Status: This was caused by spring-ai-1.1.0-M1 not supporting the 2025-06-18 MCP protocol fully yet.
 
-#### STDIO Transport (Recommended)
-More details on this on [examples/stdio/README.md](examples/stdio/README.md).
+### Read-only Mode
 
-```json
-{
-  "mcpServers": {
-    "druid-mcp-server": {
-      "command": "java",
-      "args": [
-        "-Dspring.ai.mcp.server.stdio=true",
-        "-Dspring.main.web-application-type=none",
-        "-Dlogging.pattern.console=",
-        "-jar",
-        "target/druid-mcp-server-1.2.1.jar"
-      ]
-    }
-  }
-}
+Read-only mode prevents any operation that could mutate your Druid cluster while still allowing safe read operations and SQL queries. When enabled:
+- All HTTP GET requests are allowed
+- HTTP POST is allowed only to the exact path /druid/v2/sql (for SELECT and other read-only SQL)
+- Any other HTTP method (PUT, PATCH, DELETE) is blocked
+- Any other POST endpoint (e.g. ingestion/task endpoints) is blocked
+- MCP write tools are not registered, so they will not appear in your MCP client’s tool list
+
+#### Enable Read-only Mode
+You can enable it using any of the following methods:
+
+1) application.properties
+
+```
+druid.mcp.readonly.enabled=true
 ```
 
-#### SSE Transport
-More details on this on [examples/sse/README.md](examples/stdio/README.md).
+2) Environment variable
 
-```json
-{
-  "mcpServers": {
-    "druid-mcp-server-sse": {
-      "url": "http://localhost:8080"
-    }
-  }
-}
+```bash
+export DRUID_MCP_READONLY_ENABLED=true
 ```
 
-### Using with LLM Clients
+3) JVM system property
 
-1. **Build the server first:** See [development.md](development.md) for build instructions
-2. **For STDIO transport:** The MCP server will be automatically started by the LLM client
-3. **For SSE transport:** Start the server manually first
+```bash
+java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.2.1.jar
+```
 
-## Examples
+4) Docker
 
-This repository includes comprehensive examples to help you get started with different deployment scenarios and transport modes:
+```bash
+docker run --rm -p 8080:8080 \
+  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  -e DRUID_MCP_READONLY_ENABLED=true \
+  iunera/druid-mcp-server:latest
+```
+
+### What changes in read-only mode?
+- Tools that would modify the cluster are disabled and won’t be listed by the MCP client. Examples include:
+    - Segment state changes (enableSegment, disableSegment)
+    - Datasource deletion (killDatasource)
+    - Retention rule edits (editRetentionRulesForDatasource)
+    - Compaction config edits (editCompactionConfigForDatasource, deleteCompactionConfigForDatasource)
+    - Lookup changes (createOrUpdateLookup, deleteLookup)
+    - Supervisor control (suspendSupervisor, startSupervisor, terminateSupervisor)
+    - Task control (killTask)
+    - Multi-stage SQL task operations (queryDruidMultiStage, queryDruidMultiStageWithContext, getMultiStageQueryTaskStatus, cancelMultiStageQueryTask)
+    - Ingestion spec submission and templates (createIngestionSpec, createBatchIngestionTemplate)
+- Read-only-safe tools remain available, including SQL queries (queryDruidSql), metadata and status lookups, health diagnostics, task and segment inspection, etc.
+
 
 ### 🐳 [Druid Cluster Setup](examples/druidcluster/README.md)
 Complete Docker Compose configuration for running a full Apache Druid cluster locally. Perfect for development, testing, and learning about Druid cluster architecture.
@@ -622,36 +549,7 @@ Complete Docker Compose configuration for running a full Apache Druid cluster lo
 - Pre-configured with sample data and ingestion examples
 - Integrated Druid MCP Server for immediate testing
 
-### 📡 [STDIO Transport Configuration](examples/stdio/README.md)
-Configuration examples for STDIO (Standard Input/Output) transport mode - the recommended method for integrating with LLM clients like Claude Desktop.
-
-**Features:**
-- Development and production configuration templates
-- Authentication and SSL setup examples
-- Integration guides for popular MCP clients
-- Troubleshooting and security best practices
-
-### 🐳📡 [STDIO Transport with Docker](examples/stdio-docker/README.md)
-Configuration examples for running the Druid MCP Server using Docker with STDIO transport mode. This approach combines the convenience of Docker deployment with STDIO transport for LLM client integration.
-
-**Features:**
-- Docker-based MCP configuration files for development and production
-- No Java installation required on client machines
-- Docker Compose setup for simplified deployment
-- Environment variable configuration for Druid connections
-- Authentication and SSL support via Docker environment variables
-
-### 🌐 [SSE Transport Configuration](examples/sse/README.md)
-Configuration examples for SSE (Server-Sent Events) transport mode, providing HTTP-based communication suitable for web applications and REST API integrations.
-
-**Features:**
-- HTTP-based MCP server configuration
-- Custom port and production deployment examples
-- Web client integration patterns
-- Comparison with STDIO transport mode
-
-
-## Related Projects
+~~## Related Projects
 
 This Druid MCP Server is part of a comprehensive ecosystem of Apache Druid tools and extensions developed by iunera. These complementary projects enhance different aspects of Druid cluster management and data ingestion:
 
@@ -722,61 +620,3 @@ Need help? Let
 
 *© 2024 [iunera](https://www.iunera.com). Licensed under the Apache License 2.0.*
 
-
-## Known Issues
-
-- MCP Inspector v0.16.8 protocol downgrade warning
-  - Message: "Client requested unsupported protocol version: 2025-06-18, so the server will suggest the 2025-03-26 version instead"
-  - Status: This was caused by spring-ai-1.1.0-M1 not supporting the 2025-06-18 MCP protocol fully yet. 
-
-## Read-only Mode
-
-Read-only mode prevents any operation that could mutate your Druid cluster while still allowing safe read operations and SQL queries. When enabled:
-- All HTTP GET requests are allowed
-- HTTP POST is allowed only to the exact path /druid/v2/sql (for SELECT and other read-only SQL)
-- Any other HTTP method (PUT, PATCH, DELETE) is blocked
-- Any other POST endpoint (e.g. ingestion/task endpoints) is blocked
-- MCP write tools are not registered, so they will not appear in your MCP client’s tool list
-
-### Enable Read-only Mode
-You can enable it using any of the following methods:
-
-1) application.properties
-
-```
-druid.mcp.readonly.enabled=true
-```
-
-2) Environment variable
-
-```bash
-export DRUID_MCP_READONLY_ENABLED=true
-```
-
-3) JVM system property
-
-```bash
-java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.2.1.jar
-```
-
-4) Docker
-
-```bash
-docker run --rm -p 8080:8080 \
-  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
-  -e DRUID_MCP_READONLY_ENABLED=true \
-  iunera/druid-mcp-server:latest
-```
-
-### What changes in read-only mode?
-- Tools that would modify the cluster are disabled and won’t be listed by the MCP client. Examples include:
-  - Segment state changes (enableSegment, disableSegment)
-  - Datasource deletion (killDatasource)
-  - Retention rule edits (editRetentionRulesForDatasource)
-  - Compaction config edits (editCompactionConfigForDatasource, deleteCompactionConfigForDatasource)
-  - Lookup changes (createOrUpdateLookup, deleteLookup)
-  - Supervisor control (suspendSupervisor, startSupervisor, terminateSupervisor)
-  - Task control (killTask)
-  - Multi-stage SQL task operations (queryDruidMultiStage, queryDruidMultiStageWithContext, getMultiStageQueryTaskStatus, cancelMultiStageQueryTask)
-  - Ingestion spec submission and templates (createIngestionSpec, createBatchIngestionTemplate)
-- Read-only-safe tools remain available, including SQL queries (queryDruidSql), metadata and status lookups, health diagnostics, task and segment inspection, etc.
