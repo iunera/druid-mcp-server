@@ -119,13 +119,13 @@ Download the JAR from Maven Central https://repo.maven.apache.org/maven2/com/iun
 
 ```bash
 # Run with SSE Transport (HTTP-based, default)
-java -jar druid-mcp-server-1.2.2.jar
+java -jar target/druid-mcp-server-1.2.2.jar
 
 # OR run with STDIO Transport (recommended for LLM clients)
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar druid-mcp-server-1.2.2.jar
+     -jar target/druid-mcp-server-1.2.2.jar
 ```
 
 ## For Developers

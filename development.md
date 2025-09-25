@@ -3,7 +3,7 @@
 ## Build/Configuration Instructions
 
 ### Prerequisites
-- **Java 24** (main project)
+- **Java 21** (main project)
 - **Maven 3.6+**
 - **Apache Druid cluster** (for integration testing with real Druid instance)
 
@@ -36,22 +36,32 @@ The project requires custom Maven repositories for Spring AI milestones/snapshot
 - Central Portal Snapshots: https://central.sonatype.com/repository/maven-snapshots/
 
 ### Configuration Properties
-Add these essentials to `src/main/resources/application.properties` (or as env vars):
-```properties
+Add these essentials to `src/main/resources/application.yaml` (or as env vars):
+```yaml
 # MCP Server identification
-spring.ai.mcp.server.name=druid-mcp-server
-spring.ai.mcp.server.version=1.2.2
+spring:
+  ai:
+    mcp:
+      server:
+        name: druid-mcp-server
+        version: 1.2.2
 
 # Druid connection
-druid.broker.url=http://localhost:8082
-druid.coordinator.url=http://localhost:8081
+druid:
+  router:
+    url: http://localhost:8888
 
 # Transport configuration
-server.port=8080
+server:
+  port: 8080
 
 # STDIO transport requirements (only for stdio mode)
-spring.main.banner-mode=off
-logging.pattern.console=
+spring:
+  main:
+    banner-mode: off
+logging:
+  pattern:
+    console:
 ```
 
 ### Autowiring
@@ -66,7 +76,7 @@ The project includes an automated version update script that synchronizes versio
 #### Version Update Script
 The `scripts/update-version.sh` script updates version numbers in the following files:
 - `pom.xml` (Maven project version)
-- `src/main/resources/application.properties` (MCP server version)
+- `src/main/resources/application.yaml` (MCP server version)
 - `server.json` (MCP registry version and Docker image tag)
 - `mcpservers-stdio.json` (Docker image tag)
 - `README.md` (JAR file references)

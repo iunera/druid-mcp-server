@@ -52,7 +52,7 @@ show_usage() {
     echo ""
     echo "This script updates version numbers in all project files:"
     echo "  - pom.xml (Maven project version)"
-    echo "  - src/main/resources/application.properties (MCP server version)"
+    echo "  - src/main/resources/application.yaml (MCP server version)"
     echo "  - server.json (MCP registry version and Docker image tag)"
     echo "  - mcpservers-stdio.json (Docker image tag)"
     echo "  - README.md (JAR file references)"
@@ -105,10 +105,10 @@ update_pom_xml() {
     print_success "Updated $file"
 }
 
-# Function to update application.properties
-update_application_properties() {
+# Function to update application.yaml
+update_application_yaml() {
     local new_version="$1"
-    local file="src/main/resources/application.properties"
+    local file="src/main/resources/application.yaml"
     
     if [ ! -f "$file" ]; then
         print_error "$file not found"
@@ -116,7 +116,7 @@ update_application_properties() {
     fi
 
     # Update spring.ai.mcp.server.version
-    sed -i.tmp "s/spring\.ai\.mcp\.server\.version=.*/spring.ai.mcp.server.version=$new_version/" "$file"
+    sed -i.tmp "s/\(version:\s*\).*/\1 $new_version/" "$file"
     rm -f "${file}.tmp"
     
     print_success "Updated $file"
@@ -230,7 +230,7 @@ show_summary() {
     echo ""
     echo "Updated files:"
     echo "  ✓ pom.xml"
-    echo "  ✓ src/main/resources/application.properties"
+    echo "  ✓ src/main/resources/application.yaml"
     echo "  ✓ server.json"
     echo "  ✓ mcpservers-stdio.json"
     echo "  ✓ README.md"
@@ -291,7 +291,7 @@ main() {
     
     # Update all files
     update_pom_xml "$new_version"
-    update_application_properties "$new_version"
+    update_application_yaml "$new_version"
     update_server_json "$new_version"
     update_mcpservers_stdio_json "$new_version"
     update_development_md "$new_version"
