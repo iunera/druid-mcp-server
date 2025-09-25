@@ -55,7 +55,7 @@ import static org.springframework.security.oauth2.server.authorization.config.an
  * druid.mcp.security.oauth2.enabled=true.
  */
 @Configuration
-//@ConditionalOnProperty(name = "druid.mcp.security.oauth2.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "druid.mcp.security.oauth2.enabled", havingValue = "true")
 @EnableWebSecurity
 public class OAuth2AuthorizationServerConfig {
 
