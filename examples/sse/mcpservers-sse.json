@@ -2,7 +2,10 @@
   "mcpServers": {
     "druid-mcp-server-sse": {
       "type": "sse",
-      "url": "http://localhost:8080/sse"
+      "url": "http://localhost:8080/sse",
+      "headers": {
+        "Authorization": "Bearer ${MCP_OAUTH_TOKEN}"
+      }
     }
   }
 }

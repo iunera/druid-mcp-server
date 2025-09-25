@@ -2,7 +2,10 @@
   "mcpServers": {
     "druid-mcp-server-http": {
       "type": "http",
-      "url": "http://localhost:8080/mcp"
+      "url": "http://localhost:8080/mcp",
+      "headers": {
+        "Authorization": "Bearer ${MCP_OAUTH_TOKEN}"
+      }
     }
   }
 }
