@@ -7,8 +7,11 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 ## [1.3.0] - 2025-09-26
 
 ### Added
-- Introduced CHANGELOG.md generated from GitHub Releases history to document past changes.
-- 
+- Introduced OAuth2 security for authenticating clients.
+- Migrated configuration from `application.properties` to `application.yaml`.
+
+### Changed
+- Refactored Druid configuration classes.
 
 ## [1.2.2] - 2025-09-24
 
