@@ -16,6 +16,9 @@
 
 package com.iunera.druidmcpserver.security;
 
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +28,8 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "druid.mcp.security.oauth2")
 public class SecurityOAuth2Properties {
+
+    private static final Logger log = LoggerFactory.getLogger(SecurityOAuth2Properties.class);
 
     /**
      * Enable OAuth2 security. When false, all HTTP requests are permitted without authentication.
@@ -37,5 +42,14 @@ public class SecurityOAuth2Properties {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @PostConstruct
+    void logStatus() {
+        if (enabled) {
+            log.info("OAuth2 security is ENABLED (druid.mcp.security.oauth2.enabled=true)");
+        } else {
+            log.warn("OAuth2 security is DISABLED (druid.mcp.security.oauth2.enabled=false). All HTTP requests are permitted without authentication.");
+        }
     }
 }
