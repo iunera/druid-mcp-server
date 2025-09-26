@@ -6,12 +6,18 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [1.3.0] - 2025-09-26
 
+### Breaking Change
+Configurable Environment Variable `DRUID_MCP_READONLY` is now `DRUID_MCP_READONLY_ENABLED`
+
 ### Added
 - Introduced OAuth2 security for authenticating clients.
 - Migrated configuration from `application.properties` to `application.yaml`.
+- MCP Inspection Cli examples 
 
 ### Changed
 - Refactored Druid configuration classes.
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.2.2...oauth2
 
 ## [1.2.2] - 2025-09-24
 
