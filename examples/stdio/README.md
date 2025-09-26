@@ -17,14 +17,6 @@ That file makes your client start the server using Docker with all important env
 - Starts the container in STDIO mode via environment variables
 - Passes Druid connection settings via environment variables
 
-Key environment variables you can override in your MCP client:
-- DRUID_ROUTER_URL (default: http://host.docker.internal:8888)
-- DRUID_AUTH_USERNAME
-- DRUID_AUTH_PASSWORD
-- DRUID_SSL_ENABLED (default: false)
-- DRUID_SSL_SKIP_VERIFICATION (default: true)
-- DRUID_MCP_READONLY_ENABLED (default: false)
-
 See [mcpservers-stdio.json](mcpservers-stdio.json) for defaults and how these are passed to Docker.
 
 ## Direct Docker run (optional)

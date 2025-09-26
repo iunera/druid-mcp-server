@@ -111,6 +111,14 @@ For detailed build instructions, testing, Docker setup, and development guidelin
 - Streamable HTTP and SSE transports are secured with OAuth 2.0 by default.
 - Clients must send a valid Bearer token in the Authorization header when connecting.
 - Example: Authorization: Bearer YOUR_JWT_TOKEN
+
+### Environment Variables
+
+*   `DRUID_MCP_SECURITY_OAUTH2_ENABLED`:
+    *   **Description:** Enables or disables OAuth2 security for client authentication.
+    *   **Type:** Boolean
+    *   **Default:** `true` (OAuth2 is enabled by default as per the text above)
+    *   **Usage:** Set to `false` to disable OAuth2 authentication. When disabled, clients can access the server without providing OAuth2 tokens.
 - For enterprise SSO integration (OpenID Connect, Azure AD, Keycloak, etc.), please send an inquiry to [consulting@iunera.com](mailto:consulting@iunera.com?subject=Druid%20MCP%20Server%20SSO%20integration) and see [Contact & Support](#contact--support).
 
 ## Installation from Maven Central
@@ -222,15 +230,32 @@ The MCP server auto-discovers all tools via annotations. In Read-only mode, any 
 
 ### Environment Variables Configuration
 
-For sensitive credentials like username and password, you can use environment variables instead of hardcoding them in properties files.
+The application can be configured using environment variables, which is the recommended approach for production environments. Below is a comprehensive list of supported environment variables derived from the `application.yaml` configuration file.
 
-#### Supported Environment Variables
+#### Druid Connection
+- `DRUID_ROUTER_URL`: The URL of the Druid router.
+- `DRUID_AUTH_USERNAME`: The username for Druid authentication.
+- `DRUID_AUTH_PASSWORD`: The password for Druid authentication.
+- `DRUID_SSL_ENABLED`: Enables or disables SSL for Druid connections (true/false).
+- `DRUID_SSL_SKIP_VERIFICATION`: Skips SSL certificate verification (true/false).
 
-- `DRUID_AUTH_USERNAME`: Druid authentication username
-- `DRUID_AUTH_PASSWORD`: Druid authentication password  
-- `DRUID_ROUTER_URL`: Override the default Druid router URL
-- `DRUID_SSL_ENABLED`: Enable SSL/TLS support (true/false)
-- `DRUID_SSL_SKIP_VERIFICATION`: Skip SSL certificate verification (true/false)
+#### MCP Server Configuration
+- `DRUID_MCP_SECURITY_OAUTH2_ENABLED`: Enables or disables OAuth2 security for client authentication (true/false).
+- `DRUID_MCP_READONLY_ENABLED`: Enables or disables read-only mode (true/false).
+- `SPRING_AI_MCP_SERVER_NAME`: The name of the MCP server.
+- `SPRING_AI_MCP_SERVER_PROTOCOL`: The protocol used by the MCP server (e.g., `streamable`).
+
+#### General Server Configuration
+- `SERVER_PORT`: The port the server listens on.
+- `SERVER_SERVLET_SESSION_COOKIE_NAME`: The name of the session cookie.
+- `SPRING_APPLICATION_NAME`: The name of the application.
+- `SPRING_CONFIG_IMPORT`: Imports additional configuration files.
+- `SPRING_MAIN_BANNER_MODE`: The mode for the startup banner (e.g., `off`).
+
+#### Logging
+- `LOGGING_FILE_NAME`: The name of the log file.
+- `LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY`: The log level for Spring Security (e.g., `DEBUG`).
+
 
 ### SSL-Encrypted Cluster with Authentication
 

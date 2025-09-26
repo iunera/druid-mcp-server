@@ -44,14 +44,6 @@ docker run --rm -p 8080:8080 \
   iunera/druid-mcp-server:1.3.0
 ```
 
-Common environment variables:
-- DRUID_ROUTER_URL (default used above)
-- DRUID_AUTH_USERNAME
-- DRUID_AUTH_PASSWORD
-- DRUID_SSL_ENABLED (true/false)
-- DRUID_SSL_SKIP_VERIFICATION (true/false)
-- DRUID_MCP_READONLY_ENABLED (true/false)
-
 SSE endpoint will be available at:
 - http://localhost:8080/sse
 
