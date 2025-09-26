@@ -29,10 +29,10 @@ import org.springframework.web.client.RestClientException;
 @Repository
 public class SecurityRepository {
 
-    private final RestClient druidRouterRestClient;
+    private final RestClient druidCoordinatorRestClient;
 
-    public SecurityRepository(@Qualifier("druidRouterRestClient") RestClient druidRouterRestClient) {
-        this.druidRouterRestClient = druidRouterRestClient;
+    public SecurityRepository(@Qualifier("druidCoordinatorRestClient") RestClient druidCoordinatorRestClient) {
+        this.druidCoordinatorRestClient = druidCoordinatorRestClient;
     }
 
     // Authentication API methods
@@ -41,7 +41,7 @@ public class SecurityRepository {
      * Get all users from the authentication system
      */
     public JsonNode getAllUsers(String authenticatorName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authentication/{authenticatorName}/users", authenticatorName)
                 .header("Content-Type", "application/json")
@@ -53,7 +53,7 @@ public class SecurityRepository {
      * Get specific user from the authentication system
      */
     public JsonNode getUser(String authenticatorName, String userName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authentication/{authenticatorName}/users/{userName}", 
                      authenticatorName, userName)
@@ -66,7 +66,7 @@ public class SecurityRepository {
      * Create a user in the authentication system
      */
     public JsonNode createUser(String authenticatorName, String userName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authentication/{authenticatorName}/users/{userName}", 
                      authenticatorName, userName)
@@ -79,7 +79,7 @@ public class SecurityRepository {
      * Delete a user from the authentication system
      */
     public JsonNode deleteUser(String authenticatorName, String userName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authentication/{authenticatorName}/users/{userName}", 
                      authenticatorName, userName)
@@ -93,7 +93,7 @@ public class SecurityRepository {
      */
     public JsonNode setUserCredentials(String authenticatorName, String userName, String password) throws RestClientException {
         String body = "{\"password\": \"" + password + "\"}";
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authentication/{authenticatorName}/users/{userName}/credentials", 
                      authenticatorName, userName)
@@ -109,7 +109,7 @@ public class SecurityRepository {
      * Get all users from the authorization system
      */
     public JsonNode getAllAuthorizationUsers(String authorizerName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/users", authorizerName)
                 .header("Content-Type", "application/json")
@@ -121,7 +121,7 @@ public class SecurityRepository {
      * Get specific user from the authorization system
      */
     public JsonNode getAuthorizationUser(String authorizerName, String userName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/users/{userName}", 
                      authorizerName, userName)
@@ -134,7 +134,7 @@ public class SecurityRepository {
      * Create a user in the authorization system
      */
     public JsonNode createAuthorizationUser(String authorizerName, String userName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/users/{userName}", 
                      authorizerName, userName)
@@ -147,7 +147,7 @@ public class SecurityRepository {
      * Delete a user from the authorization system
      */
     public JsonNode deleteAuthorizationUser(String authorizerName, String userName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/users/{userName}", 
                      authorizerName, userName)
@@ -160,7 +160,7 @@ public class SecurityRepository {
      * Get all roles
      */
     public JsonNode getAllRoles(String authorizerName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/roles", authorizerName)
                 .header("Content-Type", "application/json")
@@ -172,7 +172,7 @@ public class SecurityRepository {
      * Get specific role
      */
     public JsonNode getRole(String authorizerName, String roleName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/roles/{roleName}", 
                      authorizerName, roleName)
@@ -185,7 +185,7 @@ public class SecurityRepository {
      * Create a role
      */
     public JsonNode createRole(String authorizerName, String roleName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/roles/{roleName}", 
                      authorizerName, roleName)
@@ -198,7 +198,7 @@ public class SecurityRepository {
      * Delete a role
      */
     public JsonNode deleteRole(String authorizerName, String roleName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/roles/{roleName}", 
                      authorizerName, roleName)
@@ -211,7 +211,7 @@ public class SecurityRepository {
      * Set role permissions
      */
     public JsonNode setRolePermissions(String authorizerName, String roleName, String permissions) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/roles/{roleName}/permissions", 
                      authorizerName, roleName)
@@ -225,7 +225,7 @@ public class SecurityRepository {
      * Assign role to user
      */
     public JsonNode assignRoleToUser(String authorizerName, String userName, String roleName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/users/{userName}/roles/{roleName}", 
                      authorizerName, userName, roleName)
@@ -238,7 +238,7 @@ public class SecurityRepository {
      * Unassign role from user
      */
     public JsonNode unassignRoleFromUser(String authorizerName, String userName, String roleName) throws RestClientException {
-        return druidRouterRestClient
+        return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authorization/{authorizerName}/users/{userName}/roles/{roleName}", 
                      authorizerName, userName, roleName)

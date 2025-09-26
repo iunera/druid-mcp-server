@@ -43,6 +43,8 @@ spring:
 druid:
   router:
     url: http://localhost:8888
+  coordinator:
+    url: http://localhost:8081
   auth:
     username: ""
     password: ""

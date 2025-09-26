@@ -31,11 +31,16 @@ import org.springframework.stereotype.Component;
 public class DruidProperties {
 
     private final Router router = new Router();
+    private final Coordinator coordinator = new Coordinator();
     private final Auth auth = new Auth();
     private final Ssl ssl = new Ssl();
 
     public Router getRouter() {
         return router;
+    }
+
+    public Coordinator getCoordinator() {
+        return coordinator;
     }
 
     public Auth getAuth() {
@@ -51,6 +56,21 @@ public class DruidProperties {
          * Base URL of the Druid Router HTTP endpoint.
          */
         private String url = "http://localhost:8888";
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+    }
+
+    public static class Coordinator {
+        /**
+         * Base URL of the Druid Coordinator HTTP endpoint.
+         */
+        private String url = "http://localhost:8081";
 
         public String getUrl() {
             return url;

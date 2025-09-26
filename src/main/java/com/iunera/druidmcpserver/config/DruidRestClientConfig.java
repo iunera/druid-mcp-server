@@ -47,6 +47,11 @@ public class DruidRestClientConfig {
         return createRestClient(druidProperties.getRouter().getUrl());
     }
 
+    @Bean("druidCoordinatorRestClient")
+    public RestClient druidCoordinatorRestClient() {
+        return createRestClient(druidProperties.getCoordinator().getUrl());
+    }
+
     private RestClient createRestClient(String baseUrl) {
         RestClient.Builder builder = RestClient.builder()
                 .baseUrl(baseUrl);
