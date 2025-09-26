@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
         "druid.ssl.enabled=true",
         "druid.ssl.skip-verification=true"
 })
-class DruidConfigSslSkipTest {
+class DruidRestClientConfigSslSkipTest {
 
     @Autowired
-    private DruidConfig druidConfig;
+    private DruidRestClientConfig druidRestClientConfig;
 
     @Autowired
     private RestClient druidRouterRestClient;
@@ -44,9 +44,9 @@ class DruidConfigSslSkipTest {
     void testSslSkipVerificationEnabled() {
         System.out.println("[DEBUG_LOG] Testing SSL skip verification configuration");
 
-        assertNotNull(druidConfig, "DruidConfig should be autowired");
-        assertTrue(druidConfig.isSslEnabled(), "SSL should be enabled");
-        assertTrue(druidConfig.isSkipSslVerification(), "SSL verification should be skipped");
+        assertNotNull(druidRestClientConfig, "DruidRestClientConfig should be autowired");
+        assertTrue(druidRestClientConfig.isSslEnabled(), "SSL should be enabled");
+        assertTrue(druidRestClientConfig.isSkipSslVerification(), "SSL verification should be skipped");
 
         System.out.println("[DEBUG_LOG] SSL skip verification configuration verified");
     }
@@ -55,8 +55,8 @@ class DruidConfigSslSkipTest {
     void testBasicAuthConfiguration() {
         System.out.println("[DEBUG_LOG] Testing basic authentication configuration");
 
-        assertEquals("testuser", druidConfig.getDruidUsername());
-        assertEquals("testpass", druidConfig.getDruidPassword());
+        assertEquals("testuser", druidRestClientConfig.getDruidUsername());
+        assertEquals("testpass", druidRestClientConfig.getDruidPassword());
 
         System.out.println("[DEBUG_LOG] Basic authentication configuration verified");
     }

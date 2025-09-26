@@ -16,7 +16,7 @@
 
 package com.iunera.druidmcpserver.client;
 
-import com.iunera.druidmcpserver.config.DruidConfig;
+import com.iunera.druidmcpserver.config.DruidRestClientConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,21 +27,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test for default configuration without environment variable overrides
  */
 @SpringBootTest
-class DruidConfigDefaultTest {
+class DruidRestClientConfigDefaultTest {
 
     @Autowired
-    private DruidConfig druidConfig;
+    private DruidRestClientConfig druidRestClientConfig;
 
     @Test
     void testDefaultConfiguration() {
         System.out.println("[DEBUG_LOG] Testing that other configuration remains default");
 
-        assertNotNull(druidConfig, "DruidConfig should be autowired");
+        assertNotNull(druidRestClientConfig, "DruidRestClientConfig should be autowired");
 
         // Verify default values for other properties
-        assertEquals("http://localhost:8888", druidConfig.getDruidRouterUrl());
-        assertFalse(druidConfig.isSslEnabled());
-        assertFalse(druidConfig.isSkipSslVerification());
+        assertEquals("http://localhost:8888", druidRestClientConfig.getDruidRouterUrl());
+        assertFalse(druidRestClientConfig.isSslEnabled());
+        assertFalse(druidRestClientConfig.isSkipSslVerification());
 
         System.out.println("[DEBUG_LOG] Default configuration test completed successfully");
     }

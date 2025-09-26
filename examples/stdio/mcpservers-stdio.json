@@ -23,7 +23,7 @@
         "-e",
         "DRUID_SSL_SKIP_VERIFICATION",
         "-e",
-        "DRUID_MCP_READONLY",
+        "DRUID_MCP_READONLY_ENABLED",
         "iunera/druid-mcp-server:latest"
       ],
       "env": {
@@ -32,7 +32,7 @@
         "DRUID_AUTH_PASSWORD": "",
         "DRUID_SSL_ENABLED": "false",
         "DRUID_SSL_SKIP_VERIFICATION": "true",
-        "DRUID_MCP_READONLY": "false"
+        "DRUID_MCP_READONLY_ENABLED": "false"
       }
     }
   }

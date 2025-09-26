@@ -16,7 +16,7 @@
 
 package com.iunera.druidmcpserver.datamanagement.query;
 
-import com.iunera.druidmcpserver.config.DruidConfig;
+import com.iunera.druidmcpserver.config.DruidRestClientConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,13 +34,13 @@ class MultiStageQueryIntegrationTest {
     private MsqQueryTools msqQueryTools;
 
     @Autowired
-    private DruidConfig druidConfig;
+    private DruidRestClientConfig druidRestClientConfig;
 
     @Test
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing multi-stage query context loading");
         assertNotNull(msqQueryTools);
-        assertNotNull(druidConfig);
+        assertNotNull(druidRestClientConfig);
         System.out.println("[DEBUG_LOG] All multi-stage query beans loaded successfully");
     }
 
@@ -134,9 +134,9 @@ class MultiStageQueryIntegrationTest {
     @Test
     void testDruidConfigurationForQueries() {
         System.out.println("[DEBUG_LOG] Testing Druid configuration for queries");
-        assertNotNull(druidConfig.getDruidRouterUrl());
-        assertEquals("http://test-router:8888", druidConfig.getDruidRouterUrl());
-        System.out.println("[DEBUG_LOG] Druid router URL configured correctly: " + druidConfig.getDruidRouterUrl());
+        assertNotNull(druidRestClientConfig.getDruidRouterUrl());
+        assertEquals("http://test-router:8888", druidRestClientConfig.getDruidRouterUrl());
+        System.out.println("[DEBUG_LOG] Druid router URL configured correctly: " + druidRestClientConfig.getDruidRouterUrl());
     }
 
     @Test

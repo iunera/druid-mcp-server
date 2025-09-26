@@ -16,7 +16,7 @@
 
 package com.iunera.druidmcpserver.datamanagement.compaction;
 
-import com.iunera.druidmcpserver.config.DruidConfig;
+import com.iunera.druidmcpserver.config.DruidRestClientConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,14 +40,14 @@ class CompactionConfigIntegrationTest {
     private CompactionConfigRepository compactionConfigRepository;
 
     @Autowired
-    private DruidConfig druidConfig;
+    private DruidRestClientConfig druidRestClientConfig;
 
     @Test
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing compaction config context loading");
         assertNotNull(writeCompactionConfigTools);
         assertNotNull(compactionConfigRepository);
-        assertNotNull(druidConfig);
+        assertNotNull(druidRestClientConfig);
         System.out.println("[DEBUG_LOG] All compaction config beans loaded successfully");
     }
 
@@ -153,8 +153,8 @@ class CompactionConfigIntegrationTest {
     @Test
     void testDruidConfigurationForCompaction() {
         System.out.println("[DEBUG_LOG] Testing Druid configuration for compaction");
-        assertNotNull(druidConfig.getDruidRouterUrl());
-        assertEquals("http://test-router:8888", druidConfig.getDruidRouterUrl());
-        System.out.println("[DEBUG_LOG] Druid router URL configured correctly: " + druidConfig.getDruidRouterUrl());
+        assertNotNull(druidRestClientConfig.getDruidRouterUrl());
+        assertEquals("http://test-router:8888", druidRestClientConfig.getDruidRouterUrl());
+        System.out.println("[DEBUG_LOG] Druid router URL configured correctly: " + druidRestClientConfig.getDruidRouterUrl());
     }
 }

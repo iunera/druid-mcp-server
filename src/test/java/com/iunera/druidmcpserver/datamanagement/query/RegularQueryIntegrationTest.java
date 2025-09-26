@@ -16,7 +16,7 @@
 
 package com.iunera.druidmcpserver.datamanagement.query;
 
-import com.iunera.druidmcpserver.config.DruidConfig;
+import com.iunera.druidmcpserver.config.DruidRestClientConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,13 +39,13 @@ class RegularQueryIntegrationTest {
     private QueryTools queryTools;
 
     @Autowired
-    private DruidConfig druidConfig;
+    private DruidRestClientConfig druidRestClientConfig;
 
     @Test
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing regular query context loading");
         assertNotNull(queryTools);
-        assertNotNull(druidConfig);
+        assertNotNull(druidRestClientConfig);
         System.out.println("[DEBUG_LOG] All regular query beans loaded successfully");
     }
 
@@ -191,9 +191,9 @@ class RegularQueryIntegrationTest {
     @Test
     void testDruidConfigurationForRegularQueries() {
         System.out.println("[DEBUG_LOG] Testing Druid configuration for regular queries");
-        assertNotNull(druidConfig.getDruidRouterUrl());
-        assertEquals("http://test-router:8888", druidConfig.getDruidRouterUrl());
-        System.out.println("[DEBUG_LOG] Druid router URL configured correctly: " + druidConfig.getDruidRouterUrl());
+        assertNotNull(druidRestClientConfig.getDruidRouterUrl());
+        assertEquals("http://test-router:8888", druidRestClientConfig.getDruidRouterUrl());
+        System.out.println("[DEBUG_LOG] Druid router URL configured correctly: " + druidRestClientConfig.getDruidRouterUrl());
     }
 
     @Test

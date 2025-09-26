@@ -3,7 +3,7 @@
 ## Build/Configuration Instructions
 
 ### Prerequisites
-- **Java 24** (main project)
+- **Java 21** (main project)
 - **Maven 3.6+**
 - **Apache Druid cluster** (for integration testing with real Druid instance)
 
@@ -36,27 +36,103 @@ The project requires custom Maven repositories for Spring AI milestones/snapshot
 - Central Portal Snapshots: https://central.sonatype.com/repository/maven-snapshots/
 
 ### Configuration Properties
-Add these essentials to `src/main/resources/application.properties` (or as env vars):
-```properties
+Add these essentials to `src/main/resources/application.yaml` (or as env vars):
+```yaml
 # MCP Server identification
-spring.ai.mcp.server.name=druid-mcp-server
-spring.ai.mcp.server.version=1.2.2
+spring:
+  ai:
+    mcp:
+      server:
+        name: druid-mcp-server
+        version: 1.2.2
 
 # Druid connection
-druid.broker.url=http://localhost:8082
-druid.coordinator.url=http://localhost:8081
+druid:
+  router:
+    url: http://localhost:8888
 
 # Transport configuration
-server.port=8080
+server:
+  port: 8080
 
 # STDIO transport requirements (only for stdio mode)
-spring.main.banner-mode=off
-logging.pattern.console=
+spring:
+  main:
+    banner-mode: off
+logging:
+  pattern:
+    console:
 ```
 
 ### Autowiring
 Features like Tools, Resources, Prompts and more are automatically discovered and registered by Spring AI 1.1.0-M1 auto-configuration through annotation scanning. Simply use `@Component` on classes with `@McpTool`, `@McpResource`, `@McpPrompt`, and `@McpComplete` annotated methods. No manual registration in the main application class is required.
 
+
+## Inspect the Druid MCP Server with @modelcontextprotocol/inspector
+
+This guide shows how to use the official MCP Inspector to explore and debug the Druid MCP Server over all supported transports: Streamable HTTP (recommended), SSE, and STDIO.
+
+The Inspector provides a web UI and a CLI to list tools/resources/prompts, call tools, inspect schemas, and view raw protocol messages.
+
+
+### Inspect Streamable HTTP MCP Server
+
+#### Start the Druid MCP Server
+
+```bash
+java -jar target/druid-mcp-server-1.3.0.jar
+```
+
+Or Using Docker (HTTP/SSE):
+
+```bash
+docker run --rm -p 8080:8080 \
+  -e DRUID_ROUTER_URL=http://host.docker.internal:8888 \
+  iunera/druid-mcp-server:1.2.2
+```
+
+```bash
+# Obtain an access token using the built-in Authorization Server
+ACCESS_TOKEN=$(curl -s -XPOST "http://localhost:8080/oauth2/token" \
+  --data grant_type=client_credentials \
+  --user "oidc-client:secret" | jq -r '.access_token')
+export MCP_OAUTH_TOKEN="$ACCESS_TOKEN"
+echo $MCP_OAUTH_TOKEN 
+```
+
+#### Inspect via Streamable HTTP (recommended)
+- Server endpoint: http://localhost:8080/mcp
+- Adds Authorization header if MCP_OAUTH_TOKEN is set
+
+```bash
+npx @modelcontextprotocol/inspector --cli http://localhost:8080/mcp --transport http --method tools/list --header "Authorization: Bearer ${MCP_OAUTH_TOKEN}"
+npx @modelcontextprotocol/inspector --cli http://localhost:8080/mcp --method tools/call  --header "Authorization: Bearer ${MCP_OAUTH_TOKEN}" --tool-name listDatasources
+
+npx @modelcontextprotocol/inspector --cli http://localhost:8080/mcp \
+  --transport http \
+  --header "Authorization: Bearer $MCP_OAUTH_TOKEN" \
+  --method tools/call \
+  --tool-name queryDruidSql \
+  --tool-arg sqlQuery="SELECT 1"
+```
+
+### Inspect via STDIO
+
+The Inspector can also launch the server via STDIO using the config file at project root: mcpservers-stdio.json.
+
+CLI examples:
+```bash
+# List tools
+npx @modelcontextprotocol/inspector --cli \
+  --config examples/stdio/mcpservers-stdio.json \
+  --server druid-mcp-server \
+  --method tools/list
+```
+
+### References
+- MCP Inspector README: https://github.com/modelcontextprotocol/inspector
+- MCP Spec (2025-06-18): https://modelcontextprotocol.io/specification/2025-06-18
+- 
 ## Version Management
 
 ### Updating Project Version
@@ -66,7 +142,7 @@ The project includes an automated version update script that synchronizes versio
 #### Version Update Script
 The `scripts/update-version.sh` script updates version numbers in the following files:
 - `pom.xml` (Maven project version)
-- `src/main/resources/application.properties` (MCP server version)
+- `src/main/resources/application.yaml` (MCP server version)
 - `server.json` (MCP registry version and Docker image tag)
 - `mcpservers-stdio.json` (Docker image tag)
 - `README.md` (JAR file references)
@@ -306,12 +382,12 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.2.2.jar
+     -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 #### SSE Transport (HTTP-based)
 ```bash
-java -jar target/druid-mcp-server-1.2.2.jar
+java -jar target/druid-mcp-server-1.3.0.jar
 # Server available at http://localhost:8080
 ```
 

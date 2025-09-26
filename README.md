@@ -26,7 +26,7 @@ Learn how to integrate AI agents with Apache Druid using the MCP server. This tu
 - Spring AI MCP Server integration
 - Tool-based architecture for MCP protocol compliance
 - **Tool-based Architecture**: Complete MCP protocol compliance with automatic JSON schema generation
-- **Multiple Transport Modes**: STDIO, SSE, and **Streamable HTTP** support
+- **Multiple Transport Modes**: STDIO, SSE, and **Streamable HTTP** support including Oauth
 - **Real-time Communication**: Server-Sent Events with streaming capabilities
 - Comprehensive error handling
 - **Customizable Prompt Templates**: AI-assisted guidance with template customization
@@ -99,12 +99,27 @@ docker run --rm -i \
 mvn clean package -DskipTests
 
 # Run the application
-java -jar target/druid-mcp-server-1.2.2.jar
+java -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 The server will start on port 8080 by default.
 
 For detailed build instructions, testing, Docker setup, and development guidelines, see [development.md](development.md).
+
+## Security & Authentication
+
+- Streamable HTTP and SSE transports are secured with OAuth 2.0 by default.
+- Clients must send a valid Bearer token in the Authorization header when connecting.
+- Example: Authorization: Bearer YOUR_JWT_TOKEN
+
+### Environment Variables
+
+*   `DRUID_MCP_SECURITY_OAUTH2_ENABLED`:
+    *   **Description:** Enables or disables OAuth2 security for client authentication.
+    *   **Type:** Boolean
+    *   **Default:** `true` (OAuth2 is enabled by default as per the text above)
+    *   **Usage:** Set to `false` to disable OAuth2 authentication. When disabled, clients can access the server without providing OAuth2 tokens.
+- For enterprise SSO integration (OpenID Connect, Azure AD, Keycloak, etc.), please send an inquiry to [consulting@iunera.com](mailto:consulting@iunera.com?subject=Druid%20MCP%20Server%20SSO%20integration) and see [Contact & Support](#contact--support).
 
 ## Installation from Maven Central
 
@@ -119,13 +134,13 @@ Download the JAR from Maven Central https://repo.maven.apache.org/maven2/com/iun
 
 ```bash
 # Run with SSE Transport (HTTP-based, default)
-java -jar druid-mcp-server-1.2.2.jar
+java -jar target/druid-mcp-server-1.3.0.jar
 
 # OR run with STDIO Transport (recommended for LLM clients)
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar druid-mcp-server-1.2.2.jar
+     -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 ## For Developers
@@ -215,15 +230,32 @@ The MCP server auto-discovers all tools via annotations. In Read-only mode, any 
 
 ### Environment Variables Configuration
 
-For sensitive credentials like username and password, you can use environment variables instead of hardcoding them in properties files.
+The application can be configured using environment variables, which is the recommended approach for production environments. Below is a comprehensive list of supported environment variables derived from the `application.yaml` configuration file.
 
-#### Supported Environment Variables
+#### Druid Connection
+- `DRUID_ROUTER_URL`: The URL of the Druid router.
+- `DRUID_AUTH_USERNAME`: The username for Druid authentication.
+- `DRUID_AUTH_PASSWORD`: The password for Druid authentication.
+- `DRUID_SSL_ENABLED`: Enables or disables SSL for Druid connections (true/false).
+- `DRUID_SSL_SKIP_VERIFICATION`: Skips SSL certificate verification (true/false).
 
-- `DRUID_AUTH_USERNAME`: Druid authentication username
-- `DRUID_AUTH_PASSWORD`: Druid authentication password  
-- `DRUID_ROUTER_URL`: Override the default Druid router URL
-- `DRUID_SSL_ENABLED`: Enable SSL/TLS support (true/false)
-- `DRUID_SSL_SKIP_VERIFICATION`: Skip SSL certificate verification (true/false)
+#### MCP Server Configuration
+- `DRUID_MCP_SECURITY_OAUTH2_ENABLED`: Enables or disables OAuth2 security for client authentication (true/false).
+- `DRUID_MCP_READONLY_ENABLED`: Enables or disables read-only mode (true/false).
+- `SPRING_AI_MCP_SERVER_NAME`: The name of the MCP server.
+- `SPRING_AI_MCP_SERVER_PROTOCOL`: The protocol used by the MCP server (e.g., `streamable`).
+
+#### General Server Configuration
+- `SERVER_PORT`: The port the server listens on.
+- `SERVER_SERVLET_SESSION_COOKIE_NAME`: The name of the session cookie.
+- `SPRING_APPLICATION_NAME`: The name of the application.
+- `SPRING_CONFIG_IMPORT`: Imports additional configuration files.
+- `SPRING_MAIN_BANNER_MODE`: The mode for the startup banner (e.g., `off`).
+
+#### Logging
+- `LOGGING_FILE_NAME`: The name of the log file.
+- `LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY`: The log level for Spring Security (e.g., `DEBUG`).
+
 
 ### SSL-Encrypted Cluster with Authentication
 
@@ -254,7 +286,7 @@ export DRUID_SSL_ENABLED="true"
 export DRUID_SSL_SKIP_VERIFICATION="false"  # Use "true" only for testing
 
 # Start the MCP server
-java -jar target/druid-mcp-server-1.2.2.jar
+java -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 ##### Method 2: Runtime System Properties
@@ -267,7 +299,7 @@ java -Ddruid.router.url="https://your-druid-cluster.example.com:8888" \
      -Ddruid.auth.password="your-password" \
      -Ddruid.ssl.enabled=true \
      -Ddruid.ssl.skip-verification=false \
-     -jar target/druid-mcp-server-1.2.2.jar
+     -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 #### SSL Configuration Options
@@ -323,8 +355,8 @@ Update your `mcp-servers-config.json` to include environment variables:
         "-e",
         "DRUID_SSL_SKIP_VERIFICATION",
         "-e",
-        "DRUID_MCP_READONLY",
-        "iunera/druid-mcp-server:1.2.2"
+        "DRUID_MCP_READONLY_ENABLED",
+        "iunera/druid-mcp-server:1.3.0"
       ],
       "env": {
         "DRUID_ROUTER_URL": "http://host.docker.internal:8888",
@@ -332,7 +364,7 @@ Update your `mcp-servers-config.json` to include environment variables:
         "DRUID_AUTH_PASSWORD": "",
         "DRUID_SSL_ENABLED": "false",
         "DRUID_SSL_SKIP_VERIFICATION": "true",
-        "DRUID_MCP_READONLY": "false"
+        "DRUID_MCP_READONLY_ENABLED": "false"
       }
     }
   }
@@ -360,7 +392,7 @@ You can override any prompt template using Java system properties with the `-D` 
 
 ```bash
 java -Dprompts.druid-data-exploration.template="Your custom template here" \
-     -jar target/druid-mcp-server-1.2.2.jar
+     -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 #### Method 2: Custom Properties File
@@ -378,7 +410,7 @@ Environment: {environment}
 2. Load it at runtime:
 ```bash
 java -Dspring.config.additional-location=classpath:custom-prompts.properties \
-     -jar target/druid-mcp-server-1.2.2.jar
+     -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 ### Available Prompt Variables
@@ -448,7 +480,7 @@ The new **Streamable HTTP** transport provides enhanced performance and scalabil
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.2.2.jar
+     -jar target/druid-mcp-server-1.3.0.jar
 # Server available at http://localhost:8080/mcp (configurable endpoint)
 ```
 
@@ -462,6 +494,10 @@ Note: The `-Dspring.ai.mcp.server.protocol` option is deprecated and no longer r
 - **Backwards Compatibility**: Automatic fallback for older MCP clients
 - **Keep-alive**: Configurable connection health monitoring
 
+Security
+- The Streamable HTTP and SSE modes are secured with OAuth by default. Your MCP client must obtain and send a valid bearer token when connecting.
+- For enterprise SSO integration (OpenID Connect, Azure AD, Keycloak, etc.), please send an inquiry to [consulting@iunera.com](mailto:consulting@iunera.com?subject=Druid%20MCP%20Server%20SSO%20integration) and see [Contact & Support](#contact--support).
+
 #### STDIO Transport (Command-line Integration)
 Perfect for LLM clients and desktop applications:
 
@@ -469,14 +505,16 @@ Perfect for LLM clients and desktop applications:
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.2.2.jar
+     -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 #### Legacy SSE Transport (Deprecated)
 Still supported for backwards compatibility. It is no longer the default and may be removed in a future version.
 
+Note: The SSE endpoint is secured with OAuth by default. Clients must include a valid bearer token when connecting. For SSO integration support, see [Contact & Support](#contact--support).
+
 ```bash
-java -jar target/druid-mcp-server-1.2.2.jar
+java -jar target/druid-mcp-server-1.3.0.jar
 # Server available at http://localhost:8080/sse
 ```
 
@@ -508,7 +546,7 @@ export DRUID_MCP_READONLY_ENABLED=true
 3) JVM system property
 
 ```bash
-java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.2.2.jar
+java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.3.0.jar
 ```
 
 4) Docker
@@ -576,7 +614,6 @@ A specialized Apache Druid extension for ingesting and analyzing code-related da
 
 ## Roadmap
 
-- **Authentication on SSE/HTTP Mode**: Introduce Oauth Authentication
 - **Druid Auto Compaction**: Intelligent automatic compaction configuration
 - **MCP Auto Completion**: Enhanced autocomplete functionality with sampling using McpComplete
 - **MCP Notifications**: Real-time notifications for MCP operations
@@ -607,7 +644,7 @@ For more information about our services and solutions, visit [www.iunera.com](ht
 Need help? Let 
 
 - **Website**: [https://www.iunera.com](https://www.iunera.com)
-- **Professional Services**: Contact us through [www.iunera.com](https://www.iunera.com) or [email](mailto:contact@iunera.com?subject=Druid%20MCP%20Server%20inquiry) for enterprise support and custom development
+- **Professional Services**: Contact us through [email](mailto:consulting@iunera.com?subject=Druid%20MCP%20Server%20inquiry) for enterprise support and custom development
 - **Open Source**: This project is open source and community contributions are welcome
 
 ---

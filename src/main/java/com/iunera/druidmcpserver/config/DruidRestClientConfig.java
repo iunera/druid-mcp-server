@@ -18,7 +18,6 @@ package com.iunera.druidmcpserver.config;
 
 import com.iunera.druidmcpserver.readonly.ReadonlyModeProperties;
 import com.iunera.druidmcpserver.readonly.ReadonlyRestClientInterceptor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -33,32 +32,19 @@ import java.time.Duration;
 import java.util.Base64;
 
 @Configuration
-public class DruidConfig {
+public class DruidRestClientConfig {
 
-    @Value("${druid.router.url}")
-    private String druidRouterUrl;
-
-    @Value("${druid.auth.username:#{null}}")
-    private String druidUsername;
-
-    @Value("${druid.auth.password:#{null}}")
-    private String druidPassword;
-
-    @Value("${druid.ssl.skip-verification:false}")
-    private boolean skipSslVerification;
-
-    @Value("${druid.ssl.enabled:false}")
-    private boolean sslEnabled;
-
+    private final DruidProperties druidProperties;
     private final ReadonlyModeProperties readonlyModeProperties;
 
-    public DruidConfig(ReadonlyModeProperties readonlyModeProperties) {
+    public DruidRestClientConfig(DruidProperties druidProperties, ReadonlyModeProperties readonlyModeProperties) {
+        this.druidProperties = druidProperties;
         this.readonlyModeProperties = readonlyModeProperties;
     }
 
     @Bean("druidRouterRestClient")
     public RestClient druidRouterRestClient() {
-        return createRestClient(druidRouterUrl);
+        return createRestClient(druidProperties.getRouter().getUrl());
     }
 
     private RestClient createRestClient(String baseUrl) {
@@ -66,7 +52,7 @@ public class DruidConfig {
                 .baseUrl(baseUrl);
 
         // Configure HTTP client for SSL settings
-        if (sslEnabled || skipSslVerification) {
+        if (druidProperties.getSsl().isEnabled() || druidProperties.getSsl().isSkipVerification()) {
             HttpClient httpClient = createHttpClient();
             builder = builder.requestFactory(new org.springframework.http.client.JdkClientHttpRequestFactory(httpClient));
         }
@@ -75,7 +61,7 @@ public class DruidConfig {
         builder = builder.requestInterceptor(new ReadonlyRestClientInterceptor(readonlyModeProperties));
 
         // Add basic authentication if credentials are provided
-        if (druidUsername != null && druidPassword != null) {
+        if (druidProperties.getAuth().getUsername() != null && druidProperties.getAuth().getPassword() != null) {
             builder = builder.requestInterceptor(createBasicAuthInterceptor());
         }
 
@@ -86,7 +72,7 @@ public class DruidConfig {
         HttpClient.Builder httpClientBuilder = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(30));
 
-        if (skipSslVerification) {
+        if (druidProperties.getSsl().isSkipVerification()) {
             try {
                 // Create a trust manager that accepts all certificates
                 TrustManager[] trustAllCerts = new TrustManager[]{
@@ -119,7 +105,7 @@ public class DruidConfig {
 
     private ClientHttpRequestInterceptor createBasicAuthInterceptor() {
         return (request, body, execution) -> {
-            String auth = druidUsername + ":" + druidPassword;
+            String auth = druidProperties.getAuth().getUsername() + ":" + druidProperties.getAuth().getPassword();
             String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
             request.getHeaders().add("Authorization", "Basic " + encodedAuth);
             return execution.execute(request, body);
@@ -127,22 +113,22 @@ public class DruidConfig {
     }
 
     public String getDruidRouterUrl() {
-        return druidRouterUrl;
+        return druidProperties.getRouter().getUrl();
     }
 
     public String getDruidUsername() {
-        return druidUsername;
+        return druidProperties.getAuth().getUsername();
     }
 
     public String getDruidPassword() {
-        return druidPassword;
+        return druidProperties.getAuth().getPassword();
     }
 
     public boolean isSkipSslVerification() {
-        return skipSslVerification;
+        return druidProperties.getSsl().isSkipVerification();
     }
 
     public boolean isSslEnabled() {
-        return sslEnabled;
+        return druidProperties.getSsl().isEnabled();
     }
 }
