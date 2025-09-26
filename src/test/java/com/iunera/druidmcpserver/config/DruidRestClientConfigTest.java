@@ -32,26 +32,26 @@ import static org.junit.jupiter.api.Assertions.*;
         "druid.ssl.enabled=true",
         "druid.ssl.skip-verification=false"
 })
-class DruidConfigTest {
+class DruidRestClientConfigTest {
 
     @Autowired
-    private DruidConfig druidConfig;
+    private DruidRestClientConfig druidRestClientConfig;
 
     @Autowired
     private RestClient druidRouterRestClient;
 
     @Test
     void testDruidConfigPropertiesLoaded() {
-        System.out.println("[DEBUG_LOG] Testing DruidConfig properties loading");
+        System.out.println("[DEBUG_LOG] Testing DruidRestClientConfig properties loading");
 
-        assertNotNull(druidConfig, "DruidConfig should be autowired");
-        assertEquals("https://test-router:8888", druidConfig.getDruidRouterUrl());
-        assertEquals("testuser", druidConfig.getDruidUsername());
-        assertEquals("testpass", druidConfig.getDruidPassword());
-        assertTrue(druidConfig.isSslEnabled());
-        assertFalse(druidConfig.isSkipSslVerification());
+        assertNotNull(druidRestClientConfig, "DruidRestClientConfig should be autowired");
+        assertEquals("https://test-router:8888", druidRestClientConfig.getDruidRouterUrl());
+        assertEquals("testuser", druidRestClientConfig.getDruidUsername());
+        assertEquals("testpass", druidRestClientConfig.getDruidPassword());
+        assertTrue(druidRestClientConfig.isSslEnabled());
+        assertFalse(druidRestClientConfig.isSkipSslVerification());
 
-        System.out.println("[DEBUG_LOG] All DruidConfig properties loaded correctly");
+        System.out.println("[DEBUG_LOG] All DruidRestClientConfig properties loaded correctly");
     }
 
     @Test

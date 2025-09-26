@@ -16,7 +16,7 @@
 
 package com.iunera.druidmcpserver.datamanagement.retention;
 
-import com.iunera.druidmcpserver.config.DruidConfig;
+import com.iunera.druidmcpserver.config.DruidRestClientConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,14 +40,14 @@ class RetentionRulesIntegrationTest {
     private RetentionRulesRepository retentionRulesRepository;
 
     @Autowired
-    private DruidConfig druidConfig;
+    private DruidRestClientConfig druidRestClientConfig;
 
     @Test
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing retention rules context loading");
         assertNotNull(writeRetentionRulesTools);
         assertNotNull(retentionRulesRepository);
-        assertNotNull(druidConfig);
+        assertNotNull(druidRestClientConfig);
         System.out.println("[DEBUG_LOG] All retention rules beans loaded successfully");
     }
 
@@ -112,8 +112,8 @@ class RetentionRulesIntegrationTest {
     @Test
     void testDruidConfigurationForRetentionRules() {
         System.out.println("[DEBUG_LOG] Testing Druid configuration for retention rules");
-        assertNotNull(druidConfig.getDruidRouterUrl());
-        assertEquals("http://test-router:8888", druidConfig.getDruidRouterUrl());
-        System.out.println("[DEBUG_LOG] Druid router URL configured correctly: " + druidConfig.getDruidRouterUrl());
+        assertNotNull(druidRestClientConfig.getDruidRouterUrl());
+        assertEquals("http://test-router:8888", druidRestClientConfig.getDruidRouterUrl());
+        System.out.println("[DEBUG_LOG] Druid router URL configured correctly: " + druidRestClientConfig.getDruidRouterUrl());
     }
 }

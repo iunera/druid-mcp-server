@@ -34,7 +34,7 @@ import static org.springframework.security.oauth2.server.authorization.config.an
 @Configuration
 @ConditionalOnProperty(prefix = "druid.mcp.security.oauth2", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableWebSecurity
-public class OAuth2AuthorizationServerConfig {
+public class OauthSecurityConfig {
 
     @Bean
     SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
