@@ -23,7 +23,7 @@ Key environment variables you can override in your MCP client:
 - DRUID_AUTH_PASSWORD
 - DRUID_SSL_ENABLED (default: false)
 - DRUID_SSL_SKIP_VERIFICATION (default: true)
-- DRUID_MCP_READONLY (default: false)
+- DRUID_MCP_READONLY_ENABLED (default: false)
 
 See [mcpservers-stdio.json](mcpservers-stdio.json) for defaults and how these are passed to Docker.
 

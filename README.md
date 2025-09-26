@@ -323,7 +323,7 @@ Update your `mcp-servers-config.json` to include environment variables:
         "-e",
         "DRUID_SSL_SKIP_VERIFICATION",
         "-e",
-        "DRUID_MCP_READONLY",
+        "DRUID_MCP_READONLY_ENABLED",
         "iunera/druid-mcp-server:1.2.2"
       ],
       "env": {
@@ -332,7 +332,7 @@ Update your `mcp-servers-config.json` to include environment variables:
         "DRUID_AUTH_PASSWORD": "",
         "DRUID_SSL_ENABLED": "false",
         "DRUID_SSL_SKIP_VERIFICATION": "true",
-        "DRUID_MCP_READONLY": "false"
+        "DRUID_MCP_READONLY_ENABLED": "false"
       }
     }
   }

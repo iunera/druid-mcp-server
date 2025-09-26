@@ -54,7 +54,7 @@ Common environment variables:
 - DRUID_AUTH_PASSWORD
 - DRUID_SSL_ENABLED (true/false)
 - DRUID_SSL_SKIP_VERIFICATION (true/false)
-- DRUID_MCP_READONLY (true/false)
+- DRUID_MCP_READONLY_ENABLED (true/false)
 
 Streamable HTTP endpoint will be available at:
 - http://localhost:8080/mcp

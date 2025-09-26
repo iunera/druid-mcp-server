@@ -54,7 +54,7 @@ druid:
       oauth2:
         enabled: true
     readonly:
-      enabled: ${DRUID_MCP_READONLY:false}
+      enabled: false
 
 server:
   port: 8080

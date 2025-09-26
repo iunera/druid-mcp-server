@@ -39,7 +39,7 @@
           "-e",
           "DRUID_SSL_SKIP_VERIFICATION",
           "-e",
-          "DRUID_MCP_READONLY"
+          "DRUID_MCP_READONLY_ENABLED"
         ]
       },
       "environmentVariables": [
@@ -83,7 +83,7 @@
           "is_required": false,
           "format": "boolean",
           "is_secret": false,
-          "name": "DRUID_MCP_READONLY"
+          "name": "DRUID_MCP_READONLY_ENABLED"
         }
       ]
     }
