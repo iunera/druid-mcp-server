@@ -52,7 +52,7 @@ druid:
   mcp:
     security:
       oauth2:
-        enabled: ${DRUID_MCP_SECURITY_OAUTH2_ENABLED:true}
+        enabled: true
     readonly:
       enabled: ${DRUID_MCP_READONLY:false}
 
