@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.security;
+package com.iunera.druidmcpserver.security.oauth;
 
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
