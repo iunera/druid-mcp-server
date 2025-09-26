@@ -42,13 +42,14 @@ spring:
 
 druid:
   router:
-    url: ${DRUID_ROUTER_URL:http://localhost:8888}
+    url: http://localhost:8888
   auth:
-    username: ${DRUID_AUTH_USERNAME:}
-    password: ${DRUID_AUTH_PASSWORD:}
+    username: ""
+    password: ""
   ssl:
-    enabled: ${DRUID_SSL_ENABLED:false}
-    skip-verification: ${DRUID_SSL_SKIP_VERIFICATION:false}
+    enabled: false
+    skip-verification: false
+
   mcp:
     security:
       oauth2:
@@ -69,4 +70,4 @@ logging:
   level:
     org:
       springframework:
-        security: TRACE
+        security: DEBUG
