@@ -1,0 +1,80 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
+
+## [1.3.0] - 2025-09-26
+
+### Added
+- Introduced CHANGELOG.md generated from GitHub Releases history to document past changes.
+- 
+
+## [1.2.2] - 2025-09-24
+
+Release version 1.2.2
+
+MCP protocol version 2025-06-18 support
+
+What's Changed
+- Add druid-mcp-server to Github MCP registry
+- Update spring-ai 1.1.0-M2
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.2.1...v1.2.2
+
+## [1.2.1] - 2025-09-23
+
+Release version 1.2.1
+
+Changes
+- Label Dockerimage for Github MCP registry
+- Spring Boot 3.5.6
+- 
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.2.0...v1.2.1
+
+## [1.2.0] - 2025-09-19
+
+Release version 1.2.0
+
+Changes
+- Introduce Readonly Mode
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.1.0...v1.2.0
+
+## [1.1.0] - 2025-09-18
+
+Release version 1.1.0
+
+Changes
+- Partially support 2025-06-18 incl. Streamable HTTP
+- Update spring-ai 1.1.0-M1
+
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.0.1...v1.1.0
+
+## [1.0.1] - 2025-07-08
+
+Release version 1.0.1
+
+Changes
+- Automated release from pom.xml version 1.0.1
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.0.0...v1.0.1
+
+## [1.0.0] - 2025-07-08
+
+Release version 1.0.0
+
+Changes
+- Initial public release
+
+---
+
+[1.3.0]: https://github.com/iunera/druid-mcp-server/compare/v1.2.2...v1.3.0
+[1.2.2]: https://github.com/iunera/druid-mcp-server/releases/tag/v1.2.2
+[1.2.1]: https://github.com/iunera/druid-mcp-server/releases/tag/v1.2.1
+[1.2.0]: https://github.com/iunera/druid-mcp-server/releases/tag/v1.2.0
+[1.1.0]: https://github.com/iunera/druid-mcp-server/releases/tag/v1.1.0
+[1.0.1]: https://github.com/iunera/druid-mcp-server/releases/tag/v1.0.1
+[1.0.0]: https://github.com/iunera/druid-mcp-server/releases/tag/v1.0.0

@@ -26,7 +26,7 @@ Learn how to integrate AI agents with Apache Druid using the MCP server. This tu
 - Spring AI MCP Server integration
 - Tool-based architecture for MCP protocol compliance
 - **Tool-based Architecture**: Complete MCP protocol compliance with automatic JSON schema generation
-- **Multiple Transport Modes**: STDIO, SSE, and **Streamable HTTP** support
+- **Multiple Transport Modes**: STDIO, SSE, and **Streamable HTTP** support including Oauth
 - **Real-time Communication**: Server-Sent Events with streaming capabilities
 - Comprehensive error handling
 - **Customizable Prompt Templates**: AI-assisted guidance with template customization
@@ -105,6 +105,13 @@ java -jar target/druid-mcp-server-1.2.2.jar
 The server will start on port 8080 by default.
 
 For detailed build instructions, testing, Docker setup, and development guidelines, see [development.md](development.md).
+
+## Security & Authentication
+
+- Streamable HTTP and SSE transports are secured with OAuth 2.0 by default.
+- Clients must send a valid Bearer token in the Authorization header when connecting.
+- Example: Authorization: Bearer YOUR_JWT_TOKEN
+- For enterprise SSO integration (OpenID Connect, Azure AD, Keycloak, etc.), please send an inquiry to [consulting@iunera.com](mailto:consulting@iunera.com?subject=Druid%20MCP%20Server%20SSO%20integration) and see [Contact & Support](#contact--support).
 
 ## Installation from Maven Central
 
@@ -462,6 +469,10 @@ Note: The `-Dspring.ai.mcp.server.protocol` option is deprecated and no longer r
 - **Backwards Compatibility**: Automatic fallback for older MCP clients
 - **Keep-alive**: Configurable connection health monitoring
 
+Security
+- The Streamable HTTP and SSE modes are secured with OAuth by default. Your MCP client must obtain and send a valid bearer token when connecting.
+- For enterprise SSO integration (OpenID Connect, Azure AD, Keycloak, etc.), please send an inquiry to [consulting@iunera.com](mailto:consulting@iunera.com?subject=Druid%20MCP%20Server%20SSO%20integration) and see [Contact & Support](#contact--support).
+
 #### STDIO Transport (Command-line Integration)
 Perfect for LLM clients and desktop applications:
 
@@ -474,6 +485,8 @@ java -Dspring.ai.mcp.server.stdio=true \
 
 #### Legacy SSE Transport (Deprecated)
 Still supported for backwards compatibility. It is no longer the default and may be removed in a future version.
+
+Note: The SSE endpoint is secured with OAuth by default. Clients must include a valid bearer token when connecting. For SSO integration support, see [Contact & Support](#contact--support).
 
 ```bash
 java -jar target/druid-mcp-server-1.2.2.jar
@@ -576,7 +589,6 @@ A specialized Apache Druid extension for ingesting and analyzing code-related da
 
 ## Roadmap
 
-- **Authentication on SSE/HTTP Mode**: Introduce Oauth Authentication
 - **Druid Auto Compaction**: Intelligent automatic compaction configuration
 - **MCP Auto Completion**: Enhanced autocomplete functionality with sampling using McpComplete
 - **MCP Notifications**: Real-time notifications for MCP operations
@@ -607,7 +619,7 @@ For more information about our services and solutions, visit [www.iunera.com](ht
 Need help? Let 
 
 - **Website**: [https://www.iunera.com](https://www.iunera.com)
-- **Professional Services**: Contact us through [www.iunera.com](https://www.iunera.com) or [email](mailto:contact@iunera.com?subject=Druid%20MCP%20Server%20inquiry) for enterprise support and custom development
+- **Professional Services**: Contact us through [email](mailto:consulting@iunera.com?subject=Druid%20MCP%20Server%20inquiry) for enterprise support and custom development
 - **Open Source**: This project is open source and community contributions are welcome
 
 ---
