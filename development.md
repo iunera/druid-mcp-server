@@ -482,6 +482,12 @@ Ready-to-use MCP configuration in `mcp-servers-config.json` for LLM clients supp
 ## About iunera
 This Druid MCP Server is developed and maintained by [iunera](https://www.iunera.com), a leading provider of advanced AI and data analytics solutions.
 
+### Need Expert Apache Druid Consulting?
+
+**Maximize your return on data** with professional Druid implementation and optimization services. From architecture design to performance tuning and AI integration, our experts help you navigate Druid's complexity and unlock its full potential.
+
+**[Get Expert Druid Consulting →](https://www.iunera.com/druid-consulting/)**
+
 For more information about our enterprise solutions and professional services, visit https://www.iunera.com.
 
 ---
