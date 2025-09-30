@@ -486,7 +486,7 @@ This Druid MCP Server is developed and maintained by [iunera](https://www.iunera
 
 **Maximize your return on data** with professional Druid implementation and optimization services. From architecture design to performance tuning and AI integration, our experts help you navigate Druid's complexity and unlock its full potential.
 
-**[Get Expert Druid Consulting →](https://www.iunera.com/druid-consulting/)**
+**[Get Expert Druid Consulting →](https://www.iunera.com/apache-druid-ai-consulting-europe/)**
 
 For more information about our enterprise solutions and professional services, visit https://www.iunera.com.
 
