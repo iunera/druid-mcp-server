@@ -99,7 +99,7 @@ docker run --rm -i \
 mvn clean package -DskipTests
 
 # Run the application
-java -jar target/druid-mcp-server-1.3.0.jar
+java -jar target/druid-mcp-server-1.4.0.jar
 ```
 
 The server will start on port 8080 by default.
@@ -134,13 +134,13 @@ Download the JAR from Maven Central https://repo.maven.apache.org/maven2/com/iun
 
 ```bash
 # Run with SSE Transport (HTTP-based, default)
-java -jar target/druid-mcp-server-1.3.0.jar
+java -jar target/druid-mcp-server-1.4.0.jar
 
 # OR run with STDIO Transport (recommended for LLM clients)
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.3.0.jar
+     -jar target/druid-mcp-server-1.4.0.jar
 ```
 
 ## For Developers
@@ -203,6 +203,28 @@ The MCP server auto-discovers all tools via annotations. In Read-only mode, any 
 | **Functionality** | `testIngestionFunctionality` | Test ingestion functionality | None |
 | **Functionality** | `validateClusterConnectivity` | Validate connectivity between cluster components | None |
 
+### Basic Security
+
+| Feature | Tool | Description | Parameters |
+|---------|------|-------------|------------|
+| **Authentication** | `listAuthenticationUsers` | List all users in the Druid authentication system for a specific authenticator | `authenticatorName` (String) |
+| **Authentication** | `getAuthenticationUser` | Get details of a specific user from the Druid authentication system | `authenticatorName` (String), `userName` (String) |
+| **Authentication** | `createAuthenticationUser` | Create a new user in the Druid authentication system | `authenticatorName` (String), `userName` (String) |
+| **Authentication** | `deleteAuthenticationUser` | Delete a user from the Druid authentication system. Use with caution as this action cannot be undone. | `authenticatorName` (String), `userName` (String) |
+| **Authentication** | `setUserPassword` | Set or update the password for a user in the Druid authentication system | `authenticatorName` (String), `userName` (String), `password` (String) |
+| **Authorization** | `listAuthorizationUsers` | List all users in the Druid authorization system for a specific authorizer | `authorizerName` (String) |
+| **Authorization** | `getAuthorizationUser` | Get details of a specific user from the Druid authorization system including their roles | `authorizerName` (String), `userName` (String) |
+| **Authorization** | `listRoles` | List all roles in the Druid authorization system for a specific authorizer | `authorizerName` (String) |
+| **Authorization** | `getRole` | Get details of a specific role from the Druid authorization system including its permissions | `authorizerName` (String), `roleName` (String) |
+| **Authorization** | `createAuthorizationUser` | Create a new user in the Druid authorization system | `authorizerName` (String), `userName` (String) |
+| **Authorization** | `deleteAuthorizationUser` | Delete a user from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName` (String), `userName` (String) |
+| **Authorization** | `createRole` | Create a new role in the Druid authorization system | `authorizerName` (String), `roleName` (String) |
+| **Authorization** | `deleteRole` | Delete a role from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName` (String), `roleName` (String) |
+| **Authorization** | `setRolePermissions` | Set permissions for a role in the Druid authorization system. Provide permissions as JSON array. | `authorizerName` (String), `roleName` (String), `permissions` (String) |
+| **Authorization** | `assignRoleToUser` | Assign a role to a user in the Druid authorization system | `authorizerName` (String), `userName` (String), `roleName` (String) |
+| **Authorization** | `unassignRoleFromUser` | Unassign a role from a user in the Druid authorization system | `authorizerName` (String), `userName` (String), `roleName` (String) |
+| **Configuration** | `getAuthenticatorChainAndAuthorizers` | Get configured authenticatorChain and authorizers form the Basic Auth configuration. This information is important for any other security tool and LLMs need to call this tool first. | None |
+
 ## Available Resources by Feature
 
 | Feature | Resource URI Pattern | Description | Parameters |
@@ -242,6 +264,7 @@ The application can be configured using environment variables, which is the reco
 #### MCP Server Configuration
 - `DRUID_MCP_SECURITY_OAUTH2_ENABLED`: Enables or disables OAuth2 security for client authentication (true/false).
 - `DRUID_MCP_READONLY_ENABLED`: Enables or disables read-only mode (true/false).
+- `DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED`: Enables or disables the basic security feature (true/false). When disabled, basic security tools are not registered.
 - `SPRING_AI_MCP_SERVER_NAME`: The name of the MCP server.
 - `SPRING_AI_MCP_SERVER_PROTOCOL`: The protocol used by the MCP server (e.g., `streamable`).
 
@@ -286,7 +309,7 @@ export DRUID_SSL_ENABLED="true"
 export DRUID_SSL_SKIP_VERIFICATION="false"  # Use "true" only for testing
 
 # Start the MCP server
-java -jar target/druid-mcp-server-1.3.0.jar
+java -jar target/druid-mcp-server-1.4.0.jar
 ```
 
 ##### Method 2: Runtime System Properties
@@ -299,7 +322,7 @@ java -Ddruid.router.url="https://your-druid-cluster.example.com:8888" \
      -Ddruid.auth.password="your-password" \
      -Ddruid.ssl.enabled=true \
      -Ddruid.ssl.skip-verification=false \
-     -jar target/druid-mcp-server-1.3.0.jar
+     -jar target/druid-mcp-server-1.4.0.jar
 ```
 
 #### SSL Configuration Options
@@ -356,7 +379,7 @@ Update your `mcp-servers-config.json` to include environment variables:
         "DRUID_SSL_SKIP_VERIFICATION",
         "-e",
         "DRUID_MCP_READONLY_ENABLED",
-        "iunera/druid-mcp-server:1.3.0"
+        "iunera/druid-mcp-server:1.4.0"
       ],
       "env": {
         "DRUID_ROUTER_URL": "http://host.docker.internal:8888",
@@ -392,7 +415,7 @@ You can override any prompt template using Java system properties with the `-D` 
 
 ```bash
 java -Dprompts.druid-data-exploration.template="Your custom template here" \
-     -jar target/druid-mcp-server-1.3.0.jar
+     -jar target/druid-mcp-server-1.4.0.jar
 ```
 
 #### Method 2: Custom Properties File
@@ -410,7 +433,7 @@ Environment: {environment}
 2. Load it at runtime:
 ```bash
 java -Dspring.config.additional-location=classpath:custom-prompts.properties \
-     -jar target/druid-mcp-server-1.3.0.jar
+     -jar target/druid-mcp-server-1.4.0.jar
 ```
 
 ### Available Prompt Variables
@@ -480,7 +503,7 @@ The new **Streamable HTTP** transport provides enhanced performance and scalabil
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.3.0.jar
+     -jar target/druid-mcp-server-1.4.0.jar
 # Server available at http://localhost:8080/mcp (configurable endpoint)
 ```
 
@@ -505,7 +528,7 @@ Perfect for LLM clients and desktop applications:
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.3.0.jar
+     -jar target/druid-mcp-server-1.4.0.jar
 ```
 
 #### Legacy SSE Transport (Deprecated)
@@ -514,7 +537,7 @@ Still supported for backwards compatibility. It is no longer the default and may
 Note: The SSE endpoint is secured with OAuth by default. Clients must include a valid bearer token when connecting. For SSO integration support, see [Contact & Support](#contact--support).
 
 ```bash
-java -jar target/druid-mcp-server-1.3.0.jar
+java -jar target/druid-mcp-server-1.4.0.jar
 # Server available at http://localhost:8080/sse
 ```
 
@@ -546,7 +569,7 @@ export DRUID_MCP_READONLY_ENABLED=true
 3) JVM system property
 
 ```bash
-java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.3.0.jar
+java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.4.0.jar
 ```
 
 4) Docker
@@ -569,6 +592,7 @@ docker run --rm -p 8080:8080 \
     - Task control (killTask)
     - Multi-stage SQL task operations (queryDruidMultiStage, queryDruidMultiStageWithContext, getMultiStageQueryTaskStatus, cancelMultiStageQueryTask)
     - Ingestion spec submission and templates (createIngestionSpec, createBatchIngestionTemplate)
+    - Basic security changing tools (e.g., `createAuthenticationUser`, `deleteAuthenticationUser`, `setUserPassword`, `createAuthorizationUser`, `deleteAuthorizationUser`, `createRole`, `deleteRole`, `setRolePermissions`, `assignRoleToUser`, `unassignRoleFromUser`)
 - Read-only-safe tools remain available, including SQL queries (queryDruidSql), metadata and status lookups, health diagnostics, task and segment inspection, etc.
 
 
@@ -642,6 +666,14 @@ As veterans in Apache Druid iunera deployed and maintained a large number of sol
 **Maximize your return on data** with professional Druid implementation and optimization services. From architecture design to performance tuning and AI integration, our experts help you navigate Druid's complexity and unlock its full potential.
 
 **[Get Expert Druid Consulting →](https://www.iunera.com/apache-druid-ai-consulting-europe/)**
+
+### Need Enterprise MCP Server Development Consulting?
+
+**ENTERPRISE AI INTEGRATION & CUSTOM MCP (MODEL CONTEXT PROTOCOL) SERVER DEVELOPMENT**
+
+Iunera specializes in developing production-grade AI agents and enterprise-grade LLM solutions, helping businesses move beyond generic AI chatbots. They build secure, scalable, and future-ready AI infrastructure, underpinned by the Model Context Protocol (MCP), to connect proprietary data, legacy systems, and external APIs to advanced AI models.
+
+**[Get Enterprise MCP Server Development Consulting →](https://www.iunera.com/enterprise-mcp-server-development/)**
 
 For more information about our services and solutions, visit [www.iunera.com](https://www.iunera.com).
 

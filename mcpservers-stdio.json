@@ -24,7 +24,7 @@
         "DRUID_SSL_SKIP_VERIFICATION",
         "-e",
         "DRUID_MCP_READONLY_ENABLED",
-        "iunera/druid-mcp-server:1.3.0"
+        "iunera/druid-mcp-server:1.4.0"
       ],
       "env": {
         "DRUID_ROUTER_URL": "http://host.docker.internal:8888",

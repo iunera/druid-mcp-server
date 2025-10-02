@@ -145,9 +145,9 @@ For every Resource we need a separate Tool to access it in addition.
 
 ### Key Components
 
-#### Tool Providers
+#### Tools
 - `QueryService`: SQL query execution against Druid
-- `DatasourceToolProvider`: Datasource listing functionality
+- `DatasourceTools`: Datasource listing functionality
 
 #### Resource Providers
 - `DatasourceResources`: MCP resource interface for datasource information
@@ -186,7 +186,7 @@ java -jar target/druid-mcp-server-0.0.1-SNAPSHOT.jar
 #### Example (@McpTool):
 ```java
 @Component
-public class ExampleToolProvider {
+public class ExampleTools {
     
     @McpTool(name = "query-druid-sql", description = "Execute a SQL query against Druid datasources")
     public String queryDruidSql(

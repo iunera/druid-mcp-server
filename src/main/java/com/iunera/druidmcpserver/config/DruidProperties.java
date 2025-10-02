@@ -31,11 +31,17 @@ import org.springframework.stereotype.Component;
 public class DruidProperties {
 
     private final Router router = new Router();
+    private final Coordinator coordinator = new Coordinator();
     private final Auth auth = new Auth();
     private final Ssl ssl = new Ssl();
+    private final Extension extension = new Extension();
 
     public Router getRouter() {
         return router;
+    }
+
+    public Coordinator getCoordinator() {
+        return coordinator;
     }
 
     public Auth getAuth() {
@@ -46,11 +52,30 @@ public class DruidProperties {
         return ssl;
     }
 
+    public Extension getExtension() {
+        return extension;
+    }
+
     public static class Router {
         /**
          * Base URL of the Druid Router HTTP endpoint.
          */
         private String url = "http://localhost:8888";
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+    }
+
+    public static class Coordinator {
+        /**
+         * Base URL of the Druid Coordinator HTTP endpoint.
+         */
+        private String url = "http://localhost:8081";
 
         public String getUrl() {
             return url;
@@ -112,6 +137,36 @@ public class DruidProperties {
 
         public void setSkipVerification(boolean skipVerification) {
             this.skipVerification = skipVerification;
+        }
+    }
+
+    /**
+     * Druid extensions configuration.
+     */
+    public static class Extension {
+        private final DruidBasicSecurity druidBasicSecurity = new DruidBasicSecurity();
+
+        public DruidBasicSecurity getDruidBasicSecurity() {
+            return druidBasicSecurity;
+        }
+    }
+
+    /**
+     * Configuration for Druid Basic Security extension.
+     * Maps property: druid.extension.druid-basic-security.enabled
+     */
+    public static class DruidBasicSecurity {
+        /**
+         * Enable/disable all Basic Security tools and resources in this server.
+         */
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }

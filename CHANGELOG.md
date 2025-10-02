@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [1.4.0] - 2025-10-02
+
+### Added
+- Introduced basic-security components to support Apache Druid basic authentication and authorization modification via MCP
+- Added support for toggling server Druid Basic Security Tools on/off with `DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED`
+- Expanded test coverage for basic-security flows and readonly interactions.
+- Prepared CI/CD release workflows and documentation updates for the 1.4.0 release.
+
+### Notes
+- This release adds foundational basic-security tooling and read-only controls; deployments should verify environment variables (DRUID_ROUTER_URL, DRUID_AUTH_USERNAME/DRUID_AUTH_PASSWORD) and enable security features as required.
+- DRUID_COORDINATOR_URL needs to be configured to use the Druid Basic Security Tools
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.3.0...v1.4.0
+
 ## [1.3.0] - 2025-09-26
 
 ### Breaking Change
@@ -80,6 +94,7 @@ Changes
 
 ---
 
+[1.4.0]: https://github.com/iunera/druid-mcp-server/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/iunera/druid-mcp-server/compare/v1.2.2...v1.3.0
 [1.2.2]: https://github.com/iunera/druid-mcp-server/releases/tag/v1.2.2
 [1.2.1]: https://github.com/iunera/druid-mcp-server/releases/tag/v1.2.1

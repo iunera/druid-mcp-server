@@ -53,11 +53,13 @@ services:
       - druid-network
 
   coordinator:
-    image: apache/druid:33.0.0
+    image: apache/druid:34.0.0
     container_name: coordinator
     volumes:
       - druid_shared:/opt/shared
       - coordinator_var:/opt/druid/var
+    ports:
+      - "8081:8081"
     depends_on:
       - zookeeper
       - postgres
@@ -69,7 +71,7 @@ services:
       - druid-network
 
   broker:
-    image: apache/druid:33.0.0
+    image: apache/druid:34.0.0
     container_name: broker
     volumes:
       - broker_var:/opt/druid/var
@@ -85,7 +87,7 @@ services:
       - druid-network
 
   historical:
-    image: apache/druid:33.0.0
+    image: apache/druid:34.0.0
     container_name: historical
     volumes:
       - druid_shared:/opt/shared
@@ -102,7 +104,7 @@ services:
       - druid-network
 
   middlemanager:
-    image: apache/druid:33.0.0
+    image: apache/druid:34.0.0
     container_name: middlemanager
     volumes:
       - druid_shared:/opt/shared
@@ -119,7 +121,7 @@ services:
       - druid-network
 
   router:
-    image: apache/druid:33.0.0
+    image: apache/druid:34.0.0
     container_name: router
     volumes:
       - router_var:/opt/druid/var
