@@ -35,6 +35,19 @@ public class SecurityRepository {
         this.druidCoordinatorRestClient = druidCoordinatorRestClient;
     }
 
+    /**
+     * Get coordinator properties
+     */
+    public JsonNode getCoordinatorProperties() throws RestClientException {
+        return druidCoordinatorRestClient
+                .get()
+                .uri("/status/properties")
+                .header("Content-Type", "application/json")
+                .retrieve()
+                .body(JsonNode.class);
+    }
+
+
     // Authentication API methods
 
     /**
@@ -56,7 +69,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authentication/db/{authenticatorName}/users/{userName}",
-                     authenticatorName, userName)
+                        authenticatorName, userName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -69,7 +82,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authentication/db/{authenticatorName}/users/{userName}",
-                     authenticatorName, userName)
+                        authenticatorName, userName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -82,7 +95,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authentication/db/{authenticatorName}/users/{userName}",
-                     authenticatorName, userName)
+                        authenticatorName, userName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -96,7 +109,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authentication/db/{authenticatorName}/users/{userName}/credentials",
-                     authenticatorName, userName)
+                        authenticatorName, userName)
                 .header("Content-Type", "application/json")
                 .body(body)
                 .retrieve()
@@ -124,7 +137,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/users/{userName}",
-                     authorizerName, userName)
+                        authorizerName, userName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -137,7 +150,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/users/{userName}",
-                     authorizerName, userName)
+                        authorizerName, userName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -150,7 +163,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/users/{userName}",
-                     authorizerName, userName)
+                        authorizerName, userName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -175,7 +188,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .get()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/roles/{roleName}",
-                     authorizerName, roleName)
+                        authorizerName, roleName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -188,7 +201,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/roles/{roleName}",
-                     authorizerName, roleName)
+                        authorizerName, roleName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -201,7 +214,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/roles/{roleName}",
-                     authorizerName, roleName)
+                        authorizerName, roleName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -214,7 +227,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/roles/{roleName}/permissions",
-                     authorizerName, roleName)
+                        authorizerName, roleName)
                 .header("Content-Type", "application/json")
                 .body(permissions)
                 .retrieve()
@@ -228,7 +241,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/users/{userName}/roles/{roleName}",
-                     authorizerName, userName, roleName)
+                        authorizerName, userName, roleName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);
@@ -241,7 +254,7 @@ public class SecurityRepository {
         return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/users/{userName}/roles/{roleName}",
-                     authorizerName, userName, roleName)
+                        authorizerName, userName, roleName)
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .body(JsonNode.class);

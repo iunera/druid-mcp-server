@@ -18,8 +18,6 @@ package com.iunera.druidmcpserver.basicsecurity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
@@ -48,7 +46,7 @@ public class AuthenticationTools {
      */
     @McpTool(description = "List all users in the Druid authentication system for a specific authenticator")
     public String listAuthenticationUsers(
-            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true)
             String authenticatorName) {
         try {
             JsonNode result = securityRepository.getAllUsers(authenticatorName);
@@ -65,9 +63,9 @@ public class AuthenticationTools {
      */
     @McpTool(description = "Get details of a specific user from the Druid authentication system")
     public String getAuthenticationUser(
-            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true)
             String authenticatorName,
-            @McpToolParam(description = "Username to retrieve", required = true) 
+            @McpToolParam(description = "Username to retrieve", required = true)
             String userName) {
         try {
             JsonNode result = securityRepository.getUser(authenticatorName, userName);
@@ -84,9 +82,9 @@ public class AuthenticationTools {
      */
     @McpTool(description = "Create a new user in the Druid authentication system")
     public String createAuthenticationUser(
-            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true)
             String authenticatorName,
-            @McpToolParam(description = "Username to create", required = true) 
+            @McpToolParam(description = "Username to create", required = true)
             String userName) {
         try {
             JsonNode result = securityRepository.createUser(authenticatorName, userName);
@@ -106,9 +104,9 @@ public class AuthenticationTools {
      */
     @McpTool(description = "Delete a user from the Druid authentication system. Use with caution as this action cannot be undone.")
     public String deleteAuthenticationUser(
-            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true)
             String authenticatorName,
-            @McpToolParam(description = "Username to delete", required = true) 
+            @McpToolParam(description = "Username to delete", required = true)
             String userName) {
         try {
             JsonNode result = securityRepository.deleteUser(authenticatorName, userName);
@@ -128,11 +126,11 @@ public class AuthenticationTools {
      */
     @McpTool(description = "Set or update the password for a user in the Druid authentication system")
     public String setUserPassword(
-            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true)
             String authenticatorName,
-            @McpToolParam(description = "Username for password update", required = true) 
+            @McpToolParam(description = "Username for password update", required = true)
             String userName,
-            @McpToolParam(description = "New password for the user", required = true) 
+            @McpToolParam(description = "New password for the user", required = true)
             String password) {
         try {
             JsonNode result = securityRepository.setUserCredentials(authenticatorName, userName, password);
@@ -147,54 +145,4 @@ public class AuthenticationTools {
         }
     }
 
-    /**
-     * Get configured authenticator chain and authorizers from coordinator properties
-     */
-    @McpTool(description = "Get configured authenticatorChain and authorizers from Druid coordinator properties")
-    public String getauthenticatorChainAndAuthorizers() {
-        try {
-            JsonNode props = healthStatusRepository.getCoordinatorProperties();
-
-            String authChainStr = props.path("druid.auth.authenticatorChain").asText("");
-            String authorizersStr = props.path("druid.auth.authorizers").asText("");
-
-            ArrayNode authenticatorChain = objectMapper.createArrayNode();
-            ArrayNode authorizers = objectMapper.createArrayNode();
-
-            try {
-                if (authChainStr != null && !authChainStr.isEmpty()) {
-                    JsonNode parsed = objectMapper.readTree(authChainStr);
-                    if (parsed.isArray()) {
-                        for (JsonNode n : parsed) {
-                            authenticatorChain.add(n.asText());
-                        }
-                    }
-                }
-            } catch (Exception ignore) {
-                // ignore parsing errors and return empty or partially filled result
-            }
-
-            try {
-                if (authorizersStr != null && !authorizersStr.isEmpty()) {
-                    JsonNode parsed = objectMapper.readTree(authorizersStr);
-                    if (parsed.isArray()) {
-                        for (JsonNode n : parsed) {
-                            authorizers.add(n.asText());
-                        }
-                    }
-                }
-            } catch (Exception ignore) {
-                // ignore parsing errors
-            }
-
-            ObjectNode result = objectMapper.createObjectNode();
-            result.set("authenticatorChain", authenticatorChain);
-            result.set("authorizers", authorizers);
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get coordinator properties: " + e.getMessage())
-                    .toString();
-        }
-    }
 }

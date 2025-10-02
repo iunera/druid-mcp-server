@@ -43,7 +43,7 @@ public class AuthorizationTools {
      */
     @McpTool(description = "List all users in the Druid authorization system for a specific authorizer")
     public String listAuthorizationUsers(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName) {
         try {
             JsonNode result = securityRepository.getAllAuthorizationUsers(authorizerName);
@@ -60,9 +60,9 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Get details of a specific user from the Druid authorization system including their roles")
     public String getAuthorizationUser(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Username to retrieve", required = true) 
+            @McpToolParam(description = "Username to retrieve", required = true)
             String userName) {
         try {
             JsonNode result = securityRepository.getAuthorizationUser(authorizerName, userName);
@@ -79,9 +79,9 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Create a new user in the Druid authorization system")
     public String createAuthorizationUser(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Username to create", required = true) 
+            @McpToolParam(description = "Username to create", required = true)
             String userName) {
         try {
             JsonNode result = securityRepository.createAuthorizationUser(authorizerName, userName);
@@ -101,9 +101,9 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Delete a user from the Druid authorization system. Use with caution as this action cannot be undone.")
     public String deleteAuthorizationUser(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Username to delete", required = true) 
+            @McpToolParam(description = "Username to delete", required = true)
             String userName) {
         try {
             JsonNode result = securityRepository.deleteAuthorizationUser(authorizerName, userName);
@@ -123,7 +123,7 @@ public class AuthorizationTools {
      */
     @McpTool(description = "List all roles in the Druid authorization system for a specific authorizer")
     public String listRoles(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName) {
         try {
             JsonNode result = securityRepository.getAllRoles(authorizerName);
@@ -140,9 +140,9 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Get details of a specific role from the Druid authorization system including its permissions")
     public String getRole(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Role name to retrieve", required = true) 
+            @McpToolParam(description = "Role name to retrieve", required = true)
             String roleName) {
         try {
             JsonNode result = securityRepository.getRole(authorizerName, roleName);
@@ -159,9 +159,9 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Create a new role in the Druid authorization system")
     public String createRole(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Role name to create", required = true) 
+            @McpToolParam(description = "Role name to create", required = true)
             String roleName) {
         try {
             JsonNode result = securityRepository.createRole(authorizerName, roleName);
@@ -181,9 +181,9 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Delete a role from the Druid authorization system. Use with caution as this action cannot be undone.")
     public String deleteRole(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Role name to delete", required = true) 
+            @McpToolParam(description = "Role name to delete", required = true)
             String roleName) {
         try {
             JsonNode result = securityRepository.deleteRole(authorizerName, roleName);
@@ -203,11 +203,11 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Set permissions for a role in the Druid authorization system. Provide permissions as JSON array.")
     public String setRolePermissions(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Role name to update", required = true) 
+            @McpToolParam(description = "Role name to update", required = true)
             String roleName,
-            @McpToolParam(description = "Permissions JSON array (e.g., '[{\"resource\":{\"name\":\".*\",\"type\":\"DATASOURCE\"},\"action\":\"READ\"}]')", required = true) 
+            @McpToolParam(description = "Permissions JSON array (e.g., '[{\"resource\":{\"name\":\".*\",\"type\":\"DATASOURCE\"},\"action\":\"READ\"}]')", required = true)
             String permissions) {
         try {
             JsonNode result = securityRepository.setRolePermissions(authorizerName, roleName, permissions);
@@ -227,11 +227,11 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Assign a role to a user in the Druid authorization system")
     public String assignRoleToUser(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Username to assign role to", required = true) 
+            @McpToolParam(description = "Username to assign role to", required = true)
             String userName,
-            @McpToolParam(description = "Role name to assign", required = true) 
+            @McpToolParam(description = "Role name to assign", required = true)
             String roleName) {
         try {
             JsonNode result = securityRepository.assignRoleToUser(authorizerName, userName, roleName);
@@ -251,11 +251,11 @@ public class AuthorizationTools {
      */
     @McpTool(description = "Unassign a role from a user in the Druid authorization system")
     public String unassignRoleFromUser(
-            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) 
+            @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true)
             String authorizerName,
-            @McpToolParam(description = "Username to unassign role from", required = true) 
+            @McpToolParam(description = "Username to unassign role from", required = true)
             String userName,
-            @McpToolParam(description = "Role name to unassign", required = true) 
+            @McpToolParam(description = "Role name to unassign", required = true)
             String roleName) {
         try {
             JsonNode result = securityRepository.unassignRoleFromUser(authorizerName, userName, roleName);
