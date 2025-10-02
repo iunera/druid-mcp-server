@@ -18,63 +18,22 @@ package com.iunera.druidmcpserver.basicsecurity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
-/**
- * Authentication Tool Provider for Druid MCP Server
- * Provides authentication-related tools for user management in Druid basic security
- */
+@ConditionalOnProperty(prefix = "druid.mcp.readonly", name = "enabled", havingValue = "false", matchIfMissing = true)
 @Component
-public class AuthenticationTools {
+public class WriteAuthenticationTools {
 
     private final SecurityRepository securityRepository;
-    private final HealthStatusRepository healthStatusRepository;
     private final ObjectMapper objectMapper;
 
-    public AuthenticationTools(SecurityRepository securityRepository, HealthStatusRepository healthStatusRepository, ObjectMapper objectMapper) {
+    public WriteAuthenticationTools(SecurityRepository securityRepository, ObjectMapper objectMapper) {
         this.securityRepository = securityRepository;
-        this.healthStatusRepository = healthStatusRepository;
         this.objectMapper = objectMapper;
-    }
-
-    /**
-     * List all users in the authentication system
-     */
-    @McpTool(description = "List all users in the Druid authentication system for a specific authenticator")
-    public String listAuthenticationUsers(
-            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true)
-            String authenticatorName) {
-        try {
-            JsonNode result = securityRepository.getAllUsers(authenticatorName);
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to list authentication users: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get specific user details from the authentication system
-     */
-    @McpTool(description = "Get details of a specific user from the Druid authentication system")
-    public String getAuthenticationUser(
-            @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true)
-            String authenticatorName,
-            @McpToolParam(description = "Username to retrieve", required = true)
-            String userName) {
-        try {
-            JsonNode result = securityRepository.getUser(authenticatorName, userName);
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get authentication user: " + e.getMessage())
-                    .toString();
-        }
     }
 
     /**

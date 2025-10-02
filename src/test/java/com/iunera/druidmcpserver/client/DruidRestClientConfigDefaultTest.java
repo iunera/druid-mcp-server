@@ -20,6 +20,7 @@ import com.iunera.druidmcpserver.config.DruidRestClientConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test for default configuration without environment variable overrides
  */
 @SpringBootTest
+@TestPropertySource(properties = {"druid.router.url=http://localhost:8888"})
 class DruidRestClientConfigDefaultTest {
 
     @Autowired

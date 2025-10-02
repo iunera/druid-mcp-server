@@ -41,18 +41,26 @@ class SecurityIntegrationTest {
     private SecurityRepository securityRepository;
 
     @Autowired
-    private AuthenticationTools authenticationTools;
+    private ReadAuthenticationTools readAuthenticationTools;
 
     @Autowired
-    private AuthorizationTools authorizationTools;
+    private WriteAuthenticationTools writeAuthenticationTools;
+
+    @Autowired
+    private ReadAuthorizationTools readAuthorizationTools;
+
+    @Autowired
+    private WriteAuthorizationTools writeAuthorizationTools;
 
     @Test
     void testSecurityServicesAreInjected() {
         System.out.println("[DEBUG_LOG] Testing security services injection");
 
         assertNotNull(securityRepository, "SecurityRepository should be injected");
-        assertNotNull(authenticationTools, "AuthenticationTools should be injected");
-        assertNotNull(authorizationTools, "AuthorizationTools should be injected");
+        assertNotNull(readAuthenticationTools, "ReadAuthenticationTools should be injected");
+        assertNotNull(writeAuthenticationTools, "WriteAuthenticationTools should be injected");
+        assertNotNull(readAuthorizationTools, "ReadAuthorizationTools should be injected");
+        assertNotNull(writeAuthorizationTools, "WriteAuthorizationTools should be injected");
 
         System.out.println("[DEBUG_LOG] All security services are properly injected");
     }
@@ -62,17 +70,19 @@ class SecurityIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing AuthenticationTools methods");
 
         // Check that key methods exist
-        Method[] methods = authenticationTools.getClass().getDeclaredMethods();
-        boolean hasListUsers = Arrays.stream(methods)
+        Method[] readMethods = readAuthenticationTools.getClass().getDeclaredMethods();
+        Method[] writeMethods = writeAuthenticationTools.getClass().getDeclaredMethods();
+
+        boolean hasListUsers = Arrays.stream(readMethods)
                 .anyMatch(m -> m.getName().equals("listAuthenticationUsers"));
-        boolean hasCreateUser = Arrays.stream(methods)
+        boolean hasCreateUser = Arrays.stream(writeMethods)
                 .anyMatch(m -> m.getName().equals("createAuthenticationUser"));
-        boolean hasSetPassword = Arrays.stream(methods)
+        boolean hasSetPassword = Arrays.stream(writeMethods)
                 .anyMatch(m -> m.getName().equals("setUserPassword"));
 
-        assertTrue(hasListUsers, "AuthenticationTools should have listAuthenticationUsers method");
-        assertTrue(hasCreateUser, "AuthenticationTools should have createAuthenticationUser method");
-        assertTrue(hasSetPassword, "AuthenticationTools should have setUserPassword method");
+        assertTrue(hasListUsers, "ReadAuthenticationTools should have listAuthenticationUsers method");
+        assertTrue(hasCreateUser, "WriteAuthenticationTools should have createAuthenticationUser method");
+        assertTrue(hasSetPassword, "WriteAuthenticationTools should have setUserPassword method");
 
         System.out.println("[DEBUG_LOG] AuthenticationTools methods verified");
     }
@@ -82,20 +92,22 @@ class SecurityIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing AuthorizationTools methods");
 
         // Check that key methods exist
-        Method[] methods = authorizationTools.getClass().getDeclaredMethods();
-        boolean hasListRoles = Arrays.stream(methods)
+        Method[] readMethods = readAuthorizationTools.getClass().getDeclaredMethods();
+        Method[] writeMethods = writeAuthorizationTools.getClass().getDeclaredMethods();
+
+        boolean hasListRoles = Arrays.stream(readMethods)
                 .anyMatch(m -> m.getName().equals("listRoles"));
-        boolean hasCreateRole = Arrays.stream(methods)
+        boolean hasCreateRole = Arrays.stream(writeMethods)
                 .anyMatch(m -> m.getName().equals("createRole"));
-        boolean hasSetPermissions = Arrays.stream(methods)
+        boolean hasSetPermissions = Arrays.stream(writeMethods)
                 .anyMatch(m -> m.getName().equals("setRolePermissions"));
-        boolean hasAssignRole = Arrays.stream(methods)
+        boolean hasAssignRole = Arrays.stream(writeMethods)
                 .anyMatch(m -> m.getName().equals("assignRoleToUser"));
 
-        assertTrue(hasListRoles, "AuthorizationTools should have listRoles method");
-        assertTrue(hasCreateRole, "AuthorizationTools should have createRole method");
-        assertTrue(hasSetPermissions, "AuthorizationTools should have setRolePermissions method");
-        assertTrue(hasAssignRole, "AuthorizationTools should have assignRoleToUser method");
+        assertTrue(hasListRoles, "ReadAuthorizationTools should have listRoles method");
+        assertTrue(hasCreateRole, "WriteAuthorizationTools should have createRole method");
+        assertTrue(hasSetPermissions, "WriteAuthorizationTools should have setRolePermissions method");
+        assertTrue(hasAssignRole, "WriteAuthorizationTools should have assignRoleToUser method");
 
         System.out.println("[DEBUG_LOG] AuthorizationTools methods verified");
     }
@@ -105,13 +117,20 @@ class SecurityIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing security tools return correct types");
 
         // Test that methods return String (as required by MCP tools)
-        Method[] authMethods = authenticationTools.getClass().getDeclaredMethods();
-        Method[] authzMethods = authorizationTools.getClass().getDeclaredMethods();
+        Method[] authReadMethods = readAuthenticationTools.getClass().getDeclaredMethods();
+        Method[] authWriteMethods = writeAuthenticationTools.getClass().getDeclaredMethods();
+        Method[] authzReadMethods = readAuthorizationTools.getClass().getDeclaredMethods();
+        Method[] authzWriteMethods = writeAuthorizationTools.getClass().getDeclaredMethods();
 
         // Check authentication methods
-        for (Method method : authMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get") || 
-                method.getName().startsWith("create") || method.getName().startsWith("delete") || 
+        for (Method method : authReadMethods) {
+            if (method.getName().startsWith("list") || method.getName().startsWith("get")) {
+                assertEquals(String.class, method.getReturnType(),
+                        "AuthenticationTools method " + method.getName() + " should return String");
+            }
+        }
+        for (Method method : authWriteMethods) {
+            if (method.getName().startsWith("create") || method.getName().startsWith("delete") ||
                 method.getName().startsWith("set")) {
                 assertEquals(String.class, method.getReturnType(),
                         "AuthenticationTools method " + method.getName() + " should return String");
@@ -119,9 +138,14 @@ class SecurityIntegrationTest {
         }
 
         // Check authorization methods
-        for (Method method : authzMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get") || 
-                method.getName().startsWith("create") || method.getName().startsWith("delete") || 
+        for (Method method : authzReadMethods) {
+            if (method.getName().startsWith("list") || method.getName().startsWith("get")) {
+                assertEquals(String.class, method.getReturnType(),
+                        "AuthorizationTools method " + method.getName() + " should return String");
+            }
+        }
+        for (Method method : authzWriteMethods) {
+            if (method.getName().startsWith("create") || method.getName().startsWith("delete") ||
                 method.getName().startsWith("set") || method.getName().startsWith("assign") ||
                 method.getName().startsWith("unassign")) {
                 assertEquals(String.class, method.getReturnType(),
@@ -141,10 +165,10 @@ class SecurityIntegrationTest {
         // or successful responses if Druid is running with security enabled
 
         try {
-            String result = authenticationTools.listAuthenticationUsers("db");
+            String result = readAuthenticationTools.listAuthenticationUsers("db");
             assertNotNull(result, "listAuthenticationUsers should return a non-null result");
             assertInstanceOf(String.class, result, "listAuthenticationUsers should return a String");
-            System.out.println("[DEBUG_LOG] listAuthenticationUsers result: " + 
+            System.out.println("[DEBUG_LOG] listAuthenticationUsers result: " +
                               result.substring(0, Math.min(100, result.length())));
         } catch (Exception e) {
             System.out.println("[DEBUG_LOG] Authentication tool method failed (expected if Druid security not available): " + e.getMessage());
@@ -158,10 +182,10 @@ class SecurityIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing AuthorizationTools basic functionality");
 
         try {
-            String result = authorizationTools.listRoles("db");
+            String result = readAuthorizationTools.listRoles("db");
             assertNotNull(result, "listRoles should return a non-null result");
             assertInstanceOf(String.class, result, "listRoles should return a String");
-            System.out.println("[DEBUG_LOG] listRoles result: " + 
+            System.out.println("[DEBUG_LOG] listRoles result: " +
                               result.substring(0, Math.min(100, result.length())));
         } catch (Exception e) {
             System.out.println("[DEBUG_LOG] Authorization tool method failed (expected if Druid security not available): " + e.getMessage());
@@ -176,7 +200,7 @@ class SecurityIntegrationTest {
 
         // Verify that SecurityRepository has the expected methods
         Method[] methods = securityRepository.getClass().getDeclaredMethods();
-        
+
         boolean hasGetAllUsers = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("getAllUsers"));
         boolean hasCreateUser = Arrays.stream(methods)
@@ -199,29 +223,34 @@ class SecurityIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing security tool parameter counts");
 
         // Test that methods have the expected number of parameters
-        Method[] authMethods = authenticationTools.getClass().getDeclaredMethods();
-        
-        for (Method method : authMethods) {
+        Method[] authReadMethods = readAuthenticationTools.getClass().getDeclaredMethods();
+
+        for (Method method : authReadMethods) {
             if (method.getName().equals("listAuthenticationUsers")) {
-                assertEquals(1, method.getParameterCount(), 
+                assertEquals(1, method.getParameterCount(),
                            "listAuthenticationUsers should have 1 parameter (authenticatorName)");
-            } else if (method.getName().equals("createAuthenticationUser")) {
-                assertEquals(2, method.getParameterCount(), 
+            }
+        }
+
+        Method[] authWriteMethods = writeAuthenticationTools.getClass().getDeclaredMethods();
+        for (Method method : authWriteMethods) {
+            if (method.getName().equals("createAuthenticationUser")) {
+                assertEquals(2, method.getParameterCount(),
                            "createAuthenticationUser should have 2 parameters (authenticatorName, userName)");
             } else if (method.getName().equals("setUserPassword")) {
-                assertEquals(3, method.getParameterCount(), 
+                assertEquals(3, method.getParameterCount(),
                            "setUserPassword should have 3 parameters (authenticatorName, userName, password)");
             }
         }
 
-        Method[] authzMethods = authorizationTools.getClass().getDeclaredMethods();
-        
-        for (Method method : authzMethods) {
+        Method[] authzWriteMethods = writeAuthorizationTools.getClass().getDeclaredMethods();
+
+        for (Method method : authzWriteMethods) {
             if (method.getName().equals("assignRoleToUser")) {
-                assertEquals(3, method.getParameterCount(), 
+                assertEquals(3, method.getParameterCount(),
                            "assignRoleToUser should have 3 parameters (authorizerName, userName, roleName)");
             } else if (method.getName().equals("setRolePermissions")) {
-                assertEquals(3, method.getParameterCount(), 
+                assertEquals(3, method.getParameterCount(),
                            "setRolePermissions should have 3 parameters (authorizerName, roleName, permissions)");
             }
         }
