@@ -20,9 +20,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
+@ConditionalOnProperty(prefix = "druid.extension.druid-basic-security", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Component
 public class ReadAuthorizationTools {
 

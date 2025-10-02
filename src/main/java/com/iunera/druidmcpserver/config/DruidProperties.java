@@ -34,6 +34,7 @@ public class DruidProperties {
     private final Coordinator coordinator = new Coordinator();
     private final Auth auth = new Auth();
     private final Ssl ssl = new Ssl();
+    private final Extension extension = new Extension();
 
     public Router getRouter() {
         return router;
@@ -49,6 +50,10 @@ public class DruidProperties {
 
     public Ssl getSsl() {
         return ssl;
+    }
+
+    public Extension getExtension() {
+        return extension;
     }
 
     public static class Router {
@@ -132,6 +137,36 @@ public class DruidProperties {
 
         public void setSkipVerification(boolean skipVerification) {
             this.skipVerification = skipVerification;
+        }
+    }
+
+    /**
+     * Druid extensions configuration.
+     */
+    public static class Extension {
+        private final DruidBasicSecurity druidBasicSecurity = new DruidBasicSecurity();
+
+        public DruidBasicSecurity getDruidBasicSecurity() {
+            return druidBasicSecurity;
+        }
+    }
+
+    /**
+     * Configuration for Druid Basic Security extension.
+     * Maps property: druid.extension.druid-basic-security.enabled
+     */
+    public static class DruidBasicSecurity {
+        /**
+         * Enable/disable all Basic Security tools and resources in this server.
+         */
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }

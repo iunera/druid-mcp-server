@@ -52,12 +52,16 @@ druid:
     enabled: false
     skip-verification: false
 
+  extension:
+    druid-basic-security:
+      enabled: true
+
   mcp:
     security:
       oauth2:
         enabled: true
     readonly:
-      enabled: false
+      enabled: true
 
 server:
   port: 8080
