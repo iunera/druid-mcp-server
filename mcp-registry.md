@@ -10,6 +10,7 @@ The MCP Registry is a community-driven registry service that enables discovery a
 - [Publishing Guide](https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md)
 - [Server JSON Schema](https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/server-json/generic-server-json.md)
 - [Registry API Reference](https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/README.md)
+- Migration checklist: https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/server-json/CHANGELOG.md#migration-checklist-for-publishers
 
 ## Prerequisites
 
@@ -153,7 +154,7 @@ Ensure your `server.json` is up-to-date with the latest version and metadata:
 
 ```bash
 # Publish your server
-./mcp-publisher publish \
+./mcp-publisher publish  \
   --registry-url "https://registry.modelcontextprotocol.io" \
   --mcp-file "./server.json"
 
