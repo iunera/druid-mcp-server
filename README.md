@@ -203,6 +203,28 @@ The MCP server auto-discovers all tools via annotations. In Read-only mode, any 
 | **Functionality** | `testIngestionFunctionality` | Test ingestion functionality | None |
 | **Functionality** | `validateClusterConnectivity` | Validate connectivity between cluster components | None |
 
+### Basic Security
+
+| Feature | Tool | Description | Parameters |
+|---------|------|-------------|------------|
+| **Authentication** | `listAuthenticationUsers` | List all users in the Druid authentication system for a specific authenticator | `authenticatorName` (String) |
+| **Authentication** | `getAuthenticationUser` | Get details of a specific user from the Druid authentication system | `authenticatorName` (String), `userName` (String) |
+| **Authentication** | `createAuthenticationUser` | Create a new user in the Druid authentication system | `authenticatorName` (String), `userName` (String) |
+| **Authentication** | `deleteAuthenticationUser` | Delete a user from the Druid authentication system. Use with caution as this action cannot be undone. | `authenticatorName` (String), `userName` (String) |
+| **Authentication** | `setUserPassword` | Set or update the password for a user in the Druid authentication system | `authenticatorName` (String), `userName` (String), `password` (String) |
+| **Authorization** | `listAuthorizationUsers` | List all users in the Druid authorization system for a specific authorizer | `authorizerName` (String) |
+| **Authorization** | `getAuthorizationUser` | Get details of a specific user from the Druid authorization system including their roles | `authorizerName` (String), `userName` (String) |
+| **Authorization** | `listRoles` | List all roles in the Druid authorization system for a specific authorizer | `authorizerName` (String) |
+| **Authorization** | `getRole` | Get details of a specific role from the Druid authorization system including its permissions | `authorizerName` (String), `roleName` (String) |
+| **Authorization** | `createAuthorizationUser` | Create a new user in the Druid authorization system | `authorizerName` (String), `userName` (String) |
+| **Authorization** | `deleteAuthorizationUser` | Delete a user from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName` (String), `userName` (String) |
+| **Authorization** | `createRole` | Create a new role in the Druid authorization system | `authorizerName` (String), `roleName` (String) |
+| **Authorization** | `deleteRole` | Delete a role from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName` (String), `roleName` (String) |
+| **Authorization** | `setRolePermissions` | Set permissions for a role in the Druid authorization system. Provide permissions as JSON array. | `authorizerName` (String), `roleName` (String), `permissions` (String) |
+| **Authorization** | `assignRoleToUser` | Assign a role to a user in the Druid authorization system | `authorizerName` (String), `userName` (String), `roleName` (String) |
+| **Authorization** | `unassignRoleFromUser` | Unassign a role from a user in the Druid authorization system | `authorizerName` (String), `userName` (String), `roleName` (String) |
+| **Configuration** | `getAuthenticatorChainAndAuthorizers` | Get configured authenticatorChain and authorizers form the Basic Auth configuration. This information is important for any other security tool and LLMs need to call this tool first. | None |
+
 ## Available Resources by Feature
 
 | Feature | Resource URI Pattern | Description | Parameters |
@@ -242,6 +264,7 @@ The application can be configured using environment variables, which is the reco
 #### MCP Server Configuration
 - `DRUID_MCP_SECURITY_OAUTH2_ENABLED`: Enables or disables OAuth2 security for client authentication (true/false).
 - `DRUID_MCP_READONLY_ENABLED`: Enables or disables read-only mode (true/false).
+- `DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED`: Enables or disables the basic security feature (true/false). When disabled, basic security tools are not registered.
 - `SPRING_AI_MCP_SERVER_NAME`: The name of the MCP server.
 - `SPRING_AI_MCP_SERVER_PROTOCOL`: The protocol used by the MCP server (e.g., `streamable`).
 
@@ -569,6 +592,7 @@ docker run --rm -p 8080:8080 \
     - Task control (killTask)
     - Multi-stage SQL task operations (queryDruidMultiStage, queryDruidMultiStageWithContext, getMultiStageQueryTaskStatus, cancelMultiStageQueryTask)
     - Ingestion spec submission and templates (createIngestionSpec, createBatchIngestionTemplate)
+    - Basic security changing tools (e.g., `createAuthenticationUser`, `deleteAuthenticationUser`, `setUserPassword`, `createAuthorizationUser`, `deleteAuthorizationUser`, `createRole`, `deleteRole`, `setRolePermissions`, `assignRoleToUser`, `unassignRoleFromUser`)
 - Read-only-safe tools remain available, including SQL queries (queryDruidSql), metadata and status lookups, health diagnostics, task and segment inspection, etc.
 
 
