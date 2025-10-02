@@ -58,7 +58,7 @@ class SecurityIntegrationTest {
     }
 
     @Test
-    void testAuthenticationToolProviderMethods() {
+    void testAuthenticationToolsMethods() {
         System.out.println("[DEBUG_LOG] Testing AuthenticationTools methods");
 
         // Check that key methods exist
@@ -78,7 +78,7 @@ class SecurityIntegrationTest {
     }
 
     @Test
-    void testAuthorizationToolProviderMethods() {
+    void testAuthorizationToolsMethods() {
         System.out.println("[DEBUG_LOG] Testing AuthorizationTools methods");
 
         // Check that key methods exist
@@ -133,7 +133,7 @@ class SecurityIntegrationTest {
     }
 
     @Test
-    void testAuthenticationToolProviderFunctionality() {
+    void testAuthenticationToolsFunctionality() {
         System.out.println("[DEBUG_LOG] Testing AuthenticationTools basic functionality");
 
         // Test that we can call the methods without exceptions
@@ -154,7 +154,7 @@ class SecurityIntegrationTest {
     }
 
     @Test
-    void testAuthorizationToolProviderFunctionality() {
+    void testAuthorizationToolsFunctionality() {
         System.out.println("[DEBUG_LOG] Testing AuthorizationTools basic functionality");
 
         try {
