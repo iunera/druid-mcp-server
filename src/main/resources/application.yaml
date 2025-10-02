@@ -61,7 +61,7 @@ druid:
       oauth2:
         enabled: true
     readonly:
-      enabled: true
+      enabled: false
 
 server:
   port: 8080
