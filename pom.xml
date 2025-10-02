@@ -63,6 +63,7 @@
 
     <properties>
         <java.version>24</java.version>
+        <spring.ai.version>1.1.0-M2</spring.ai.version>
     </properties>
 
     <dependencyManagement>
@@ -70,7 +71,7 @@
             <dependency>
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
-                <version>1.1.0-M2</version>
+                <version>${spring.ai.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
