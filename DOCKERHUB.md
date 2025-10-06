@@ -85,7 +85,7 @@ Optimize storage and query performance through intelligent segment compaction:
 | `deleteCompactionConfigForDatasource` | Remove compaction config | `datasourceName` |
 | `viewCompactionStatus` | Monitor compaction progress | `datasourceName` (optional) |
 
-### 📥 Ingestion Management Tools (9 tools)
+### 📥 Ingestion Management Tools (10 tools)
 Streamline data ingestion with batch and streaming capabilities:
 
 | Tool | Purpose | Key Parameters |
@@ -115,6 +115,29 @@ Ensure optimal cluster performance with comprehensive monitoring:
 | `testQueryFunctionality` | Validate query services | None |
 | `testIngestionFunctionality` | Validate ingestion pipeline | None |
 | `validateClusterConnectivity` | Network connectivity check | None |
+
+### 🔐 Basic Security Tools (17 tools)
+Manage users, roles, and permissions with the Druid Basic Security extension:
+
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `listAuthenticationUsers` | List all users in the Druid authentication system for a specific authenticator | `authenticatorName` |
+| `getAuthenticationUser` | Get details of a specific user from the Druid authentication system | `authenticatorName`, `userName` |
+| `createAuthenticationUser` | Create a new user in the Druid authentication system | `authenticatorName`, `userName` |
+| `deleteAuthenticationUser` | Delete a user from the Druid authentication system. Use with caution as this action cannot be undone. | `authenticatorName`, `userName` |
+| `setUserPassword` | Set or update the password for a user in the Druid authentication system | `authenticatorName`, `userName`, `password` |
+| `listAuthorizationUsers` | List all users in the Druid authorization system for a specific authorizer | `authorizerName` |
+| `getAuthorizationUser` | Get details of a specific user from the Druid authorization system including their roles | `authorizerName`, `userName` |
+| `listRoles` | List all roles in the Druid authorization system for a specific authorizer | `authorizerName` |
+| `getRole` | Get details of a specific role from the Druid authorization system including its permissions | `authorizerName`, `roleName` |
+| `createAuthorizationUser` | Create a new user in the Druid authorization system | `authorizerName`, `userName` |
+| `deleteAuthorizationUser` | Delete a user from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName`, `userName` |
+| `createRole` | Create a new role in the Druid authorization system | `authorizerName`, `roleName` |
+| `deleteRole` | Delete a role from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName`, `roleName` |
+| `setRolePermissions` | Set permissions for a role in the Druid authorization system. Provide permissions as JSON array. | `authorizerName`, `roleName`, `permissions` |
+| `assignRoleToUser` | Assign a role to a user in the Druid authorization system | `authorizerName`, `userName`, `roleName` |
+| `unassignRoleFromUser` | Unassign a role from a user in the Druid authorization system | `authorizerName`, `userName`, `roleName` |
+| `getAuthenticatorChainAndAuthorizers` | Get configured authenticatorChain and authorizers form the Basic Auth configuration. This information is important for any other security tool and LLMs need to call this tool first. | None |
 
 ## 🔗 MCP Resources & Prompts
 
@@ -161,10 +184,11 @@ docker run -p 8080:8080 \
 ### Environment Variables
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `DRUID_BROKER_URL` | Druid broker endpoint | `http://localhost:8082` |
-| `DRUID_COORDINATOR_URL` | Druid coordinator endpoint | `http://localhost:8081` |
+| `DRUID_ROUTER_URL` | Druid router endpoint | `http://localhost:8888` |
 | `SPRING_AI_MCP_SERVER_NAME` | MCP server identifier | `druid-mcp-server` |
 | `SERVER_PORT` | HTTP server port | `8080` |
+| `DRUID_MCP_READONLY_ENABLED` | Enables or disables read-only mode. | `false` |
+| `DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED` | Enables or disables the basic security feature. | `true` |
 
 ### Volume Mounts
 ```bash
