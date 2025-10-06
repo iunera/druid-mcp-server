@@ -644,7 +644,6 @@ A specialized Apache Druid extension for ingesting and analyzing code-related da
 - **Proper Observability**: Comprehensive metrics and tracing
 - **Enhanced Monitoring**: Advanced cluster monitoring and alerting capabilities
 - **Advanced Analytics**: Machine learning-powered insights and recommendations
-- **Security Enhancements**: Advanced authentication and authorization features
 - **Kubernetes Support**: Proper deployment on Kubernetes
 
 ---
