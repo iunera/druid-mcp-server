@@ -19,7 +19,7 @@ This tells your client to connect to the Streamable HTTP endpoint. You must run 
 docker run --rm -p 8080:8080 \
   -e DRUID_ROUTER_URL=http://host.docker.internal:8888 \
   -e DRUID_MCP_SECURITY_OAUTH2_ENABLED=true \
-  iunera/druid-mcp-server:1.4.0
+  iunera/druid-mcp-server:1.4.1
 ```
 
 2) Obtain a token using client-credentials grant (default client: `oidc-client` / `secret`):
@@ -45,7 +45,7 @@ Expose the HTTP port and configure Druid access via environment variables:
 ```bash
 docker run --rm -p 8080:8080 \
   -e DRUID_ROUTER_URL=http://host.docker.internal:8888 \
-  iunera/druid-mcp-server:1.4.0
+  iunera/druid-mcp-server:1.4.1
 ```
 
 Streamable HTTP endpoint will be available at:
