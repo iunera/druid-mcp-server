@@ -41,7 +41,7 @@ public class SecurityRepository {
      */
     private void ensureMutableRoles(String roleName) {
         if ("admin".equalsIgnoreCase(roleName.trim()) || "druid_system".equalsIgnoreCase(roleName.trim())) {
-            throw new IllegalArgumentException("The " + roleName + " role cannot be modified.");
+            throw new IllegalArgumentException("The " + roleName + " role cannot be modified because it's defined as immutable.");
         }
     }
 
