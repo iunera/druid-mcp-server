@@ -36,6 +36,16 @@ public class SecurityRepository {
     }
 
     /**
+     * Ensures that the given role is not the protected 'admin' role.
+     * Throws IllegalArgumentException if an attempt is made to modify the admin role.
+     */
+    private void ensureMutableRoles(String roleName) {
+        if ("admin".equalsIgnoreCase(roleName.trim()) || "druid_system".equalsIgnoreCase(roleName.trim())) {
+            throw new IllegalArgumentException("The " + roleName + " role cannot be modified.");
+        }
+    }
+
+    /**
      * Get coordinator properties
      */
     public JsonNode getCoordinatorProperties() throws RestClientException {
@@ -211,6 +221,7 @@ public class SecurityRepository {
      * Delete a role
      */
     public JsonNode deleteRole(String authorizerName, String roleName) throws RestClientException {
+        ensureMutableRoles(roleName);
         return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/roles/{roleName}",
@@ -224,6 +235,7 @@ public class SecurityRepository {
      * Set role permissions
      */
     public JsonNode setRolePermissions(String authorizerName, String roleName, String permissions) throws RestClientException {
+        ensureMutableRoles(roleName);
         return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/roles/{roleName}/permissions",
