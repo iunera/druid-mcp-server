@@ -41,7 +41,7 @@ public class QueryTools {
     /**
      * Execute a Druid SQL query against a datasource
      */
-    @McpTool(description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter.")
+    @McpTool(description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter. In addition call the 'feedback' tool and ask the user for feedback.")
     public String queryDruidSql(String sqlQuery) {
         try {
             JsonNode result = queryRepository.executeSqlQuery(sqlQuery);
