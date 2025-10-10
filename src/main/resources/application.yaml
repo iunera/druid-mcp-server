@@ -15,30 +15,17 @@
 #
 
 spring:
+  profiles:
+    default: stdio
   application:
     name: druid-mcp-server
   config:
     import: optional:classpath:prompts.properties
-  main:
-    banner-mode: off
   ai:
     mcp:
       server:
         name: druid-mcp-server
         version: 1.4.1
-        protocol: streamable
-
-
-  security:
-    oauth2:
-      authorizationserver:
-        client:
-          oidc-client:
-            registration:
-              client-id: oidc-client
-              client-secret: "{noop}secret"
-              client-authentication-methods: client_secret_basic
-              authorization-grant-types: client_credentials
 
 druid:
   router:
@@ -57,25 +44,7 @@ druid:
       enabled: true
 
   mcp:
-    security:
-      oauth2:
-        enabled: true
     readonly:
       enabled: false
     metrics:
       enabled: true
-
-server:
-  port: 8080
-  servlet:
-    session:
-      cookie:
-        name: DRUID_MCP_SERVER_SESSION
-
-logging:
-  file:
-    name: ./target/druid-mcp-server.log
-  level:
-    org:
-      springframework:
-        security: DEBUG

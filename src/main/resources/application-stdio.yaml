@@ -1,0 +1,29 @@
+# Profile: stdio (default)
+spring:
+  main:
+    banner-mode: off
+    web-application-type: none
+  ai:
+    mcp:
+      server:
+        stdio: true
+
+druid:
+  mcp:
+    security:
+      oauth2:
+        enabled: false
+
+# server port is irrelevant for stdio (web-application-type: none), kept for consistency
+server:
+  port: 8080
+  servlet:
+    session:
+      cookie:
+        name: DRUID_MCP_SERVER_SESSION
+
+logging:
+  pattern:
+    console: ""
+  file:
+    name: ./target/druid-mcp-server.log
