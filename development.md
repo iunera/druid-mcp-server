@@ -25,9 +25,9 @@ mvn clean package
 
 ### Key Dependencies
 - Spring Boot: 3.5.6 (main)
-- Spring AI MCP Server: 1.1.0-M2 (with official MCP annotations support)
-- Spring AI BOM: 1.1.0-M2
-- Spring AI MCP Annotations: Included in Spring AI 1.1.0-M2
+- Spring AI MCP Server: 1.1.0-M3 (with official MCP annotations support)
+- Spring AI BOM: 1.1.0-M3
+- Spring AI MCP Annotations: Included in Spring AI 1.1.0-M3
 
 ### Repository Configuration
 The project requires custom Maven repositories for Spring AI milestones/snapshots:
@@ -80,23 +80,26 @@ The Inspector provides a web UI and a CLI to list tools/resources/prompts, call 
 #### Start the Druid MCP Server
 
 ```bash
-java -jar target/druid-mcp-server-1.4.0.jar
+java -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 Or Using Docker (HTTP/SSE):
 
 ```bash
 docker run --rm -p 8080:8080 \
+  -e SPRING_PROFILES_ACTIVE=http \
   -e DRUID_ROUTER_URL=http://host.docker.internal:8888 \
-  iunera/druid-mcp-server:1.2.2
+  -e DRUID_COORDINATOR_URL=http://host.docker.internal:8081 \
+  -e DRUID_AUTH_USERNAME=admin \
+  -e DRUID_AUTH_PASSWORD=password \
+  iunera/druid-mcp-server:latest
 ```
 
 ```bash
 # Obtain an access token using the built-in Authorization Server
-ACCESS_TOKEN=$(curl -s -XPOST "http://localhost:8080/oauth2/token" \
+export MCP_OAUTH_TOKEN=$(curl -s -XPOST "http://localhost:8080/oauth2/token" \
   --data grant_type=client_credentials \
-  --user "oidc-client:secret" | jq -r '.access_token')
-export MCP_OAUTH_TOKEN="$ACCESS_TOKEN"
+  --user "oidc-client:secret" | jq -r ".access_token")
 echo $MCP_OAUTH_TOKEN 
 ```
 
@@ -105,10 +108,10 @@ echo $MCP_OAUTH_TOKEN
 - Adds Authorization header if MCP_OAUTH_TOKEN is set
 
 ```bash
-npx @modelcontextprotocol/inspector --cli http://localhost:8080/mcp --transport http --method tools/list --header "Authorization: Bearer ${MCP_OAUTH_TOKEN}"
-npx @modelcontextprotocol/inspector --cli http://localhost:8080/mcp --method tools/call  --header "Authorization: Bearer ${MCP_OAUTH_TOKEN}" --tool-name listDatasources
+npx @modelcontextprotocol/inspector@0.16.8 --cli http://localhost:8080/mcp --transport http --method tools/list --header "Authorization: Bearer ${MCP_OAUTH_TOKEN}"
+npx @modelcontextprotocol/inspector@0.16.8 --cli http://localhost:8080/mcp --method tools/call  --header "Authorization: Bearer ${MCP_OAUTH_TOKEN}" --tool-name listDatasources
 
-npx @modelcontextprotocol/inspector --cli http://localhost:8080/mcp \
+npx @modelcontextprotocol/inspector@0.16.8 --cli http://localhost:8080/mcp \
   --transport http \
   --header "Authorization: Bearer $MCP_OAUTH_TOKEN" \
   --method tools/call \
@@ -123,10 +126,18 @@ The Inspector can also launch the server via STDIO using the config file at proj
 CLI examples:
 ```bash
 # List tools
-npx @modelcontextprotocol/inspector --cli \
+npx @modelcontextprotocol/inspector@0.16.8 --cli \
   --config examples/stdio/mcpservers-stdio.json \
   --server druid-mcp-server \
   --method tools/list
+  
+npx @modelcontextprotocol/inspector@0.16.8 --cli \
+  --config examples/stdio/mcpservers-stdio.json \
+  --server druid-mcp-server \
+  --method tools/call \
+  --tool-name listDatasources
+  
+
 ```
 
 ### References
@@ -270,7 +281,6 @@ Once all services are running:
 - **MCP Server**: http://localhost:8080
 - **Druid Router**: http://localhost:8888 (unified Druid UI)
 - **Druid Coordinator**: http://localhost:8081
-- **Druid Broker**: http://localhost:8082
 
 ## Architecture
 
@@ -348,7 +358,7 @@ src/
 
 ### Key Technologies
 - Spring Boot 3.5.6 - Main framework
-- Spring AI MCP Server 1.1.0-M1 - MCP protocol implementation
+- Spring AI MCP Server 1.1.0-M3 - MCP protocol implementation
 - Jackson - JSON processing
 - RestClient - HTTP client for Druid communication
 - JUnit 5 - Testing framework
@@ -382,14 +392,9 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.4.0.jar
+     -jar target/druid-mcp-server-1.5.0.jar
 ```
 
-#### SSE Transport (HTTP-based)
-```bash
-java -jar target/druid-mcp-server-1.4.0.jar
-# Server available at http://localhost:8080
-```
 
 ## Error Handling
 
@@ -461,15 +466,12 @@ public class ExampleToolProvider {
 - Verify dependency injection with `assertNotNull()`
 - Use `@TestPropertySource` for test-specific configuration
 
-### MCP Client Configuration
-Ready-to-use MCP configuration in `mcp-servers-config.json` for LLM clients supporting both STDIO and SSE transports.
-
 ### Debugging Tips
 1. Enable debug logging in tests using `[DEBUG_LOG]` prefix
 2. Check Druid connectivity before running integration tests
 3. Verify MCP tool registration through Spring Boot actuator endpoints
-4. Test both transport modes (STDIO/SSE) for compatibility
-5. Monitor application logs in `target/druid-mcp-server.log`
+4. Test both transport modes (STDIO/HTTP) for compatibility
+
 
 ### Common Issues
 - STDIO transport: Requires banner and console logging disabled

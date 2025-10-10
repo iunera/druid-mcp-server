@@ -35,5 +35,4 @@ build/
 ### Environment files ###
 .env
 key.pem
-/mcp-publisher
-/postman_collection.json
+

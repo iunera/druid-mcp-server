@@ -1,0 +1,37 @@
+# Profile: http (SSE/HTTP server mode)
+spring:
+  ai:
+    mcp:
+      server:
+        protocol: streamable
+  security:
+    oauth2:
+      authorizationserver:
+        client:
+          oidc-client:
+            registration:
+              client-id: oidc-client
+              client-secret: "{noop}secret"
+              client-authentication-methods: client_secret_basic
+              authorization-grant-types: client_credentials
+
+druid:
+  mcp:
+    security:
+      oauth2:
+        enabled: true
+
+server:
+  port: 8080
+  servlet:
+    session:
+      cookie:
+        name: DRUID_MCP_SERVER_SESSION
+
+logging:
+  file:
+    name: ./target/druid-mcp-server.log
+  level:
+    org:
+      springframework:
+        security: DEBUG

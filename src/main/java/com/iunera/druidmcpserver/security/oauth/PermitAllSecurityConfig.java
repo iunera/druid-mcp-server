@@ -19,6 +19,7 @@ package com.iunera.druidmcpserver.security.oauth;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,6 +30,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * Security configuration used when OAuth2 security is disabled. Permits all requests.
  */
 @Configuration
+@Profile("http")
 @ConditionalOnProperty(prefix = "druid.mcp.security.oauth2", name = "enabled", havingValue = "false")
 @EnableWebSecurity
 public class PermitAllSecurityConfig {

@@ -7,13 +7,9 @@
         "--rm",
         "-i",
         "-e",
-        "SPRING_AI_MCP_SERVER_STDIO=true",
-        "-e",
-        "SPRING_MAIN_WEB_APPLICATION_TYPE=none",
-        "-e",
-        "LOGGING_PATTERN_CONSOLE=",
-        "-e",
         "DRUID_ROUTER_URL",
+        "-e",
+        "DRUID_COORDINATOR_URL",
         "-e",
         "DRUID_AUTH_USERNAME",
         "-e",
@@ -22,17 +18,15 @@
         "DRUID_SSL_ENABLED",
         "-e",
         "DRUID_SSL_SKIP_VERIFICATION",
-        "-e",
-        "DRUID_MCP_READONLY_ENABLED",
         "iunera/druid-mcp-server:latest"
       ],
       "env": {
         "DRUID_ROUTER_URL": "http://host.docker.internal:8888",
-        "DRUID_AUTH_USERNAME": "",
-        "DRUID_AUTH_PASSWORD": "",
+        "DRUID_COORDINATOR_URL": "http://host.docker.internal:8081",
+        "DRUID_AUTH_USERNAME": "admin",
+        "DRUID_AUTH_PASSWORD": "password",
         "DRUID_SSL_ENABLED": "false",
-        "DRUID_SSL_SKIP_VERIFICATION": "true",
-        "DRUID_MCP_READONLY_ENABLED": "false"
+        "DRUID_SSL_SKIP_VERIFICATION": "false"
       }
     }
   }

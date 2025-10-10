@@ -36,6 +36,46 @@ public class SecurityRepository {
     }
 
     /**
+     * Ensures that the given role is not the protected 'admin' role.
+     * Throws IllegalArgumentException if an attempt is made to modify the admin role.
+     */
+    private void ensureMutableRoles(String roleName) {
+        if ("admin".equalsIgnoreCase(roleName.trim()) || "druid_system".equalsIgnoreCase(roleName.trim())) {
+            throw new IllegalArgumentException("The " + roleName + " role cannot be modified because it's defined as immutable.");
+        }
+    }
+
+    /**
+     * Ensures that protected authentication users cannot be deleted.
+     * Protected users: 'admin' and 'druid_system'.
+     */
+    private void ensureMutableUsers(String userName) {
+        if (userName == null) {
+            return;
+        }
+        String _userName = userName.trim();
+        if ("admin".equalsIgnoreCase(_userName) || "druid_system".equalsIgnoreCase(_userName)) {
+            throw new IllegalArgumentException("The '" + _userName + "' user cannot be deleted because it's defined as immutable.");
+        }
+    }
+
+    /**
+     * Ensures that credential changes comply with protection rules.
+     * - 'druid_system' password must NOT be changed.
+     * - 'admin' password change IS allowed.
+     * Other users are allowed as usual.
+     */
+    private void ensureCredentialChangeAllowed(String userName) {
+        if (userName == null) {
+            return;
+        }
+        String _userName = userName.trim();
+        if ("druid_system".equalsIgnoreCase(_userName)) {
+            throw new IllegalArgumentException("The " + _userName + " user's password cannot be changed.");
+        }
+    }
+
+    /**
      * Get coordinator properties
      */
     public JsonNode getCoordinatorProperties() throws RestClientException {
@@ -92,6 +132,7 @@ public class SecurityRepository {
      * Delete a user from the authentication system
      */
     public JsonNode deleteUser(String authenticatorName, String userName) throws RestClientException {
+        ensureMutableUsers(userName);
         return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authentication/db/{authenticatorName}/users/{userName}",
@@ -105,6 +146,7 @@ public class SecurityRepository {
      * Set user credentials (password)
      */
     public JsonNode setUserCredentials(String authenticatorName, String userName, String password) throws RestClientException {
+        ensureCredentialChangeAllowed(userName);
         String body = "{\"password\": \"" + password + "\"}";
         return druidCoordinatorRestClient
                 .post()
@@ -211,6 +253,7 @@ public class SecurityRepository {
      * Delete a role
      */
     public JsonNode deleteRole(String authorizerName, String roleName) throws RestClientException {
+        ensureMutableRoles(roleName);
         return druidCoordinatorRestClient
                 .delete()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/roles/{roleName}",
@@ -224,6 +267,7 @@ public class SecurityRepository {
      * Set role permissions
      */
     public JsonNode setRolePermissions(String authorizerName, String roleName, String permissions) throws RestClientException {
+        ensureMutableRoles(roleName);
         return druidCoordinatorRestClient
                 .post()
                 .uri("/druid-ext/basic-security/authorization/db/{authorizerName}/roles/{roleName}/permissions",

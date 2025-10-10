@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [1.5.0] - 2025-10-10
+
+### Breaking Change
+`Streamable HTTP` is now to be configured by setting `SPRING_PROFILES_ACTIVE=http`
+
+### Added
+- Added failsafe methods to `SecurityRepository` to prevent modification or deletion of critical "admin" and "druid_system" roles and users, and to disallow password changes for the "druid_system" user, ensuring their immutability.
+- Introduced a new feedback tool to gather community input on `druid-mcp-server` usage and prioritize future feature development.
+- Implemented anonymous metrics for product enhancement. Opt-out is available via `druid.mcp.metrics.enabled` property.
+- Introduced two Spring profiles with dedicated configs: `stdio` (default) via `application-stdio.yaml` and `http` (SSE/HTTP) via `application-http.yaml`.
+- Updated to Spring AI 1.1.0-M3.
+
+### Changed
+- Set `stdio` as the default Spring profile (non-web, STDIO transport).
+
 ## [1.4.0] - 2025-10-02
 
 ### Added

@@ -36,6 +36,8 @@ services:
     image: postgres:latest
     volumes:
       - metadata_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=FoolishPassword
       - POSTGRES_USER=druid

@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@org.springframework.test.context.ActiveProfiles("http")
 @TestPropertySource(properties = {
         // Explicitly enable OAuth2 security (this is the default per config)
         "druid.mcp.security.oauth2.enabled=true"

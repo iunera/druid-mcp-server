@@ -91,7 +91,7 @@ class SegmentIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing ReadSegmentTools and WriteSegmentTools methods");
 
         // Check that read methods exist on ReadSegmentTools
-        Method[] readMethods = readSegmentTools.getClass().getDeclaredMethods();
+        Method[] readMethods = readSegmentTools.getClass().getSuperclass().getDeclaredMethods();
         boolean hasListAllSegments = Arrays.stream(readMethods)
                 .anyMatch(m -> m.getName().equals("listAllSegments"));
         boolean hasGetSegmentMetadata = Arrays.stream(readMethods)
@@ -101,7 +101,7 @@ class SegmentIntegrationTest {
         assertTrue(hasGetSegmentMetadata, "ReadSegmentTools should have getSegmentMetadata method");
 
         // Check that write methods exist on WriteSegmentTools
-        Method[] writeMethods = writeSegmentTools.getClass().getDeclaredMethods();
+        Method[] writeMethods = writeSegmentTools.getClass().getSuperclass().getDeclaredMethods();
         boolean hasEnableSegment = Arrays.stream(writeMethods)
                 .anyMatch(m -> m.getName().equals("enableSegment"));
         boolean hasDisableSegment = Arrays.stream(writeMethods)
@@ -133,20 +133,20 @@ class SegmentIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing segment tool return correct types");
 
         // Test that methods return String (as required by MCP tools)
-        Method[] readMethods = readSegmentTools.getClass().getDeclaredMethods();
-        Method[] writeMethods = writeSegmentTools.getClass().getDeclaredMethods();
+        Method[] readMethods = readSegmentTools.getClass().getSuperclass().getDeclaredMethods();
+        Method[] writeMethods = writeSegmentTools.getClass().getSuperclass().getDeclaredMethods();
 
         // Check ReadSegmentTools methods
         for (Method method : readMethods) {
             if (method.getName().startsWith("list") || method.getName().startsWith("get")) {
+                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "ReadSegmentTools method " + method.getName() + " should return String");
             }
         }
-
-        // Check WriteSegmentTools methods
         for (Method method : writeMethods) {
             if (method.getName().startsWith("enable") || method.getName().startsWith("disable")) {
+                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "WriteSegmentTools method " + method.getName() + " should return String");
             }
