@@ -6,14 +6,14 @@
     "url": "https://github.com/iunera/druid-mcp-server",
     "source": "github"
   },
-  "version": "1.4.1",
+  "version": "1.5.0",
   "packages": [
     {
       "registryType": "oci",
       "registryBaseUrl": "https://docker.io",
       "identifier": "iunera/druid-mcp-server",
       "runtimeHint": "docker",
-      "version": "1.4.1",
+      "version": "1.5.0",
       "transport": {
         "type": "stdio",
         "command": "docker",
@@ -22,13 +22,9 @@
           "--rm",
           "-i",
           "-e",
-          "SPRING_AI_MCP_SERVER_STDIO=true",
-          "-e",
-          "SPRING_MAIN_WEB_APPLICATION_TYPE=none",
-          "-e",
-          "LOGGING_PATTERN_CONSOLE=",
-          "-e",
           "DRUID_ROUTER_URL",
+          "-e",
+          "DRUID_COORDINATOR_URL",
           "-e",
           "DRUID_AUTH_USERNAME",
           "-e",
@@ -38,7 +34,8 @@
           "-e",
           "DRUID_SSL_SKIP_VERIFICATION",
           "-e",
-          "DRUID_MCP_READONLY_ENABLED"
+          "DRUID_MCP_READONLY_ENABLED",
+          "iunera/druid-mcp-server:latest"
         ]
       },
       "environmentVariables": [
@@ -48,6 +45,13 @@
           "format": "string",
           "is_secret": false,
           "name": "DRUID_ROUTER_URL"
+        },
+        {
+          "description": "Druid coordinator URL for querying metadata endpoints (optional)",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "DRUID_COORDINATOR_URL"
         },
         {
           "description": "Username for Druid authentication (optional)",

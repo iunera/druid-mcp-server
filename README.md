@@ -66,27 +66,30 @@ A ready-to-use MCP configuration file is provided at `mcp-servers-config.json` t
 #### Examples
 The configuration includes both transport options:
 
-* [STDIO](examples/stdio/README.md): STDIO-based streaming connection via command-line.
-* [SSE](examples/sse/README.md): HTTP-based streaming connection via Server-Sent Events.
-* [Streamable HTTP Configuration](examples/streamable-http/README.md) Modern single-endpoint HTTP transport per MCP 2025-06-18.
+* [STDIO default)](examples/stdio/README.md) (: see examples/stdio/README.md - server is spawned by the MCP client over STDIO.
+* [Streamable HTTP (profile: http)](examples/streamable-http/README.md) : see examples/streamable-http/README.md - single /mcp endpoint per MCP 2025-06-18.
 
 
 #### Docker examples using environment variables:
 
 ```bash
-# Run with SSE Transport (HTTP-based, default)
-docker run -p 8080:8080 \
+# STDIO mode (default)
+docker run --rm -i \
   -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
   iunera/druid-mcp-server:latest
 
-# OR run with STDIO Transport (recommended for LLM clients)
-docker run --rm -i \
-  -e SPRING_AI_MCP_SERVER_STDIO=true \
-  -e SPRING_MAIN_WEB_APPLICATION_TYPE=none \
-  -e LOGGING_PATTERN_CONSOLE= \
+# HTTP mode (enable profile 'http' and expose /mcp)
+docker run -p 8080:8080 \
+  -e SPRING_PROFILES_ACTIVE=http \
   -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
   iunera/druid-mcp-server:latest
 ```
+
+Note on Spring profiles:
+- Default profile: stdio (no SPRING_PROFILES_ACTIVE needed)
+- HTTP profile: set SPRING_PROFILES_ACTIVE=http to enable Streamable HTTP at /mcp
 
 ### Prerequisites
 - Java 24
@@ -99,7 +102,7 @@ docker run --rm -i \
 mvn clean package -DskipTests
 
 # Run the application
-java -jar target/druid-mcp-server-1.4.1.jar
+java -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 The server will start on port 8080 by default.
@@ -133,14 +136,12 @@ If you prefer to use the pre-built JAR without building from source, you can dow
 Download the JAR from Maven Central https://repo.maven.apache.org/maven2/com/iunera/druid-mcp-server/
 
 ```bash
-# Run with SSE Transport (HTTP-based, default)
-java -jar target/druid-mcp-server-1.4.1.jar
+# STDIO mode (default)
+java -jar target/druid-mcp-server-1.5.0.jar
 
-# OR run with STDIO Transport (recommended for LLM clients)
-java -Dspring.ai.mcp.server.stdio=true \
-     -Dspring.main.web-application-type=none \
-     -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.4.1.jar
+# HTTP mode (profile: http) - exposes /mcp on port 8080
+java -Dspring.profiles.active=http \
+     -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 ## For Developers
@@ -309,7 +310,7 @@ export DRUID_SSL_ENABLED="true"
 export DRUID_SSL_SKIP_VERIFICATION="false"  # Use "true" only for testing
 
 # Start the MCP server
-java -jar target/druid-mcp-server-1.4.1.jar
+java -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 ##### Method 2: Runtime System Properties
@@ -320,7 +321,7 @@ Pass configuration as JVM system properties:
 java -Ddruid.router.url="http://localhost:8888" \
      -Ddruid.auth.username="admin" \
      -Ddruid.auth.password="password" \
-     -jar target/druid-mcp-server-1.4.1.jar
+     -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 #### SSL Configuration Options
@@ -360,13 +361,9 @@ Update your `mcp-servers-config.json` to include environment variables:
         "--rm",
         "-i",
         "-e",
-        "SPRING_AI_MCP_SERVER_STDIO=true",
-        "-e",
-        "SPRING_MAIN_WEB_APPLICATION_TYPE=none",
-        "-e",
-        "LOGGING_PATTERN_CONSOLE=",
-        "-e",
         "DRUID_ROUTER_URL",
+        "-e",
+        "DRUID_COORDINATOR_URL",
         "-e",
         "DRUID_AUTH_USERNAME",
         "-e",
@@ -377,10 +374,11 @@ Update your `mcp-servers-config.json` to include environment variables:
         "DRUID_SSL_SKIP_VERIFICATION",
         "-e",
         "DRUID_MCP_READONLY_ENABLED",
-        "iunera/druid-mcp-server:1.4.1"
+        "iunera/druid-mcp-server:1.5.0"
       ],
       "env": {
         "DRUID_ROUTER_URL": "http://host.docker.internal:8888",
+        "DRUID_COORDINATOR_URL": "http://host.docker.internal:8081",
         "DRUID_AUTH_USERNAME": "",
         "DRUID_AUTH_PASSWORD": "",
         "DRUID_SSL_ENABLED": "false",
@@ -413,7 +411,7 @@ You can override any prompt template using Java system properties with the `-D` 
 
 ```bash
 java -Dprompts.druid-data-exploration.template="Your custom template here" \
-     -jar target/druid-mcp-server-1.4.1.jar
+     -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 #### Method 2: Custom Properties File
@@ -431,7 +429,7 @@ Environment: {environment}
 2. Load it at runtime:
 ```bash
 java -Dspring.config.additional-location=classpath:custom-prompts.properties \
-     -jar target/druid-mcp-server-1.4.1.jar
+     -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 ### Available Prompt Variables
@@ -492,20 +490,16 @@ This server uses Spring AI's MCP Server framework and supports both STDIO and SS
 
 The Druid MCP Server supports multiple transport modes compliant with MCP 2025-06-18 specification:
 
-#### Streamable HTTP Transport (Recommended and Default - New in MCP 2025-06-18)
+#### Streamable HTTP Transport (Recommended)
 The new **Streamable HTTP** transport provides enhanced performance and scalability with support for multiple concurrent clients:
 
 ```bash
 # Default configuration with Streamable HTTP
 
-java -Dspring.ai.mcp.server.stdio=true \
-     -Dspring.main.web-application-type=none \
-     -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.4.1.jar
+java -Dspring.profiles.active=http \
+     -jar target/druid-mcp-server-1.5.0.jar
 # Server available at http://localhost:8080/mcp (configurable endpoint)
 ```
-
-Note: The `-Dspring.ai.mcp.server.protocol` option is deprecated and no longer required. `STREAMABLE` is the default protocol and is configured in `application.properties`. If you previously set this flag, you can safely remove it.
 
 **Features:**
 - **Single Endpoint**: One HTTP endpoint handles both POST and GET requests
@@ -523,10 +517,7 @@ Security
 Perfect for LLM clients and desktop applications:
 
 ```bash
-java -Dspring.ai.mcp.server.stdio=true \
-     -Dspring.main.web-application-type=none \
-     -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.4.1.jar
+java -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 #### Legacy SSE Transport (Deprecated)
@@ -534,10 +525,6 @@ Still supported for backwards compatibility. It is no longer the default and may
 
 Note: The SSE endpoint is secured with OAuth by default. Clients must include a valid bearer token when connecting. For SSO integration support, see [Contact & Support](#contact--support).
 
-```bash
-java -jar target/druid-mcp-server-1.4.1.jar
-# Server available at http://localhost:8080/sse
-```
 
 
 ### Read-only Mode
@@ -567,14 +554,13 @@ export DRUID_MCP_READONLY_ENABLED=true
 3) JVM system property
 
 ```bash
-java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.4.1.jar
+java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-1.5.0.jar
 ```
 
 4) Docker
 
 ```bash
 docker run --rm -p 8080:8080 \
-  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
   -e DRUID_MCP_READONLY_ENABLED=true \
   iunera/druid-mcp-server:latest
 ```

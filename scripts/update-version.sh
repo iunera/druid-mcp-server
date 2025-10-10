@@ -54,7 +54,6 @@ show_usage() {
     echo "  - pom.xml (Maven project version)"
     echo "  - src/main/resources/application.yaml (MCP server version)"
     echo "  - server.json (MCP registry version and Docker image tag)"
-    echo "  - mcpservers-stdio.json (Docker image tag)"
     echo "  - README.md (JAR file references)"
     echo "  - All README files under examples/ (JAR and Docker image tag references)"
     echo "  - development.md (version references in documentation)"
@@ -140,22 +139,6 @@ update_server_json() {
     print_success "Updated $file"
 }
 
-# Function to update mcpservers-stdio.json
-update_mcpservers_stdio_json() {
-    local new_version="$1"
-    local file="mcpservers-stdio.json"
-    
-    if [ ! -f "$file" ]; then
-        print_error "$file not found"
-        return 1
-    fi
-
-    # Update Docker image tag (skip :latest)
-    sed -i.tmp -E "s/iunera\/druid-mcp-server:[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?\"/iunera\/druid-mcp-server:$new_version\"/g" "$file"
-    rm -f "${file}.tmp"
-    
-    print_success "Updated $file"
-}
 
 # Function to update development.md
 update_development_md() {
@@ -293,7 +276,6 @@ main() {
     update_pom_xml "$new_version"
     update_application_yaml "$new_version"
     update_server_json "$new_version"
-    update_mcpservers_stdio_json "$new_version"
     update_development_md "$new_version"
     update_mcp_registry_md "$new_version"
     update_all_readmes "$new_version"

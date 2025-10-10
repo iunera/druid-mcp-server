@@ -16,9 +16,16 @@ A comprehensive **Model Context Protocol (MCP) server** for Apache Druid that pr
 # Pull the latest image
 docker pull iunera/druid-mcp-server:latest
 
-# Run with default configuration
+# STDIO mode (default, recommended for LLM clients that spawn the server)
+docker run --rm -i \
+  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
+  iunera/druid-mcp-server:latest
+
+# HTTP mode (enable profile 'http' and expose /mcp)
 docker run -p 8080:8080 \
-  -e DRUID_BROKER_URL=http://your-druid-broker:8082 \
+  -e SPRING_PROFILES_ACTIVE=http \
+  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
   -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
   iunera/druid-mcp-server:latest
 ```
@@ -32,11 +39,12 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - SPRING_PROFILES_ACTIVE=http
       - DRUID_BROKER_URL=http://druid-broker:8082
       - DRUID_COORDINATOR_URL=http://druid-coordinator:8081
       - SPRING_AI_MCP_SERVER_NAME=druid-mcp-server
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/mcp/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -162,21 +170,20 @@ Intelligent guidance for common Druid operations:
 ### STDIO Transport (Recommended for AI Clients)
 ```bash
 docker run --rm -i \
-  -e SPRING_AI_MCP_SERVER_STDIO=true \
-  -e SPRING_MAIN_WEB_APPLICATION_TYPE=none \
-  -e SPRING_MAIN_BANNER_MODE=off \
-  -e LOGGING_PATTERN_CONSOLE= \
-  -e DRUID_BROKER_URL=http://your-druid:8082 \
+  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
   iunera/druid-mcp-server:latest
 ```
 
-### SSE Transport (HTTP-based)
+### HTTP Transport (Profile: http)
 ```bash
 docker run -p 8080:8080 \
-  -e DRUID_BROKER_URL=http://your-druid:8082 \
+  -e SPRING_PROFILES_ACTIVE=http \
+  -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
+  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
   iunera/druid-mcp-server:latest
 
-# Access at http://localhost:8080/mcp
+# Streamable HTTP endpoint: http://localhost:8080/mcp
 ```
 
 ## ⚙️ Configuration
@@ -189,17 +196,6 @@ docker run -p 8080:8080 \
 | `SERVER_PORT` | HTTP server port | `8080` |
 | `DRUID_MCP_READONLY_ENABLED` | Enables or disables read-only mode. | `false` |
 | `DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED` | Enables or disables the basic security feature. | `true` |
-
-### Volume Mounts
-```bash
-# Custom configuration
-docker run -v /path/to/config:/app/config \
-  iunera/druid-mcp-server:latest
-
-# Logs persistence
-docker run -v /path/to/logs:/app/logs \
-  iunera/druid-mcp-server:latest
-```
 
 ## 🏗️ Architecture
 
@@ -250,8 +246,8 @@ Built on enterprise-grade technologies:
       "command": "docker",
       "args": [
         "run", "--rm", "-i",
-        "-e", "SPRING_AI_MCP_SERVER_STDIO=true",
         "-e", "DRUID_ROUTER_URL=http://your-druid-router:8888",
+        "-e", "DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081",
         "iunera/druid-mcp-server:latest"
       ]
     }
@@ -265,26 +261,6 @@ Built on enterprise-grade technologies:
 "Analyze the performance of my ingestion pipeline"
 "Help me optimize this SQL query for better performance"
 "Generate a health report for the cluster"
-```
-
-## 📊 Monitoring & Observability
-
-### Health Checks
-```bash
-# Container health
-curl http://localhost:8080/mcp/health
-
-# Druid connectivity
-curl http://localhost:8080/actuator/health
-```
-
-### Logging
-```bash
-# View container logs
-docker logs druid-mcp-server
-
-# Follow logs in real-time
-docker logs -f druid-mcp-server
 ```
 
 ## 🤝 Support & Community
