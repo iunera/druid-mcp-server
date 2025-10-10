@@ -117,14 +117,15 @@ class SecurityIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing security tools return correct types");
 
         // Test that methods return String (as required by MCP tools)
-        Method[] authReadMethods = readAuthenticationTools.getClass().getDeclaredMethods();
-        Method[] authWriteMethods = writeAuthenticationTools.getClass().getDeclaredMethods();
-        Method[] authzReadMethods = readAuthorizationTools.getClass().getDeclaredMethods();
-        Method[] authzWriteMethods = writeAuthorizationTools.getClass().getDeclaredMethods();
+        Method[] authReadMethods = readAuthenticationTools.getClass().getSuperclass().getDeclaredMethods();
+        Method[] authWriteMethods = writeAuthenticationTools.getClass().getSuperclass().getDeclaredMethods();
+        Method[] authzReadMethods = readAuthorizationTools.getClass().getSuperclass().getDeclaredMethods();
+        Method[] authzWriteMethods = writeAuthorizationTools.getClass().getSuperclass().getDeclaredMethods();
 
         // Check authentication methods
         for (Method method : authReadMethods) {
             if (method.getName().startsWith("list") || method.getName().startsWith("get")) {
+                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "AuthenticationTools method " + method.getName() + " should return String");
             }
@@ -132,6 +133,7 @@ class SecurityIntegrationTest {
         for (Method method : authWriteMethods) {
             if (method.getName().startsWith("create") || method.getName().startsWith("delete") ||
                 method.getName().startsWith("set")) {
+                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "AuthenticationTools method " + method.getName() + " should return String");
             }
@@ -140,6 +142,7 @@ class SecurityIntegrationTest {
         // Check authorization methods
         for (Method method : authzReadMethods) {
             if (method.getName().startsWith("list") || method.getName().startsWith("get")) {
+                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "AuthorizationTools method " + method.getName() + " should return String");
             }
@@ -148,6 +151,7 @@ class SecurityIntegrationTest {
             if (method.getName().startsWith("create") || method.getName().startsWith("delete") ||
                 method.getName().startsWith("set") || method.getName().startsWith("assign") ||
                 method.getName().startsWith("unassign")) {
+                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "AuthorizationTools method " + method.getName() + " should return String");
             }

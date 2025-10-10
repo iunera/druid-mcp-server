@@ -133,11 +133,12 @@ class LookupIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing lookup tool return correct types");
 
         // Test that methods return String (as required by MCP tools)
-        Method[] lookupMethods = writeLookupTools.getClass().getDeclaredMethods();
+        Method[] lookupMethods = writeLookupTools.getClass().getSuperclass().getDeclaredMethods();
 
         // Check that public methods return String
         for (Method method : lookupMethods) {
             if (method.getName().startsWith("list") || method.getName().startsWith("get") || method.getName().startsWith("create") || method.getName().startsWith("delete")) {
+                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "WriteLookupTools method " + method.getName() + " should return String");
             }

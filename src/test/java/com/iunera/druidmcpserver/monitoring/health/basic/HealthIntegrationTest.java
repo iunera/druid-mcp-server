@@ -71,11 +71,12 @@ class HealthIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing health tool return correct types");
 
         // Test that methods return String (as required by MCP tools)
-        Method[] healthMethods = healthToolProvider.getClass().getDeclaredMethods();
+        Method[] healthMethods = healthToolProvider.getClass().getSuperclass().getDeclaredMethods();
 
         // Check that public methods return String
         for (Method method : healthMethods) {
             if (method.getName().startsWith("check") || method.getName().startsWith("get") || method.getName().startsWith("is")) {
+                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "HealthToolProvider method " + method.getName() + " should return String");
             }

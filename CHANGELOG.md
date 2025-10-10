@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [1.4.1] - 2025-10-10
+
+### Added
+- Implemented anonymous metrics for product enhancement. Opt-out is available via `druid.mcp.metrics.enabled` property.
+- Added failsafe methods to `SecurityRepository` to prevent modification or deletion of critical "admin" and "druid_system" roles and users, and to disallow password changes for the "druid_system" user, ensuring their immutability.
+- Introduced a new feedback tool to gather community input on `druid-mcp-server` usage and prioritize future feature development.
+- Updated to Spring AI 1.1.0-M3.
+
 ## [1.4.0] - 2025-10-02
 
 ### Added

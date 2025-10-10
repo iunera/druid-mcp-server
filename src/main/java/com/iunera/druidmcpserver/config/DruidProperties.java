@@ -35,6 +35,7 @@ public class DruidProperties {
     private final Auth auth = new Auth();
     private final Ssl ssl = new Ssl();
     private final Extension extension = new Extension();
+    private final Mcp mcp = new Mcp();
 
     public Router getRouter() {
         return router;
@@ -54,6 +55,10 @@ public class DruidProperties {
 
     public Extension getExtension() {
         return extension;
+    }
+
+    public Mcp getMcp() {
+        return mcp;
     }
 
     public static class Router {
@@ -167,6 +172,37 @@ public class DruidProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    /**
+     * MCP-related configuration properties.
+     * Maps properties under `druid.mcp.*`.
+     */
+    public static class Mcp {
+        private final Metrics metrics = new Metrics();
+
+        public Metrics getMetrics() {
+            return metrics;
+        }
+
+        /**
+         * Metrics configuration under `druid.mcp.metrics`.
+         */
+        public static class Metrics {
+            /**
+             * Enable/disable Metrics AOP aspect publishing tool execution metrics.
+             * Maps property: druid.mcp.metrics.enabled
+             */
+            private boolean enabled = true;
+
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
+            }
         }
     }
 }

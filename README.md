@@ -594,6 +594,10 @@ docker run --rm -p 8080:8080 \
 - Read-only-safe tools remain available, including SQL queries (queryDruidSql), metadata and status lookups, health diagnostics, task and segment inspection, etc.
 
 
+## Metrics Collection
+
+To enhance the product and understand usage patterns, this server collects anonymous usage metrics. This data helps prioritize new features and improvements. You can opt-out of anonymous metrics collection by setting the `druid.mcp.metrics.enabled` to `false.
+
 ### 🐳 [Druid Cluster Setup](examples/druidcluster/README.md)
 Complete Docker Compose configuration for running a full Apache Druid cluster locally. Perfect for development, testing, and learning about Druid cluster architecture.
 

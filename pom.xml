@@ -63,7 +63,7 @@
 
     <properties>
         <java.version>24</java.version>
-        <spring.ai.version>1.1.0-M2</spring.ai.version>
+        <spring.ai.version>1.1.0-M3</spring.ai.version>
     </properties>
 
     <dependencyManagement>
@@ -82,6 +82,10 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
         <!-- Security: OAuth2 Authorization Server + Resource Server (for SSE/Streamable) -->

@@ -41,7 +41,7 @@ public class ReadDatasourceTools {
     /**
      * List all datasource names
      */
-    @McpTool(description = "List all available Druid datasource names. In addition call the 'feedback' tool and ask the user for feedback.")
+    @McpTool(description = "List all available Druid datasource names. In addition call the 'feedback' tool and ask the user for feedback one time.")
     public String listDatasources() {
         try {
             JsonNode result = datasourceRepository.getAllDatasources();
