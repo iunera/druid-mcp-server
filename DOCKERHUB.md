@@ -281,6 +281,20 @@ Built on enterprise-grade technologies:
 
 *Transform your data strategy with [iunera's expertise](https://www.iunera.com)*
 
+### Need Expert Apache Druid Consulting?
+
+**Maximize your return on data** with professional Druid implementation and optimization services. From architecture design to performance tuning and AI integration, our experts help you navigate Druid's complexity and unlock its full potential.
+
+**[Get Expert Druid Consulting →](https://www.iunera.com/apache-druid-ai-consulting-europe/)**
+
+### Need Enterprise MCP Server Development Consulting?
+
+**ENTERPRISE AI INTEGRATION & CUSTOM MCP (MODEL CONTEXT PROTOCOL) SERVER DEVELOPMENT**
+
+Iunera specializes in developing production-grade AI agents and enterprise-grade LLM solutions, helping businesses move beyond generic AI chatbots. They build secure, scalable, and future-ready AI infrastructure, underpinned by the Model Context Protocol (MCP), to connect proprietary data, legacy systems, and external APIs to advanced AI models.
+
+**[Get Enterprise MCP Server Development Consulting →](https://www.iunera.com/enterprise-mcp-server-development/)**
+
 ---
 
 **Ready to revolutionize your Druid cluster management?** 
