@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [1.5.1] - 2025-10-15
+
+### Fix
+- Versioning and MCP Registry publish
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.5.0...v1.5.1
+
+
 ## [1.5.0] - 2025-10-10
 
 ### Breaking Change
