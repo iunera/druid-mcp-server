@@ -25,7 +25,7 @@ spring:
     mcp:
       server:
         name: druid-mcp-server
-        version: 1.5.1
+        version: 1.5.2
 
 druid:
   router:

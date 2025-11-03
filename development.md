@@ -80,7 +80,7 @@ The Inspector provides a web UI and a CLI to list tools/resources/prompts, call 
 #### Start the Druid MCP Server
 
 ```bash
-java -jar target/druid-mcp-server-1.5.1.jar
+java -jar target/druid-mcp-server-1.5.2.jar
 ```
 
 Or Using Docker (HTTP/SSE):
@@ -392,7 +392,7 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.5.1.jar
+     -jar target/druid-mcp-server-1.5.2.jar
 ```
 
 
