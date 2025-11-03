@@ -68,6 +68,7 @@ jobs:
           type=raw,value=dev
           type=raw,value=dev-${{ steps.version.outputs.version }}
           type=sha,format=short,prefix=dev-
+          type=ref,event=branch,prefix=dev-
 
     - name: Build and push Docker image (dev)
       uses: docker/build-push-action@v5

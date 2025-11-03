@@ -182,7 +182,7 @@
                         </executions>
                         <configuration>
                             <doclint>none</doclint>
-                            <source>24</source>
+                            <source>25</source>
                         </configuration>
                     </plugin>
 

@@ -1,5 +1,5 @@
 # Multi-stage build for Spring Boot application
-FROM maven:3-eclipse-temurin-24 AS build
+FROM maven:3-eclipse-temurin-25 AS build
 
 # Set working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn clean package
 
 # Runtime stage
-FROM eclipse-temurin:24-jre
+FROM eclipse-temurin:25-jre
 
 # Add MCP server metadata labels
 LABEL io.modelcontextprotocol.server.name="com.iunera/druid-mcp-server"
