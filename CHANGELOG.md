@@ -6,9 +6,6 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [1.5.2] - 2025-11-05
 
-### Added
-- Prepare release: bump version, update documentation and metadata, and finalize release automation.
-
 ### Changed
 - Dependency refreshes.
 - Spring AI: upgraded `spring.ai` from `1.1.0-M3` to `1.1.0-M4`
