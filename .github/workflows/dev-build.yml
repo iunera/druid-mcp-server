@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: iunera/druid-mcp-server-cshtest
+  IMAGE_NAME: iunera/druid-mcp-server
 
 jobs:
   dev-build:
