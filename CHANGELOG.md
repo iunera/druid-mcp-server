@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [1.5.2] - 2025-11-05
+
+### Changed
+- Dependency refreshes.
+- Spring AI: upgraded `spring.ai` from `1.1.0-M3` to `1.1.0-M4`
+- Updated MCP SDK to `0.15.0`: unified request context API, improved autoconfiguration for MCP tool initialization, and fixed tool callback provider injection issues.
+- Dockerfile improvements and healthcheck fix:
+  - Reworked to a multi-stage build with a dedicated `deps` stage to cache Maven dependencies and reuse the local repository, reducing image build time.
+  - Upgraded base build/runtime images to Eclipse Temurin 25.
+  - Switched the container healthcheck to use `nc -z localhost 8080` (netcat) instead of `curl`. 
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.5.1...v1.5.2
+
 ## [1.5.1] - 2025-10-15
 
 ### Fix
@@ -54,7 +67,7 @@ Configurable Environment Variable `DRUID_MCP_READONLY` is now `DRUID_MCP_READONL
 ### Changed
 - Refactored Druid configuration classes.
 
-Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.2.2...oauth2
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.2.2...v1.3.0
 
 ## [1.2.2] - 2025-09-24
 
