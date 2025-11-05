@@ -1,5 +1,5 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "name": "com.iunera/druid-mcp-server",
   "description": "AI-powered MCP server for Apache Druid cluster management and analytic",
   "repository": {
@@ -39,51 +39,51 @@
       "environmentVariables": [
         {
           "description": "Druid router URL for connecting to the Druid cluster",
-          "is_required": true,
+          "isRequired": true,
           "format": "string",
-          "is_secret": false,
+          "isSecret": false,
           "name": "DRUID_ROUTER_URL"
         },
         {
           "description": "Druid coordinator URL for querying metadata endpoints (optional)",
-          "is_required": false,
+          "isRequired": false,
           "format": "string",
-          "is_secret": false,
+          "isSecret": false,
           "name": "DRUID_COORDINATOR_URL"
         },
         {
           "description": "Username for Druid authentication (optional)",
-          "is_required": false,
+          "isRequired": false,
           "format": "string",
-          "is_secret": false,
+          "isSecret": false,
           "name": "DRUID_AUTH_USERNAME"
         },
         {
           "description": "Password for Druid authentication (optional)",
-          "is_required": false,
+          "isRequired": false,
           "format": "string",
-          "is_secret": true,
+          "isSecret": true,
           "name": "DRUID_AUTH_PASSWORD"
         },
         {
           "description": "Enable SSL/TLS support for Druid connections",
-          "is_required": false,
+          "isRequired": false,
           "format": "boolean",
-          "is_secret": false,
+          "isSecret": false,
           "name": "DRUID_SSL_ENABLED"
         },
         {
           "description": "Skip SSL certificate verification (for development/testing only)",
-          "is_required": false,
+          "isRequired": false,
           "format": "boolean",
-          "is_secret": false,
+          "isSecret": false,
           "name": "DRUID_SSL_SKIP_VERIFICATION"
         },
         {
           "description": "Enable read-only mode (only GET requests and SQL queries allowed)",
-          "is_required": false,
+          "isRequired": false,
           "format": "boolean",
-          "is_secret": false,
+          "isSecret": false,
           "name": "DRUID_MCP_READONLY_ENABLED"
         }
       ]
