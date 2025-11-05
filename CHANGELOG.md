@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [1.5.2] - 2025-11-05
+
 ### Added
 - Prepare release: bump version, update documentation and metadata, and finalize release automation.
 
