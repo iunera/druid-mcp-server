@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: iunera/druid-mcp-server-dev
+  IMAGE_NAME: iunera/druid-mcp-server-cshtest
 
 jobs:
   dev-build:
@@ -65,8 +65,6 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
-          type=raw,value=dev
-          type=raw,value=dev-${{ steps.version.outputs.version }}
           type=sha,format=short,prefix=dev-
           type=ref,event=branch,prefix=dev-
 
