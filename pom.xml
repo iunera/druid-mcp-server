@@ -62,7 +62,7 @@
     </scm>
 
     <properties>
-        <java.version>25</java.version>
+        <java.version>24</java.version>
         <spring.ai.version>1.1.0-M4</spring.ai.version>
     </properties>
 
@@ -182,7 +182,7 @@
                         </executions>
                         <configuration>
                             <doclint>none</doclint>
-                            <source>25</source>
+                            <source>24</source>
                         </configuration>
                     </plugin>
 

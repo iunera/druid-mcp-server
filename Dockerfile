@@ -1,19 +1,33 @@
 # Multi-stage build for Spring Boot application
+
+# Stage 1: deps - download and cache Maven dependencies
+FROM maven:3-eclipse-temurin-25 AS deps
+
+# Set working directory
+WORKDIR /app
+
+# Copy only pom to cache dependencies layer
+COPY pom.xml ./
+
+# Download dependencies into the image-local maven repository
+RUN mvn -B dependency:go-offline -Dmaven.repo.local=/root/.m2/repository
+
+# Stage 2: build - compile the application using cached deps
 FROM maven:3-eclipse-temurin-25 AS build
 
 # Set working directory
 WORKDIR /app
 
-# Copy pom.xml and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Reuse the cached maven repository from deps stage
+COPY --from=deps /root/.m2 /root/.m2
 
 # Copy source code and build the application
 COPY src ./src
+COPY pom.xml ./
 
-RUN mvn clean package
+RUN mvn clean package -Dmaven.repo.local=/root/.m2/repository
 
-# Runtime stage
+# Stage 3: Runtime stage
 FROM eclipse-temurin:25-jre
 
 # Add MCP server metadata labels
@@ -26,7 +40,7 @@ LABEL org.opencontainers.image.vendor="iunera"
 WORKDIR /app
 
 # Install curl for health check
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
 
 # Create user and group with id 1000
 RUN groupadd -g 1000 appgroup 2>/dev/null || true && \
@@ -44,7 +58,7 @@ EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8080/mcp/health || exit 1
+  CMD nc -z localhost 8080 || exit 1
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
