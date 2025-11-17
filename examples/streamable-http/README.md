@@ -22,7 +22,7 @@ docker run --rm -p 8080:8080 \
   -e DRUID_COORDINATOR_URL=http://host.docker.internal:8081 \
   -e DRUID_AUTH_USERNAME=admin \
   -e DRUID_AUTH_PASSWORD=password \
-  iunera/druid-mcp-server:1.5.2
+  iunera/druid-mcp-server:1.6.0
 ```
 
 2) Obtain a token using client-credentials grant (default client: `oidc-client` / `secret`):

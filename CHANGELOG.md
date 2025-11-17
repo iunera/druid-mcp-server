@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [1.6.0] - 2025-11-17
+
+### Changed
+- **Spring AI: upgraded from `1.1.0-M4` to `1.1.0` (GA Release)** - Production-ready release with stable APIs and enhanced MCP server capabilities
+- Spring Boot: upgraded from `3.5.6` to `3.5.7` - Latest bug fixes and improvements
+- MCP SDK: upgraded from `0.13.1` to `0.16.0` - Enhanced Model Context Protocol support with improved client compatibility and protocol compliance
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.5.2...v1.6.0
+
 ## [1.5.2] - 2025-11-05
 
 ### Changed

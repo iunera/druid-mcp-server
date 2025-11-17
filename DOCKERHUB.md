@@ -3,7 +3,7 @@
 [![Docker Image](https://img.shields.io/badge/docker-available-blue.svg)](https://hub.docker.com/r/iunera/druid-mcp-server)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Java](https://img.shields.io/badge/Java-24-orange.svg)](https://openjdk.java.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-green.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-green.svg)](https://spring.io/projects/spring-boot)
 
 A comprehensive **Model Context Protocol (MCP) server** for Apache Druid that provides extensive tools, resources, and AI-assisted prompts for managing and analyzing Druid clusters. Built with enterprise-grade reliability and performance in mind.
 
@@ -200,7 +200,7 @@ docker run -p 8080:8080 \
 ## 🏗️ Architecture
 
 Built on enterprise-grade technologies:
-- **Spring Boot 3.5.6** - Production-ready framework
+- **Spring Boot 3.5.7** - Production-ready framework
 - **Spring AI MCP Server** - Native MCP protocol support
 - **Java 24** - Latest performance optimizations
 - **Maven** - Reliable dependency management

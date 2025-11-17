@@ -24,10 +24,10 @@ mvn clean package
 ```
 
 ### Key Dependencies
-- Spring Boot: 3.5.6 (main)
-- Spring AI MCP Server: 1.1.0-M3 (with official MCP annotations support)
-- Spring AI BOM: 1.1.0-M3
-- Spring AI MCP Annotations: Included in Spring AI 1.1.0-M3
+- Spring Boot: 3.5.7
+- Spring AI MCP Server: 1.1.0 (GA Release with official MCP annotations support)
+- Spring AI BOM: 1.1.0
+- Spring AI MCP Annotations: Included in Spring AI 1.1.0
 
 ### Repository Configuration
 The project requires custom Maven repositories for Spring AI milestones/snapshots:
@@ -65,7 +65,7 @@ logging:
 ```
 
 ### Autowiring
-Features like Tools, Resources, Prompts and more are automatically discovered and registered by Spring AI 1.1.0-M1 auto-configuration through annotation scanning. Simply use `@Component` on classes with `@McpTool`, `@McpResource`, `@McpPrompt`, and `@McpComplete` annotated methods. No manual registration in the main application class is required.
+Features like Tools, Resources, Prompts and more are automatically discovered and registered by Spring AI 1.1.0 auto-configuration through annotation scanning. Simply use `@Component` on classes with `@McpTool`, `@McpResource`, `@McpPrompt`, and `@McpComplete` annotated methods. No manual registration in the main application class is required.
 
 
 ## Inspect the Druid MCP Server with @modelcontextprotocol/inspector
@@ -80,7 +80,10 @@ The Inspector provides a web UI and a CLI to list tools/resources/prompts, call 
 #### Start the Druid MCP Server
 
 ```bash
-java -jar target/druid-mcp-server-1.5.2.jar
+java -jar target/druid-mcp-server-1.6.0.jar \
+  --spring.profiles.active=http \
+  --druid.auth.username=admin \
+  --druid.auth.password=password
 ```
 
 Or Using Docker (HTTP/SSE):
@@ -357,8 +360,8 @@ src/
 ```
 
 ### Key Technologies
-- Spring Boot 3.5.6 - Main framework
-- Spring AI MCP Server 1.1.0-M3 - MCP protocol implementation
+- Spring Boot 3.5.7 - Main framework
+- Spring AI MCP Server 1.1.0 - MCP protocol implementation (GA Release)
 - Jackson - JSON processing
 - RestClient - HTTP client for Druid communication
 - JUnit 5 - Testing framework
@@ -392,7 +395,7 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.5.2.jar
+     -jar target/druid-mcp-server-1.6.0.jar
 ```
 
 
