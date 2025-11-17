@@ -33,7 +33,7 @@ networks:
 services:
   postgres:
     container_name: postgres
-    image: postgres:latest
+    image: postgres:17
     volumes:
       - metadata_data:/var/lib/postgresql/data
     ports:
