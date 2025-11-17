@@ -13,7 +13,7 @@ That file makes your client start the server using Docker with all important env
 
 ## What the config does
 
-- Uses Docker image: iunera/druid-mcp-server:1.5.2
+- Uses Docker image: iunera/druid-mcp-server:1.6.0
 - Starts the container in STDIO mode via environment variables
 - Passes Druid connection settings via environment variables
 
@@ -28,7 +28,7 @@ docker run --rm -i \
   -e DRUID_COORDINATOR_URL=http://host.docker.internal:8081 \
   -e DRUID_AUTH_USERNAME=admin \
   -e DRUID_AUTH_PASSWORD=password \
-  iunera/druid-mcp-server:1.5.2
+  iunera/druid-mcp-server:1.6.0
 ```
 
 Tip: Replace DRUID_ROUTER_URL and add DRUID_AUTH_USERNAME/DRUID_AUTH_PASSWORD and TLS flags when connecting to a secured Druid.
