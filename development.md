@@ -80,7 +80,10 @@ The Inspector provides a web UI and a CLI to list tools/resources/prompts, call 
 #### Start the Druid MCP Server
 
 ```bash
-java -jar target/druid-mcp-server-1.5.2.jar
+java -jar target/druid-mcp-server-1.5.2.jar \
+  --spring.profiles.active=http \
+  --druid.auth.username=admin \
+  --druid.auth.password=password
 ```
 
 Or Using Docker (HTTP/SSE):
