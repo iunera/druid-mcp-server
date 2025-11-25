@@ -258,32 +258,16 @@ See `SimpleTestExample.java` for a complete example demonstrating:
 ## Docker Integration
 The project includes Docker support via `Dockerfile` for containerized runs.
 
-The project includes Docker support with a `Dockerfile` and `docker-compose.yaml` for easy deployment.
-
 ### Docker Build
 ```bash
-docker build -t druid-mcp-server .
+docker build -t iunera/druid-mcp-server .
 ```
 
-### Docker Compose
-```bash
-docker-compose up -d
-```
+### Development Druid Installation with Docker
 
-### Services Included
-- **Druid Coordinator** (port 8081) - Manages data availability and replication
-- **Druid Broker** (port 8082) - Handles queries from external clients
-- **Druid Historical** (port 8083) - Stores queryable data
-- **Druid MiddleManager** (port 8091) - Handles ingestion tasks
-- **Druid Router** (port 8888) - Optional load balancer and unified entry point
-- **Druid MCP Server** (port 8080) - Your application
+For local development, a complete Docker Compose setup for running a full Apache Druid cluster is available at [iunera/druid-local-cluster-installer](https://github.com/iunera/druid-local-cluster-installer). This is the recommended way to run a Druid cluster for development and testing of the MCP server.
 
-### Accessing Services
-Once all services are running:
-
-- **MCP Server**: http://localhost:8080
-- **Druid Router**: http://localhost:8888 (unified Druid UI)
-- **Druid Coordinator**: http://localhost:8081
+Please refer to the instructions in that repository to start a local Druid cluster. The MCP server can then be run as a separate container or on the host machine and connect to the Druid cluster.
 
 ## Architecture
 

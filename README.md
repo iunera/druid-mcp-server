@@ -584,14 +584,19 @@ docker run --rm -p 8080:8080 \
 
 To enhance the product and understand usage patterns, this server collects anonymous usage metrics. This data helps prioritize new features and improvements. You can opt-out of anonymous metrics collection by setting the `druid.mcp.metrics.enabled` to `false.
 
-### 🐳 [Druid Cluster Setup](examples/druidcluster/README.md)
-Complete Docker Compose configuration for running a full Apache Druid cluster locally. Perfect for development, testing, and learning about Druid cluster architecture.
+### 🐳 Development Druid Installation
 
-**Features:**
-- Full Druid cluster with all components (Coordinator, Broker, Historical, MiddleManager, Router)
-- PostgreSQL metadata storage and ZooKeeper coordination
-- Pre-configured with sample data and ingestion examples
-- Integrated Druid MCP Server for immediate testing
+For local development, testing, and learning, a complete Docker Compose setup for running a full Apache Druid cluster is available at [iunera/druid-local-cluster-installer](https://github.com/iunera/druid-local-cluster-installer).
+
+This setup is the recommended way to get a Druid cluster running for use with this MCP server.
+
+**Key Features:**
+*   **Complete Druid Cluster:** Includes all core Druid services (Coordinator, Broker, Historical, MiddleManager, Router).
+*   **One-Command Install:** Automated scripts for macOS, Linux, and Windows.
+*   **Cross-Platform:** Runs anywhere Docker is available.
+*   **Pre-configured:** Sensible defaults for local development.
+*   **Basic Security Enabled:** Pre-configured admin user (`admin`/`password`).
+*   **Ready for Data Philter:** Designed to work out-of-the-box with `iunera/data-philter`.
 
 ~~## Related Projects
 

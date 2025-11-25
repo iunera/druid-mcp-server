@@ -4,7 +4,6 @@
 
 # Docker
 Dockerfile
-examples/druidcluster/docker-compose.yaml
 .dockerignore
 
 # IDE
