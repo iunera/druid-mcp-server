@@ -21,6 +21,18 @@ Learn how to integrate AI agents with Apache Druid using the MCP server. This tu
 
 *Click the thumbnail above to watch the video on YouTube*
 
+## 🧠 Data Philter: AI-Powered UI for Druid
+
+Experience your data like never before with **[Data Philter](https://github.com/iunera/data-philter)**, a local-first AI gateway designed by iunera. It leverages this **Druid MCP Server** to provide a seamless, conversational interface for your Druid cluster.
+
+*   **Natural Language Queries:** Ask questions in plain English and get results instantly.
+*   **Local & Secure:** Runs completely locally with support for Ollama models (or OpenAI).
+*   **Plug & Play:** Works out-of-the-box with the Development Druid Installation.
+
+[![Data Philter](https://raw.githubusercontent.com/iunera/data-philter/main/assets/images/dataphilterinstall.gif)](https://github.com/iunera/data-philter)
+
+[**Get Data Philter on GitHub →**](https://github.com/iunera/data-philter)
+
 ## Features
 
 - Spring AI MCP Server integration
@@ -598,7 +610,7 @@ This setup is the recommended way to get a Druid cluster running for use with th
 *   **Basic Security Enabled:** Pre-configured admin user (`admin`/`password`).
 *   **Ready for Data Philter:** Designed to work out-of-the-box with `iunera/data-philter`.
 
-~~## Related Projects
+## Related Projects
 
 This Druid MCP Server is part of a comprehensive ecosystem of Apache Druid tools and extensions developed by iunera. These complementary projects enhance different aspects of Druid cluster management and data ingestion:
 
