@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [1.7.0] - 2025-11-24
+
+### Changed
+- **Spring AI: upgraded from `1.1.0` to `1.1.2`** - Minor bug fixes and improvements.
+- MCP SDK: upgraded from `0.13.1` to `0.16.0` - Enhanced Model Context Protocol support with improved client compatibility and protocol compliance
+
+Full Changelog: https://github.com/iunera/druid-mcp-server/compare/v1.6.0...v1.7.0
+
 ## [1.6.0] - 2025-11-17
 
 ### Changed
