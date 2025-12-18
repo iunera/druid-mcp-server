@@ -51,7 +51,7 @@ Ensure your `server.json` file follows the MCP registry schema. Key requirements
 Example validation:
 ```bash
 # Validate server.json against schema
-curl -s https://static.modelcontextprotocol.io/schemas/2025-09-16/server.schema.json | \
+curl -s https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json | \
 jq '.' > schema.json
 
 # Use a JSON schema validator to check your server.json
@@ -128,7 +128,7 @@ Ensure your `server.json` is up-to-date with the latest version and metadata:
 
 ```json
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-16/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "name": "com.iunera/druid-mcp-server",
   "description": "A comprehensive Model Context Protocol (MCP) server for Apache Druid...",
   "status": "active",
