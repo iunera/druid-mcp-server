@@ -24,10 +24,9 @@ mvn clean package
 ```
 
 ### Key Dependencies
-- Spring Boot: 3.5.7
-- Spring AI MCP Server: 1.1.0 (GA Release with official MCP annotations support)
-- Spring AI BOM: 1.1.0
-- Spring AI MCP Annotations: Included in Spring AI 1.1.0
+- Spring Boot: 3.5.9
+- Spring AI MCP Server: 1.1.2 (GA Release with official MCP annotations support)
+
 
 ### Repository Configuration
 The project requires custom Maven repositories for Spring AI milestones/snapshots:

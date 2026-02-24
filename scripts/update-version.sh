@@ -54,6 +54,7 @@ show_usage() {
     echo "  - pom.xml (Maven project version)"
     echo "  - src/main/resources/application.yaml (MCP server version)"
     echo "  - server.json (MCP registry version and Docker image tag)"
+    echo "  - jbang-catalog.json (JBang version)"
     echo "  - README.md (JAR file references)"
     echo "  - All README files under examples/ (JAR and Docker image tag references)"
     echo "  - development.md (version references in documentation)"
@@ -139,6 +140,22 @@ update_server_json() {
     print_success "Updated $file"
 }
 
+# Function to update jbang-catalog.json
+update_jbang_catalog_json() {
+    local new_version="$1"
+    local file="jbang-catalog.json"
+    
+    if [ ! -f "$file" ]; then
+        print_error "$file not found"
+        return 1
+    fi
+
+    sed -i.tmp -E "s/(com\.iunera:druid-mcp-server:)[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?/\1$new_version/g" "$file"
+    rm -f "${file}.tmp"
+    
+    print_success "Updated $file"
+}
+
 
 # Function to update development.md
 update_development_md() {
@@ -215,7 +232,7 @@ show_summary() {
     echo "  ✓ pom.xml"
     echo "  ✓ src/main/resources/application.yaml"
     echo "  ✓ server.json"
-    echo "  ✓ mcpservers-stdio.json"
+    echo "  ✓ jbang-catalog.json"
     echo "  ✓ README.md"
     echo "  ✓ all README files under examples/"
     echo "  ✓ development.md"
@@ -276,6 +293,7 @@ main() {
     update_pom_xml "$new_version"
     update_application_yaml "$new_version"
     update_server_json "$new_version"
+    update_jbang_catalog_json "$new_version"
     update_development_md "$new_version"
     update_mcp_registry_md "$new_version"
     update_all_readmes "$new_version"
