@@ -1,25 +1,37 @@
-# STDIO (Docker) Examples
+# STDIO Examples (JBang & Docker)
 
-This folder contains Docker-focused examples for running the Druid MCP Server with the STDIO transport. These examples are designed to be used by MCP clients (e.g., Claude Desktop) that spawn the server process and communicate over STDIO.
+This folder contains examples for running the Druid MCP Server with the STDIO transport. These examples are designed to be used by MCP clients (e.g., Claude Desktop) that spawn the server process and communicate over STDIO.
 
-We focus on environment variable configuration. No Java/JAR commands are required.
+## Option 1: Running with JBang (Recommended)
 
-## Quick use with MCP client
+JBang is the easiest way to run the server as it automatically manages the Java environment and downloads the required version.
+
+### Quick use with MCP client
 
 Point your MCP client to this config file:
-- [mcpservers-stdio.json](mcpservers-stdio.json)
+- [mcpservers-jbang.json](mcpservers-jbang.json)
 
-That file makes your client start the server using Docker with all important environment variables.
+The JBang configuration in that file allows the client to start the server directly using the Maven GAV.
 
-## What the config does
+### Direct JBang run (optional)
 
-- Uses Docker image: iunera/druid-mcp-server:1.7.0
-- Starts the container in STDIO mode via environment variables
-- Passes Druid connection settings via environment variables
+```bash
+export DRUID_ROUTER_URL=http://localhost:8888
+export DRUID_AUTH_USERNAME=admin
+export DRUID_AUTH_PASSWORD=password
+jbang druid-mcp-server@iunera/druid-mcp-server
+```
 
-See [mcpservers-stdio.json](mcpservers-stdio.json) for defaults and how these are passed to Docker.
+## Option 2: Running with Docker
 
-## Direct Docker run (optional)
+Docker is a great alternative if you prefer containerized execution.
+
+### Quick use with MCP client
+
+Point your MCP client to this config file:
+- [mcpservers-docker.json](mcpservers-docker.json)
+
+### Direct Docker run (optional)
 If your client does not support spawning via config, you can also run the server manually and point the client to the spawned process (stdin/stdout attached):
 
 ```bash
