@@ -1,0 +1,11 @@
+{
+  "aliases": {
+    "druid-mcp-server": {
+      "gav": "com.iunera:druid-mcp-server:1.7.0",
+      "description": "A Model Context Protocol (MCP) server for Apache Druid.",
+      "runtime-options": [
+        "-Dorg.slf4j.simpleLogger.logFile=System.err"
+      ]
+    }
+  }
+}
