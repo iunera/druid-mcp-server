@@ -80,7 +80,7 @@ The Inspector provides a web UI and a CLI to list tools/resources/prompts, call 
 #### Start the Druid MCP Server
 
 ```bash
-java -jar target/druid-mcp-server-1.7.0.jar \
+java -jar target/druid-mcp-server-1.8.0.jar \
   --spring.profiles.active=http \
   --druid.auth.username=admin \
   --druid.auth.password=password
@@ -379,7 +379,7 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.7.0.jar
+     -jar target/druid-mcp-server-1.8.0.jar
 ```
 
 
