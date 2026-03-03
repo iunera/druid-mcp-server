@@ -40,7 +40,9 @@ public class OauthSecurityConfig {
 
     @Bean
     SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+        return http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/health").permitAll()
+                        .anyRequest().authenticated())
                 .with(authorizationServer(), Customizer.withDefaults())
                 .oauth2ResourceServer(resource -> resource.jwt(Customizer.withDefaults()))
                 .csrf(CsrfConfigurer::disable)
