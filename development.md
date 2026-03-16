@@ -3,7 +3,7 @@
 ## Build/Configuration Instructions
 
 ### Prerequisites
-- **Java 21** (main project)
+- **Java 25** (main project)
 - **Maven 3.6+**
 - **Apache Druid cluster** (for integration testing with real Druid instance)
 
@@ -463,7 +463,7 @@ public class ExampleToolProvider {
 - STDIO transport: Requires banner and console logging disabled
 - Snapshot/Milestone dependencies: May require repository updates for latest versions
 - Druid connectivity: Integration tests should handle connection failures gracefully
-- Java version compatibility: Main project uses Java 24, submodule uses Java 17+
+- Java version compatibility: Main project uses Java 25, submodule uses Java 17+
 
 ---
 

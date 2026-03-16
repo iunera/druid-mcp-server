@@ -104,7 +104,7 @@ Note on Spring profiles:
 - HTTP profile: set SPRING_PROFILES_ACTIVE=http to enable Streamable HTTP at /mcp
 
 ### Prerequisites
-- Java 24
+- Java 25
 - Maven 3.6+
 - Apache Druid cluster running with router on port 8888
 
@@ -141,7 +141,7 @@ For detailed build instructions, testing, Docker setup, and development guidelin
 If you prefer to use the pre-built JAR without building from source, you can download and run it directly from Maven Central.
 
 ### Prerequisites
-- Java 24 JRE only
+- Java 25 JRE only
 
 ### Download and Run
 
