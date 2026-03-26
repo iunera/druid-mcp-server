@@ -3,7 +3,7 @@
 ## Build/Configuration Instructions
 
 ### Prerequisites
-- **Java 21** (main project)
+- **Java 25** (main project)
 - **Maven 3.6+**
 - **Apache Druid cluster** (for integration testing with real Druid instance)
 
@@ -79,7 +79,7 @@ The Inspector provides a web UI and a CLI to list tools/resources/prompts, call 
 #### Start the Druid MCP Server
 
 ```bash
-java -jar target/druid-mcp-server-1.8.1.jar \
+java -jar target/druid-mcp-server-1.8.2.jar \
   --spring.profiles.active=http \
   --druid.auth.username=admin \
   --druid.auth.password=password
@@ -378,7 +378,7 @@ For every Resource we need a separate Tool to access it in addition.
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-1.8.1.jar
+     -jar target/druid-mcp-server-1.8.2.jar
 ```
 
 
@@ -463,7 +463,7 @@ public class ExampleToolProvider {
 - STDIO transport: Requires banner and console logging disabled
 - Snapshot/Milestone dependencies: May require repository updates for latest versions
 - Druid connectivity: Integration tests should handle connection failures gracefully
-- Java version compatibility: Main project uses Java 24, submodule uses Java 17+
+- Java version compatibility: Main project uses Java 25, submodule uses Java 17+
 
 ---
 

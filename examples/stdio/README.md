@@ -40,7 +40,7 @@ docker run --rm -i \
   -e DRUID_COORDINATOR_URL=http://host.docker.internal:8081 \
   -e DRUID_AUTH_USERNAME=admin \
   -e DRUID_AUTH_PASSWORD=password \
-  iunera/druid-mcp-server:1.8.1
+  iunera/druid-mcp-server:1.8.2
 ```
 
 Tip: Replace DRUID_ROUTER_URL and add DRUID_AUTH_USERNAME/DRUID_AUTH_PASSWORD and TLS flags when connecting to a secured Druid.
