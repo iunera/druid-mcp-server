@@ -5,6 +5,10 @@ A comprehensive Model Context Protocol (MCP) server for Apache Druid that provid
 
 *Developed by [iunera](https://www.iunera.com) - Advanced AI and Data Analytics Solutions*
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/iunera-druid-mcp-server).
+
 ## Overview
 
 This MCP server implements a feature-based architecture where each package represents a distinct functional area of Druid management. The server provides three main types of MCP components:
