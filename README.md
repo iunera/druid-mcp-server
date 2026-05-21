@@ -21,17 +21,19 @@ Learn how to integrate AI agents with Apache Druid using the MCP server. This tu
 
 *Click the thumbnail above to watch the video on YouTube*
 
-## 🧠 Data Philter: AI-Powered UI for Druid
+## 🌊 Y̊pipe: AI-Powered UI for Druid
 
-Experience your data like never before with **[Data Philter](https://github.com/iunera/data-philter)**, a local-first AI gateway designed by iunera. It leverages this **Druid MCP Server** to provide a seamless, conversational interface for your Druid cluster.
+Experience your data like never before with **[Y̊pipe (formerly Data-Philter)](https://ypipe.com)**, a local desktop application that makes offline AI practical, designed by iunera. It leverages this **Druid MCP Server** to provide a seamless, conversational interface for your Druid cluster.
 
 *   **Natural Language Queries:** Ask questions in plain English and get results instantly.
-*   **Local & Secure:** Runs completely locally with support for Ollama models (or OpenAI).
+*   **Local & Secure:** Runs completely locally with support for offline models (CPU/GPU).
 *   **Plug & Play:** Works out-of-the-box with the Development Druid Installation.
 
-[![Data Philter](https://raw.githubusercontent.com/iunera/data-philter/main/assets/images/dataphilterinstall.gif)](https://github.com/iunera/data-philter)
+[![Ypipe](https://raw.githubusercontent.com/iunera/ypipe/main/github-ypipe-public/assets/screenshot-chat.png)](https://github.com/iunera/ypipe)
 
-[**Get Data Philter on GitHub →**](https://github.com/iunera/data-philter)
+[**Get Ypipe on GitHub →**](https://github.com/iunera/ypipe)
+
+*The easiest way to test iunera/druid-mcp-server is [ypipe.com](https://ypipe.com) / [https://github.com/iunera/ypipe](https://github.com/iunera/ypipe)*
 
 ## Features
 
@@ -608,7 +610,7 @@ This setup is the recommended way to get a Druid cluster running for use with th
 *   **Cross-Platform:** Runs anywhere Docker is available.
 *   **Pre-configured:** Sensible defaults for local development.
 *   **Basic Security Enabled:** Pre-configured admin user (`admin`/`password`).
-*   **Ready for Data Philter:** Designed to work out-of-the-box with `iunera/data-philter`.
+*   **Ready for Ypipe:** Designed to work out-of-the-box with `iunera/ypipe`.
 
 ## Related Projects
 
