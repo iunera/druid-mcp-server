@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [2.0.0] - 2026-06-15
+
+### Changed
+- **Spring Boot: upgraded to 4.1.0** - Modularized testing support, updated configuration defaults.
+- **Spring AI: upgraded to 2.0.0** - Consolidated Model Context Protocol (MCP) server support, migrated annotations to standard core `org.springframework.ai.mcp.annotation.*` packages.
+- **Jackson 3 Integration**: Migrated JSON mapping from Jackson 2 to Jackson 3 (`tools.jackson.*`), using `JsonMapper` and updating the underlying MCP SDK to `mcp-json-jackson3`.
+
 ## [1.8.0] - 2026-03-03
 
 ### Added
