@@ -16,7 +16,7 @@
 
 package com.iunera.druidmcpserver.ingestion.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.config.MockDruidTestConfiguration;
 import com.iunera.druidmcpserver.config.TestProfiles;
 import org.junit.jupiter.api.Test;

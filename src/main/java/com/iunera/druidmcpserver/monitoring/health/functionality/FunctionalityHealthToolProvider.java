@@ -16,13 +16,13 @@
 
 package com.iunera.druidmcpserver.monitoring.health.functionality;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.datamanagement.segments.SegmentRepository;
 import com.iunera.druidmcpserver.ingestion.supervisors.SupervisorsRepository;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
-import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 
 /**
@@ -193,7 +193,7 @@ public class FunctionalityHealthToolProvider {
                 if (segmentsByServer.size() > 1) {
                     final int[] maxSegments = {0};
                     final int[] minSegments = {Integer.MAX_VALUE};
-                    segmentsByServer.fields().forEachRemaining(entry -> {
+                    segmentsByServer.properties().forEach(entry -> {
                         int count = entry.getValue().asInt();
                         if (count > maxSegments[0]) maxSegments[0] = count;
                         if (count < minSegments[0]) minSegments[0] = count;

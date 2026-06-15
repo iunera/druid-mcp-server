@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.9</version>
+        <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.iunera</groupId>
@@ -63,7 +63,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring.ai.version>1.1.2</spring.ai.version>
+        <spring.ai.version>2.0.0</spring.ai.version>
     </properties>
 
     <dependencyManagement>
@@ -89,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
 
         <!-- Security: OAuth2 Authorization Server + Resource Server (for SSE/Streamable) -->
@@ -99,7 +99,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
+            <artifactId>spring-boot-starter-security-oauth2-authorization-server</artifactId>
         </dependency>
 
         <!-- Test dependencies -->
@@ -108,12 +108,17 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- MCP JSON mapper (Jackson) needed by Spring AI MCP server auto-config and StdioClientTransport -->
         <dependency>
             <groupId>io.modelcontextprotocol.sdk</groupId>
-            <artifactId>mcp-json-jackson2</artifactId>
-            <version>0.16.0</version>
+            <artifactId>mcp-json-jackson3</artifactId>
+            <version>2.0.0</version>
         </dependency>
     </dependencies>
 

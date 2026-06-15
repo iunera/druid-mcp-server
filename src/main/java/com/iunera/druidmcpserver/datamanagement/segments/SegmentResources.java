@@ -16,12 +16,12 @@
 
 package com.iunera.druidmcpserver.datamanagement.segments;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
-import org.springaicommunity.mcp.annotation.McpResource;
+import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 

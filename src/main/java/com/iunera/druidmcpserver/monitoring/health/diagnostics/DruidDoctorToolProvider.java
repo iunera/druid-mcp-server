@@ -16,15 +16,15 @@
 
 package com.iunera.druidmcpserver.monitoring.health.diagnostics;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.datamanagement.datasource.DatasourceRepository;
 import com.iunera.druidmcpserver.datamanagement.segments.SegmentRepository;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.ClusterRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.ServerRepository;
-import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 
 /**
@@ -204,7 +204,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private ComponentStatus checkCoordinatorHealth(com.fasterxml.jackson.databind.node.ArrayNode issues, com.fasterxml.jackson.databind.node.ArrayNode recommendations) {
+    private ComponentStatus checkCoordinatorHealth(tools.jackson.databind.node.ArrayNode issues, tools.jackson.databind.node.ArrayNode recommendations) {
         try {
             JsonNode coordinatorHealth = healthStatusRepository.getCoordinatorHealth();
             JsonNode leaderInfo = clusterRepository.getLeaderInfo();
@@ -223,7 +223,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private ComponentStatus checkServerHealth(com.fasterxml.jackson.databind.node.ArrayNode issues, com.fasterxml.jackson.databind.node.ArrayNode recommendations) {
+    private ComponentStatus checkServerHealth(tools.jackson.databind.node.ArrayNode issues, tools.jackson.databind.node.ArrayNode recommendations) {
         try {
             JsonNode servers = serverRepository.getAllServersStatus();
 
@@ -241,7 +241,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private ComponentStatus checkSegmentHealth(com.fasterxml.jackson.databind.node.ArrayNode issues, com.fasterxml.jackson.databind.node.ArrayNode recommendations) {
+    private ComponentStatus checkSegmentHealth(tools.jackson.databind.node.ArrayNode issues, tools.jackson.databind.node.ArrayNode recommendations) {
         try {
             JsonNode segments = segmentRepository.getAllSegments();
 
@@ -265,7 +265,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private ComponentStatus checkIngestionHealth(com.fasterxml.jackson.databind.node.ArrayNode issues, com.fasterxml.jackson.databind.node.ArrayNode recommendations) {
+    private ComponentStatus checkIngestionHealth(tools.jackson.databind.node.ArrayNode issues, tools.jackson.databind.node.ArrayNode recommendations) {
         try {
             JsonNode runningTasks = tasksRepository.getRunningTasks();
             JsonNode pendingTasks = tasksRepository.getPendingTasks();
@@ -287,7 +287,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private ComponentStatus checkLoadQueueHealth(com.fasterxml.jackson.databind.node.ArrayNode issues, com.fasterxml.jackson.databind.node.ArrayNode recommendations) {
+    private ComponentStatus checkLoadQueueHealth(tools.jackson.databind.node.ArrayNode issues, tools.jackson.databind.node.ArrayNode recommendations) {
         try {
             // This would require additional API calls to check load queue
             // For now, return healthy status
@@ -299,7 +299,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private ComponentStatus checkDatasourceHealth(com.fasterxml.jackson.databind.node.ArrayNode issues, com.fasterxml.jackson.databind.node.ArrayNode recommendations) {
+    private ComponentStatus checkDatasourceHealth(tools.jackson.databind.node.ArrayNode issues, tools.jackson.databind.node.ArrayNode recommendations) {
         try {
             JsonNode datasources = datasourceRepository.getAllDatasources();
 
@@ -317,7 +317,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private void checkCriticalCoordinatorHealth(com.fasterxml.jackson.databind.node.ArrayNode criticalIssues, com.fasterxml.jackson.databind.node.ArrayNode immediateActions) {
+    private void checkCriticalCoordinatorHealth(tools.jackson.databind.node.ArrayNode criticalIssues, tools.jackson.databind.node.ArrayNode immediateActions) {
         try {
             JsonNode coordinatorHealth = healthStatusRepository.getCoordinatorHealth();
             if (coordinatorHealth == null) {
@@ -330,7 +330,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private void checkCriticalServerHealth(com.fasterxml.jackson.databind.node.ArrayNode criticalIssues, com.fasterxml.jackson.databind.node.ArrayNode immediateActions) {
+    private void checkCriticalServerHealth(tools.jackson.databind.node.ArrayNode criticalIssues, tools.jackson.databind.node.ArrayNode immediateActions) {
         try {
             JsonNode servers = serverRepository.getAllServersStatus();
             if (servers == null || !servers.isArray() || servers.size() == 0) {
@@ -343,7 +343,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private void checkCriticalIngestionHealth(com.fasterxml.jackson.databind.node.ArrayNode criticalIssues, com.fasterxml.jackson.databind.node.ArrayNode immediateActions) {
+    private void checkCriticalIngestionHealth(tools.jackson.databind.node.ArrayNode criticalIssues, tools.jackson.databind.node.ArrayNode immediateActions) {
         try {
             JsonNode pendingTasks = tasksRepository.getPendingTasks();
             if (pendingTasks != null && pendingTasks.isArray() && pendingTasks.size() > 50) {
@@ -355,35 +355,35 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    private void analyzeSegmentPerformance(com.fasterxml.jackson.databind.node.ArrayNode performanceIssues, com.fasterxml.jackson.databind.node.ArrayNode optimizations) {
+    private void analyzeSegmentPerformance(tools.jackson.databind.node.ArrayNode performanceIssues, tools.jackson.databind.node.ArrayNode optimizations) {
         // Placeholder for segment performance analysis
         optimizations.add("Consider segment compaction for better query performance");
     }
 
-    private void analyzeIngestionPerformance(com.fasterxml.jackson.databind.node.ArrayNode performanceIssues, com.fasterxml.jackson.databind.node.ArrayNode optimizations) {
+    private void analyzeIngestionPerformance(tools.jackson.databind.node.ArrayNode performanceIssues, tools.jackson.databind.node.ArrayNode optimizations) {
         // Placeholder for ingestion performance analysis
         optimizations.add("Monitor ingestion lag and optimize supervisor configurations");
     }
 
-    private void analyzeLoadBalancing(com.fasterxml.jackson.databind.node.ArrayNode performanceIssues, com.fasterxml.jackson.databind.node.ArrayNode optimizations) {
+    private void analyzeLoadBalancing(tools.jackson.databind.node.ArrayNode performanceIssues, tools.jackson.databind.node.ArrayNode optimizations) {
         // Placeholder for load balancing analysis
         optimizations.add("Review segment distribution across historical nodes");
     }
 
-    private void analyzeResourceUtilization(com.fasterxml.jackson.databind.node.ArrayNode performanceIssues, com.fasterxml.jackson.databind.node.ArrayNode optimizations) {
+    private void analyzeResourceUtilization(tools.jackson.databind.node.ArrayNode performanceIssues, tools.jackson.databind.node.ArrayNode optimizations) {
         // Placeholder for resource utilization analysis
     }
 
-    private void validateCoordinatorConfig(com.fasterxml.jackson.databind.node.ArrayNode configIssues, com.fasterxml.jackson.databind.node.ArrayNode bestPractices) {
+    private void validateCoordinatorConfig(tools.jackson.databind.node.ArrayNode configIssues, tools.jackson.databind.node.ArrayNode bestPractices) {
         bestPractices.add("Ensure coordinator has sufficient heap memory allocated");
         bestPractices.add("Configure appropriate coordinator period settings");
     }
 
-    private void validateSegmentConfig(com.fasterxml.jackson.databind.node.ArrayNode configIssues, com.fasterxml.jackson.databind.node.ArrayNode bestPractices) {
+    private void validateSegmentConfig(tools.jackson.databind.node.ArrayNode configIssues, tools.jackson.databind.node.ArrayNode bestPractices) {
         bestPractices.add("Configure appropriate segment granularity for your use case");
     }
 
-    private void validateIngestionConfig(com.fasterxml.jackson.databind.node.ArrayNode configIssues, com.fasterxml.jackson.databind.node.ArrayNode bestPractices) {
+    private void validateIngestionConfig(tools.jackson.databind.node.ArrayNode configIssues, tools.jackson.databind.node.ArrayNode bestPractices) {
         bestPractices.add("Configure appropriate task capacity and resources");
     }
 
@@ -395,11 +395,11 @@ public class DruidDoctorToolProvider {
         return "CRITICAL";
     }
 
-    private int calculatePerformanceScore(com.fasterxml.jackson.databind.node.ArrayNode performanceIssues) {
+    private int calculatePerformanceScore(tools.jackson.databind.node.ArrayNode performanceIssues) {
         return Math.max(0, 100 - (performanceIssues.size() * 10));
     }
 
-    private int calculateConfigScore(com.fasterxml.jackson.databind.node.ArrayNode configIssues) {
+    private int calculateConfigScore(tools.jackson.databind.node.ArrayNode configIssues) {
         return Math.max(0, 100 - (configIssues.size() * 15));
     }
 

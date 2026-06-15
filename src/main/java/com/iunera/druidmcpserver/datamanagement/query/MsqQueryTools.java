@@ -16,10 +16,10 @@
 
 package com.iunera.druidmcpserver.datamanagement.query;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
-import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
