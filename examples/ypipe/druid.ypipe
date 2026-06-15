@@ -1,0 +1,667 @@
+---
+apiVersion: "mcp.ypipe.com/v1"
+kind: "McpIntegrationBlueprint"
+metadata:
+  name: "druid"
+  namespace: "system"
+spec:
+  displayName: "Apache Druid"
+  description: "Apache Druid ability for high-performance real-time analytics. Provides\
+    \ comprehensive tools for data management, ingestion monitoring, and advanced\
+    \ SQL querying."
+  source: "https://github.com/iunera/druid-mcp-server"
+  configurationSchema:
+    DRUID_ROUTER_URL:
+      type: "string"
+      required: true
+      default: "http://localhost:18888"
+      description: "Base URL of the Apache Druid router"
+      sensitive: false
+      pattern: null
+    DRUID_AUTH_USERNAME:
+      type: "string"
+      required: false
+      default: ""
+      description: "Username for Druid authentication. Is only needed when Druid basic\
+        \ security extension is enabled"
+      sensitive: false
+      pattern: null
+    DRUID_AUTH_PASSWORD:
+      type: "string"
+      required: false
+      default: ""
+      description: "Password for Druid authentication. Is only needed when Druid basic\
+        \ security extension is enabled"
+      sensitive: true
+      pattern: null
+    DRUID_SSL_ENABLED:
+      type: "boolean"
+      required: false
+      default: "false"
+      description: "Whether SSL is enabled on Druid Cluster"
+      sensitive: false
+      pattern: null
+    DRUID_MCP_READONLY_ENABLED:
+      type: "boolean"
+      required: false
+      default: "true"
+      description: "Whether to use only readonly tools or not"
+      sensitive: false
+      pattern: null
+    DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED:
+      type: "boolean"
+      required: false
+      default: "false"
+      description: "Additional Tools for User Authentication and Authorization in\
+        \ Druid Cluster with the Druid basic security extension."
+      sensitive: false
+      pattern: null
+    DRUID_COORDINATOR_URL:
+      type: "string"
+      required: false
+      default: ""
+      description: "The URL of the Apache Druid coordinator. Is only needed if the\
+        \ Druid basic security extension is enabled"
+      sensitive: false
+      pattern: null
+  mcpConfig:
+    type: "stdio"
+    command: "jbang"
+    args:
+    - "druid-mcp-server@iunera/druid-mcp-server"
+    - "--spring.profiles.active=stdio"
+    env:
+      DRUID_ROUTER_URL: "${DRUID_ROUTER_URL}"
+      DRUID_AUTH_USERNAME: "${DRUID_AUTH_USERNAME}"
+      DRUID_AUTH_PASSWORD: "${DRUID_AUTH_PASSWORD}"
+      DRUID_SSL_ENABLED: "${DRUID_SSL_ENABLED}"
+      DRUID_SSL_SKIP_VERIFICATION: "true"
+      DRUID_MCP_READONLY_ENABLED: "${DRUID_MCP_READONLY_ENABLED}"
+      DRUID_COORDINATOR_URL: "${DRUID_COORDINATOR_URL}"
+      DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED: "${DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED}"
+    url: null
+    headers: null
+  disabledTools:
+  - "feedback"
+  - "checkClusterHealth"
+  - "getCoordinatorHealth"
+  - "getRouterHealth"
+  - "quickHealthCheck"
+  - "checkFunctionalityHealth"
+  - "checkHistoricalHealth"
+  - "checkSupervisorHealth"
+  - "quickFunctionalityCheck"
+  - "getCoordinatorProperties"
+  - "getRouterProperties"
+  - "getAuthenticatorChainAndAuthorizers"
+  - "viewRetentionRuleHistory"
+  - "getBrokerStatus"
+  - "getRouterSelfDiscovered"
+  - "isCoordinatorLeader"
+  - "getLeaderInfo"
+  - "getCoordinatorSelfDiscovered"
+  - "viewCompactionConfigHistory"
+  - "viewCompactionStatusForDatasource"
+  - "getLookupStatus"
+  - "getLookupStatusForTier"
+  - "getLookupsForTier"
+  - "getLoadQueueStatusForServer"
+  - "getAllServersStatus"
+  - "getServerStatus"
+  - "validateConfiguration"
+  - "viewCompactionConfigForDatasource"
+  - "viewRetentionRulesForDatasource"
+  - "getSegmentMetadata"
+  - "getSegmentDetails"
+  - "getTaskLogWithOffset"
+  - "getTaskRawDetails"
+  suggestions:
+  - id: "druid-druid-list-datasources"
+    title: "Druid: List Datasources"
+    label: "Show all analytical datasets"
+    action: "List datasources in Apache Druid (druid-listDatasources)"
+    actionType: null
+    target: null
+  - id: "druid-druid-data-details"
+    title: "Druid: Data Details"
+    label: "Inspect schema of a datasource"
+    action: "Show me the column details and schema for the most important datasource\
+      \ in my Druid cluster."
+    actionType: null
+    target: null
+  - id: "druid-druid-cluster-health"
+    title: "Druid: Cluster Health"
+    label: "Check connectivity and status"
+    action: "Check the health and operational status of my Apache Druid cluster."
+    actionType: null
+    target: null
+  tools:
+    killDatasource:
+      description: "Delete a datasource and all associated metadata from the cluster."
+      usageIntent: null
+      discoveryHint: "Permanently delete a specified datasource and all its associated\
+        \ metadata from the Apache Druid cluster. This is a high-level, destructive\
+        \ administrative tool that must be handled with extreme caution and only used\
+        \ when absolutely necessary for data lifecycle management. When executed,\
+        \ it triggers the removal of all data segments from deep storage (such as\
+        \ S3, HDFS, or Google Cloud Storage) and clears all corresponding entries\
+        \ in the cluster's metadata store. **DANGER: This operation is irreversible.**\
+        \ Once a datasource is killed, the data is gone forever and cannot be restored\
+        \ through Druid APIs. Synonyms include data deletion, permanent cleanup, datasource\
+        \ termination, administrative removal, lifecycle purging, and data destruction.\
+        \ Common use cases include complying with data deletion requests (e.g., GDPR\
+        \ right to be forgotten), removing temporary or intermediate datasets created\
+        \ during a data engineering experiment, or clearing out obsolete logs to save\
+        \ on storage costs and reduce metadata overhead. Behavioral notes: To successfully\
+        \ 'kill' a datasource, it must typically be 'disabled' first (all its segments\
+        \ marked as unused). The process is asynchronous; the tool initiates the request,\
+        \ and the cluster's background processes handle the physical deletion over\
+        \ time. Keywords: data lifecycle, permanent deletion, administrative action,\
+        \ cluster maintenance, storage optimization, data governance, secure deletion.\
+        \ Caveats: Always verify the datasource name multiple times before execution\
+        \ to avoid catastrophic accidental data loss. Ensure that no active dashboards,\
+        \ scheduled reports, or streaming ingestion tasks are currently relying on\
+        \ this data. The AI should always seek explicit confirmation before invoking\
+        \ this tool. Security-wise, this requires elevated administrative privileges\
+        \ and should be strictly audited. Performance-wise, the call returns quickly,\
+        \ but the background deletion process can consume significant I/O and network\
+        \ bandwidth on the cluster during segment removal. This tool provides the\
+        \ AI with the ultimate level of data management control, ensuring the cluster\
+        \ remains clean, focused, and compliant with all relevant data policies."
+      properties: null
+      required: null
+    getClusterStatus:
+      description: "Check the overall health and connectivity of the Druid cluster."
+      usageIntent: null
+      discoveryHint: "Check the overall health, availability, and operational status\
+        \ of the entire Apache Druid cluster. This tool provides a high-level 'heartbeat'\
+        \ of the system, verifying that all core management components—including the\
+        \ Coordinator (for data management), the Overlord (for task management), and\
+        \ the Historical nodes (for data serving)—are responding and healthy. It is\
+        \ the primary 'first response' tool for any connectivity, availability, or\
+        \ performance investigation an AI performs. Synonyms for this action include\
+        \ cluster health check, system heartbeat, availability verification, monitoring\
+        \ status, and cluster audit. Common use cases include verifying that the system\
+        \ is ready to receive new ingestion tasks, checking for version consistency\
+        \ across nodes after an upgrade, and confirming connectivity before starting\
+        \ complex data operations. Behavioral notes: The status often includes the\
+        \ Druid version, the current leader node for each service, and basic cluster-wide\
+        \ metrics. Keywords: cluster health, system availability, heartbeat monitoring,\
+        \ health check, Druid status, cluster diagnostics, uptime verification. Caveats:\
+        \ A 'healthy' status from this tool primarily means that the control plane\
+        \ is operational; it does not necessarily guarantee that every individual\
+        \ segment of every datasource is currently loaded and queryable. For that\
+        \ level of detail, use 'listAllSegments' or 'showDatasourceDetails'. This\
+        \ tool is the foundation of trust between the AI and the Druid infrastructure.\
+        \ By regularly checking the cluster's status, the AI can avoid attempting\
+        \ operations on a degraded system and can proactively warn users if the cluster\
+        \ is undergoing maintenance or experiencing issues. It ensures that the AI's\
+        \ actions are always aligned with the actual current state of the system,\
+        \ preventing unnecessary timeouts and failed requests. Security-wise, it is\
+        \ a safe, read-only operation. Performance is extremely fast, making it ideal\
+        \ for frequent health monitoring. This tool ensures that the AI is always\
+        \ aware of the health of its workspace, providing a professional and reliable\
+        \ experience for all users. It's the first thing to check when something feels\
+        \ off and ensures the AI has a solid foundation for all its analytical tasks."
+      properties: null
+      required: null
+    viewRetentionRules:
+      description: "View data retention policies for a specific Druid datasource."
+      usageIntent: null
+      discoveryHint: "View the data retention policies and storage rules currently\
+        \ configured for a specific Apache Druid datasource. Retention rules are the\
+        \ critical governance policies that define how long data segments are kept\
+        \ in the cluster before being automatically deleted or moved to a different\
+        \ storage tier (e.g., 'keep the last 30 days of data on high-performance nodes\
+        \ and move anything older to cold storage'). This tool is essential for an\
+        \ AI to understand the data lifecycle, manage storage costs, and answer user\
+        \ questions about data availability. Synonyms include retention policy review,\
+        \ data lifecycle audit, storage rule inspection, TTL (Time-To-Live) analysis,\
+        \ and data governance check. Common use cases include auditing how long logs\
+        \ are kept for compliance, explaining to a user why data from a specific year\
+        \ is no longer available, and planning for storage capacity increases based\
+        \ on current retention settings. Behavioral notes: Rules in Druid are applied\
+        \ in a specific order of precedence; the first matching rule 'wins'. The tool\
+        \ displays these rules in their evaluation order. Keywords: retention policy,\
+        \ data lifecycle, storage tiers, segment management, TTL, data governance,\
+        \ policy audit. Caveats: Rules can be complex, involving relative time intervals,\
+        \ absolute dates, and multiple hardware tiers. The AI must carefully interpret\
+        \ the ordered list of rules to provide an accurate picture of what happens\
+        \ to a segment over time. This tool allows the AI to provide transparency\
+        \ into the cluster's automatic data management processes. It ensures that\
+        \ the user is aware of how their data is being handled and allows for better\
+        \ alignment between business needs and infrastructure costs. Security-wise,\
+        \ this is a read-only metadata operation. Performance is near-instant, as\
+        \ it retrieves the policy configuration from the Coordinator's metadata store.\
+        \ It ensures that data management is not a hidden 'black box' but a well-understood\
+        \ and documented policy that can be audited at any time. This tool is key\
+        \ for maintaining a professional and compliant data environment and ensures\
+        \ the AI can provide deep context about data history."
+      properties: null
+      required: null
+    getTaskStatus:
+      description: "Retrieve the current status and execution details of a specific\
+        \ task."
+      usageIntent: null
+      discoveryHint: "Retrieve the current operational status, execution details, and\
+        \ diagnostic information for a specific Apache Druid ingestion task. This\
+        \ tool allows for a granular, surgical inspection of an individual ingestion\
+        \ job, providing essential details such as its start time, end time, total\
+        \ duration, and most importantly, detailed error reports if the task failed\
+        \ to complete. It is the primary 'debugging' tool for an AI when a data load\
+        \ fails or is taking longer than expected. By providing the exact status of\
+        \ a task, the agent can offer precise feedback to users or administrators\
+        \ about the health of their data ingestion. Synonyms for this action include\
+        \ task debugging, job diagnostics, error reporting, execution verification,\
+        \ and task status inspection. Common use cases include diagnosing the root\
+        \ cause of a failed CSV ingestion, checking the estimated completion time\
+        \ (ETA) for a large-scale batch job, reviewing worker logs for performance\
+        \ bottlenecks, and verifying that a specific segment has been successfully\
+        \ pushed to deep storage. Behavioral notes: You must provide a valid task\
+        \ ID, which is usually obtained from a 'listTasks' or 'listSupervisors' call.\
+        \ The output often includes a 'status' object containing an error message\
+        \ or a link to the task logs. Keywords: task debugging, error reporting, ingestion\
+        \ diagnostics, job verification, execution logs, status audit, task diagnostics.\
+        \ Caveats: If a task failed, the error message might be technical and require\
+        \ careful interpretation by the AI to translate into a user-friendly explanation.\
+        \ Some task types produce more verbose status reports than others. This tool\
+        \ is a bridge between high-level task management and low-level execution details,\
+        \ ensuring that every data ingestion attempt is fully transparent and accountable\
+        \ within the Druid cluster. Security-wise, it provides deep operational insight\
+        \ without exposing the data itself. Performance-wise, the call is fast and\
+        \ targeted, making it ideal for real-time troubleshooting and providing immediate\
+        \ answers to 'what happened to my data?' type questions. It ensures that no\
+        \ ingestion task remains a black box."
+      properties: null
+      required: null
+    listLookups:
+      description: "List all available lookups configured for data enrichment."
+      usageIntent: null
+      discoveryHint: "List all available lookups currently configured and active within\
+        \ the Apache Druid cluster. Lookups are specialized, high-performance key-value\
+        \ maps used to enrich data during SQL query execution (e.g., mapping a numeric\
+        \ 'product_id' in a log to a human-readable 'product_name'). This tool provides\
+        \ the AI with an overview of all available enrichment datasets, allowing it\
+        \ to understand how it can 'beautify' or extend raw analytical data with meaningful\
+        \ business labels without the need for expensive and complex SQL JOIN operations.\
+        \ Synonyms for this action include enrichment discovery, lookup inventory,\
+        \ key-value map listing, metadata mapping, and dictionary listing. Common\
+        \ use cases include identifying available metadata sources for a report, verifying\
+        \ that a required translation table is loaded into the cluster, and mapping\
+        \ out the data relationships between raw IDs and business identifiers. Behavioral\
+        \ notes: Lookups are managed as part of the Druid configuration and are often\
+        \ synchronized across the entire cluster (on Brokers, Historicals, and Indexers)\
+        \ to ensure they are available during query processing. Keywords: data enrichment,\
+        \ lookup mapping, key-value store, metadata management, relational mapping,\
+        \ dictionary discovery, enrichment audit. Caveats: Lookups can be very large\
+        \ (containing millions of keys), but this tool only lists their names and\
+        \ types, not the actual content of the maps. It is essential for an AI to\
+        \ know what lookups are available so it can automatically incorporate them\
+        \ into the SQL queries it generates for users, providing a much more intuitive\
+        \ and readable result. For example, instead of returning a list of IDs, the\
+        \ AI can use a lookup to return actual names. Security-wise, lookups are read-only\
+        \ during query time. Performance-wise, lookups are much faster than traditional\
+        \ joins as they are often cached in-memory on every node. This tool ensures\
+        \ the AI can leverage these 'shortcuts' for better data presentation, making\
+        \ analytical reports much more accessible and meaningful to human stakeholders.\
+        \ It's the key to making raw data speak a human language."
+      properties: null
+      required: null
+    updateLookupConfig:
+      description: "Create or update the configuration for a Druid lookup."
+      usageIntent: null
+      discoveryHint: "Create or update the configuration for a specific Apache Druid\
+        \ lookup. This powerful administrative tool allows you to manage the dynamic\
+        \ enrichment datasets that power your analytical queries. You can define new\
+        \ mappings for business concepts (e.g., 'mapping region codes to names') or\
+        \ modify existing ones to reflect changes in your organization (e.g., updating\
+        \ a product catalog). This tool enables the AI to keep the analytical environment\
+        \ 'smart' and current without requiring the re-ingestion of massive datasets\
+        \ just to change a few labels. Synonyms for this action include enrichment\
+        \ management, lookup update, mapping configuration, dynamic metadata adjustment,\
+        \ and lookup provisioning. Common use cases include updating a category mapping\
+        \ after a business reorganization, adding a new lookup source for a newly\
+        \ launched product line, and automating the synchronization of external reference\
+        \ data into the Druid cluster. Behavioral notes: Updating a lookup is an administrative\
+        \ action that triggers a reload of the lookup data across all nodes in the\
+        \ cluster that use it. This ensures that all subsequent queries immediately\
+        \ benefit from the new mapping. Keywords: lookup management, dynamic enrichment,\
+        \ configuration update, metadata change, data mapping, lookup administration,\
+        \ real-time enrichment update. Caveats: Be careful when updating lookups that\
+        \ are used by many production dashboards, as an incorrect mapping could lead\
+        \ to widespread reporting errors. The new configuration must be valid JSON\
+        \ and conform to Druid's lookup provider specifications. Large lookup reloads\
+        \ can cause a temporary spike in memory and network usage. The AI should ideally\
+        \ validate the new mapping data before applying the update. Security-wise,\
+        \ this requires significant permissions as it modifies cluster-wide behavior.\
+        \ Performance-wise, the configuration update is fast, but the background data\
+        \ fetch for the lookup itself may take some time depending on the source size\
+        \ and network speed. This tool gives the AI the power to keep the analytical\
+        \ environment perfectly aligned with the changing needs of the business, ensuring\
+        \ that reports always use the most up-to-date definitions and labels."
+      properties: null
+      required: null
+    updateRetentionRules:
+      description: "Modify the data retention rules for a specific Druid datasource."
+      usageIntent: null
+      discoveryHint: "Modify and update the data retention policies for a specific\
+        \ Apache Druid datasource. This tool allows you to change the governance rules\
+        \ that control how long data is stored and which types of nodes it should\
+        \ reside on throughout its lifecycle. You can add new rules (e.g., 'drop data\
+        \ older than 1 year'), remove obsolete policies, or reorder them to optimize\
+        \ the balance between query performance and storage cost. This is a vital\
+        \ administrative capability for keeping a large cluster efficient and compliant\
+        \ with evolving data retention requirements. Synonyms for this action include\
+        \ lifecycle management, policy update, storage optimization, administrative\
+        \ rule change, data expiration control, and retention provisioning. Common\
+        \ use cases include shortening the retention period for high-volume, low-value\
+        \ logs to save space, moving older data to 'cold' storage tiers with cheaper\
+        \ hardware, and ensuring compliance with new data privacy laws that require\
+        \ shorter storage times for personal information. Behavioral notes: This is\
+        \ a significant administrative action; applying a new rule can trigger the\
+        \ immediate deletion of large amounts of data or initiate massive data movements\
+        \ between storage tiers across the cluster. Keywords: lifecycle management,\
+        \ storage policy, administrative control, cluster optimization, data expiration,\
+        \ policy update, storage governance. Caveats: **Be extremely careful.** A\
+        \ simple mistake in a retention rule—such as setting an incorrect time interval—\
+        could lead to the unintended and permanent loss of massive amounts of data.\
+        \ The AI should always double-check the logic and ask for explicit confirmation\
+        \ before applying changes. Ensure that the new rules are semantically sound\
+        \ (e.g., a 'drop' rule at the top will ignore everything below it). Security-wise,\
+        \ this requires high-level administrative permissions and should be logged\
+        \ for auditing. Performance-wise, the configuration update is fast, but the\
+        \ resulting cluster-wide data movement can take hours to complete depending\
+        \ on the scale. This tool gives the AI the power to keep the cluster's storage\
+        \ profile perfectly aligned with the organization's business and legal requirements,\
+        \ ensuring maximum efficiency and cost-effectiveness."
+      properties: null
+      required: null
+    listSupervisors:
+      description: "List active ingestion supervisors like Kafka or Kinesis."
+      usageIntent: null
+      discoveryHint: "Retrieve a comprehensive list of all active ingestion supervisors\
+        \ currently running in the Apache Druid cluster. Supervisors are the primary\
+        \ management components responsible for overseeing continuous, real-time streaming\
+        \ ingestion from sources such as Apache Kafka, Amazon Kinesis, or other supported\
+        \ stream providers. This tool provides a high-level, birds-eye view of all\
+        \ 'live' ingestion pipelines, allowing the AI to monitor which data streams\
+        \ are currently being actively processed into the cluster. Synonyms for this\
+        \ action include ingestion monitoring, pipeline discovery, stream management\
+        \ overview, active supervisor listing, and ingestion status check. Common\
+        \ use cases include verifying that all expected data streams are operational,\
+        \ identifying which datasources are being updated in real-time, and troubleshooting\
+        \ situations where data seems to be missing from recent intervals. Behavioral\
+        \ notes: The output typically includes the supervisor's unique ID, the type\
+        \ of ingestion (e.g., 'kafka'), and its overall health status. This tool allows\
+        \ the AI to quickly differentiate between static batch-loaded data and dynamic\
+        \ real-time data flows. Keywords: ingestion management, Kafka supervisor,\
+        \ Kinesis monitoring, real-time data flow, pipeline health, ingestion dashboard,\
+        \ stream orientation. Caveats: This list only includes active supervisors;\
+        \ it does not show historical batch ingestion tasks or individual worker task\
+        \ details. If a supervisor has been suspended or deleted, it will not appear\
+        \ here. The AI should use this tool as the starting point for any real-time\
+        \ data availability investigation. By listing supervisors, the AI can then\
+        \ drill down into specific pipelines using 'getSupervisorStatus' to diagnose\
+        \ detailed performance or connectivity issues. It is the 'dashboard' for all\
+        \ real-time data ingress, ensuring the AI can maintain a high-level awareness\
+        \ of the system's data freshness and overall ingestion health. Security-wise,\
+        \ it is a read-only metadata operation. Performance is near-instant as it\
+        \ queries the active Overlord state, providing an immediate snapshot of the\
+        \ system's data-gathering activity. It is essential for ensuring that real-time\
+        \ analytics are powered by healthy and current data streams."
+      properties: null
+      required: null
+    getSupervisorStatus:
+      description: "Get detailed health and status information for an ingestion supervisor."
+      usageIntent: null
+      discoveryHint: "Retrieve detailed health, performance, and operational status\
+        \ information for a specific Apache Druid ingestion supervisor (e.g., a Kafka\
+        \ or Kinesis ingestion pipeline). This tool provides a deep-dive into the\
+        \ inner workings of a streaming ingestion process, revealing critical metrics\
+        \ such as consumer lag, task distribution across the cluster, error messages,\
+        \ and recent activity logs. By analyzing the output of this tool, the AI can\
+        \ diagnose precisely why a real-time dataset might be falling behind its source\
+        \ or why ingestion has completely stalled. Synonyms for this action include\
+        \ pipeline diagnostics, supervisor health check, stream performance analysis,\
+        \ ingestion troubleshooting, and detailed status report. Common use cases\
+        \ include monitoring 'lag' to ensure data latency stays within acceptable\
+        \ limits, identifying connectivity issues with a Kafka broker, diagnosing\
+        \ task failures within a supervisor, and verifying that all partitions of\
+        \ a stream are being correctly consumed. Behavioral notes: The status information\
+        \ is fetched directly from the Overlord component and often contains a complex,\
+        \ nested JSON structure describing the state of each worker task managed by\
+        \ the supervisor. Keywords: consumer lag, offset monitoring, supervisor diagnostics,\
+        \ ingestion health, Kafka performance, stream monitoring, pipeline audit.\
+        \ Caveats: The output can be extremely verbose; the AI must be highly adept\
+        \ at parsing these details to find the 'signal' (like a 'FAILED' status or\
+        \ a massive 'lag' number) within the 'noise' of technical metadata. If the\
+        \ supervisor ID is incorrect, the tool will return an error. This tool is\
+        \ critical for maintaining high-availability and accuracy of real-time dashboards.\
+        \ It allows the AI to act as a proactive system administrator, identifying\
+        \ and explaining pipeline issues before they impact the end-user's data analysis\
+        \ experience. Security-wise, it provides detailed operational insights but\
+        \ does not expose the underlying data content. Performance-wise, the call\
+        \ is lightweight but the amount of data returned can be significant for very\
+        \ large supervisors with many tasks. It is the key to maintaining a healthy\
+        \ and responsive real-time data environment."
+      properties: null
+      required: null
+    queryDruidSql:
+      description: "Execute high-performance SQL queries on Apache Druid datasources."
+      usageIntent: null
+      discoveryHint: "Execute high-performance SQL queries against Apache Druid datasources\
+        \ to perform lightning-fast analytical operations on massive, real-time datasets.\
+        \ This tool is the primary, high-bandwidth interface for data analysis within\
+        \ the Druid ecosystem, enabling sub-second latency queries for real-time dashboards,\
+        \ interactive reporting, and complex ad-hoc data exploration. By leveraging\
+        \ the Druid Router's SQL API, the agent can run complex aggregations over\
+        \ billions of rows, filter events by highly granular time ranges, and perform\
+        \ multi-dimensional grouping on both streaming and batch-ingested data. The\
+        \ underlying Apache Druid engine uses a sophisticated columnar storage format\
+        \ and advanced indexing (including bitmap indexes) to minimize data scan volume\
+        \ and maximize CPU efficiency. This tool is essential for a wide variety of\
+        \ tasks, including calculating real-time business metrics, identifying trends\
+        \ in high-cardinality data, and performing exploratory data science. Synonyms\
+        \ for this action include analytical querying, SQL execution, time-series\
+        \ analysis, OLAP exploration, remote data retrieval, and massive data analysis.\
+        \ Common use cases include counting unique users over the last hour across\
+        \ multiple dimensions, grouping transaction volumes by geographical region,\
+        \ or performing multi-stage joins on enrichment datasources. Behavioral notes:\
+        \ The tool supports most standard SQL features but includes powerful Druid-specific\
+        \ extensions for time-series handling, such as 'TIME_FLOOR' for bucketed aggregations.\
+        \ Keywords: OLAP, real-time analytics, time-series database, big data, SQL\
+        \ dialect, Druid Router, data warehousing, high-concurrency querying. Caveats:\
+        \ While Druid is incredibly fast, extremely large result sets that exceed\
+        \ the Router's memory limits or the AI's context window can cause performance\
+        \ degradation or truncation. Always use a time filter (the '__time' column)\
+        \ whenever possible to leverage Druid's time-based partitioning and indexing\
+        \ for optimal performance. Security-wise, ensure that the SQL is well-formed\
+        \ to avoid injection risks, although the API typically handles this well.\
+        \ This tool is the 'brain' of the data operations, allowing for deep, real-time\
+        \ insights that drive informed decision-making across the entire organization.\
+        \ It ensures that data is not just stored but is instantly actionable at any\
+        \ scale, providing the necessary precision and speed for modern data-driven\
+        \ enterprises. The AI should use this tool for all primary data retrieval\
+        \ and analytical reasoning tasks within the Druid cluster."
+      properties: null
+      required: null
+    listTasks:
+      description: "List all current and historical ingestion tasks in the cluster."
+      usageIntent: null
+      discoveryHint: "List all current and historical ingestion tasks in the Apache\
+        \ Druid cluster, providing a comprehensive audit trail of all data movement\
+        \ into the system. Tasks are the fundamental units of work in Druid that handle\
+        \ data ingestion, whether they are individual batch jobs (from files like\
+        \ CSV or Parquet) or part of a streaming supervisor's workload (Kafka/Kinesis\
+        \ indexers). This tool allows the AI to see the 'engine room' of the cluster,\
+        \ showing which jobs are currently running, which are pending in the queue,\
+        \ which have succeeded, and crucially, which have failed. Synonyms for this\
+        \ action include job auditing, ingestion monitoring, task history retrieval,\
+        \ cluster activity review, and ingestion log listing. Common use cases include\
+        \ verifying that a specific batch data load has finished successfully before\
+        \ notifying a user, auditing the history of ingestion for a specific datasource,\
+        \ and identifying recurring task failures that might indicate a systemic configuration\
+        \ issue. Behavioral notes: The list can be filtered by status (e.g., RUNNING,\
+        \ SUCCESS, FAILED), by datasource, or by time range to help manage the volume\
+        \ of information. Keywords: task auditing, job monitoring, ingestion logs,\
+        \ execution history, cluster operations, data movement audit, job tracking.\
+        \ Caveats: On a busy production cluster, the task history can contain thousands\
+        \ of entries; without proper filtering, the response can be massive and difficult\
+        \ to process. The tool typically returns metadata like task ID, type, status,\
+        \ and duration, but not the detailed logs (use 'getTaskStatus' for more detail\
+        \ on a specific task). This tool is indispensable for any AI managing data\
+        \ operations, as it provides the visibility needed to ensure that the cluster\
+        \ is correctly ingesting and updating its data. Security-wise, it is a read-only\
+        \ metadata operation. Performance-wise, querying the task list can take a\
+        \ few seconds on very large clusters with extensive histories. It ensures\
+        \ full transparency of the data ingress process, allowing the AI to keep a\
+        \ close eye on all data-loading activities and report status accurately to\
+        \ the user."
+      properties: null
+      required: null
+    listDatasources:
+      description: "List all available datasources (tables) within the Apache Druid\
+        \ cluster."
+      usageIntent: null
+      discoveryHint: "List and browse all available datasources currently hosted within\
+        \ the Apache Druid cluster. A Druid datasource is the the equivalent to a\
+        \ table in a traditional relational database. This tool is foundational for\
+        \ data discovery, providing a high-level inventory of which datasets (equivalent\
+        \ to tables in traditional RDBMS) are accessible for querying, monitoring,\
+        \ and management. It is almost always the first step in any analytical workflow,\
+        \ allowing the AI to identify relevant namespaces such as production event\
+        \ logs, user behavioral metrics, or real-time IoT sensor streams. By calling\
+        \ this tool, the agent interacts with the Druid Coordinator or Router to fetch\
+        \ the current list of active and 'retired' datasources stored in the cluster's\
+        \ metadata store. Synonyms for this action include datasource discovery, namespace\
+        \ listing, schema reconnaissance, cluster orientation, identifying data targets,\
+        \ and data mapping. Common use cases include performing initial reconnaissance\
+        \ on a new Druid cluster to see what data is available, verifying that a newly\
+        \ created ingestion pipeline has successfully produced a datasource, or identifying\
+        \ obsolete datasets that may be candidates for deletion. Behavioral notes:\
+        \ The listing usually includes the names of all datasources that have at least\
+        \ one segment in the cluster, regardless of whether they are currently being\
+        \ actively ingested into. Use cases: Data inventorying, verifying cluster\
+        \ state, and preparing for deeper schema inspection. Keywords: datasource\
+        \ discovery, metadata listing, Apache Druid inventory, cluster reconnaissance,\
+        \ schema discovery, data mapping. Caveats: In very large clusters with long\
+        \ histories, the list can contain hundreds of datasources, some of which might\
+        \ be empty or historically preserved but no longer updated. This tool provides\
+        \ only the identifiers; it does not return data volume, row counts, or column\
+        \ details. Therefore, it should be followed by 'showDatasourceDetails' for\
+        \ specific targets. This tool is essential for an AI to build a structural\
+        \ map of the data landscape, ensuring that subsequent analytical queries are\
+        \ directed at the correct database, avoiding errors and ensuring a professional,\
+        \ well-informed approach to data management. It provides the 'landscape' view\
+        \ before the AI zooms in on specific details. The AI should use this as its\
+        \ starting point for any research task to avoid making assumptions about data\
+        \ availability."
+      properties: null
+      required: null
+    getLookupConfig:
+      description: "Retrieve the configuration details for a specific Druid lookup."
+      usageIntent: null
+      discoveryHint: "Retrieve the detailed configuration and definition for a specific\
+        \ Apache Druid lookup. This tool provides the 'blueprint' of a lookup, revealing\
+        \ its source (e.g., a URI for a static file, a SQL query for a relational\
+        \ database, or a static map in JSON), its refresh interval (how often it checks\
+        \ for new data), and its specific mapping rules. Use this tool to verify how\
+        \ a particular enrichment set is populated and to ensure that the data it\
+        \ provides is current and trustworthy. Synonyms for this action include lookup\
+        \ auditing, configuration inspection, data provenance review, enrichment settings\
+        \ verification, and blueprint analysis. Common use cases include troubleshooting\
+        \ why a lookup seems to contain stale or incorrect data, verifying the source\
+        \ of truth for a specific business mapping, and auditing the cluster for sensitive\
+        \ data sources used in enrichment. Behavioral notes: The configuration is\
+        \ usually returned as a JSON object that describes the 'lookup provider' and\
+        \ its parameters. Keywords: lookup configuration, data provenance, enrichment\
+        \ source, metadata audit, provider details, mapping rules, lookup blueprint.\
+        \ Caveats: If a lookup is sourced from an external database, the configuration\
+        \ might contain connection strings; however, sensitive credentials should\
+        \ be masked by the Druid cluster. This tool allows an AI to act as a system\
+        \ auditor, ensuring that the 'magic' of automated data enrichment is fully\
+        \ transparent and verifiable. If a user questions the accuracy of a report,\
+        \ the AI can use this tool to trace the data back to its source, providing\
+        \ a clear path to resolution. It ensures that the AI's data-driven insights\
+        \ are grounded in a well-understood and correctly configured metadata layer.\
+        \ Security-wise, access to lookup configs might be restricted to administrative\
+        \ users. Performance is near-instant as it queries the cluster's internal\
+        \ configuration store. This tool ensures that the AI is not just using lookups,\
+        \ but understands exactly where they come from and how they work, providing\
+        \ a higher level of trust and reliability in its analytical outputs."
+      properties: null
+      required: null
+    showDatasourceDetails:
+      description: "Retrieve schema information and column details for a specific\
+        \ datasource."
+      usageIntent: null
+      discoveryHint: "Retrieve comprehensive schema information, column definitions,\
+        \ and structural metadata for a specific Apache Druid datasource. This tool\
+        \ provides granular, technical insights into the data types (e.g., Long, Float,\
+        \ String, Complex, or specialized sketch types), dimension names, and metric\
+        \ definitions stored within a table. Understanding the schema is critical\
+        \ for writing syntactically correct and performant SQL queries, especially\
+        \ when dealing with specialized Druid features like 'hyperUnique' sketches\
+        \ for approximate unique counting or 'theta' sketches for set operations.\
+        \ By querying the Druid metadata API, the agent can understand how the data\
+        \ is organized, what columns are available for filtering, and which columns\
+        \ are optimized for aggregation. Synonyms for this action include schema inspection,\
+        \ column definition retrieval, technical data profiling, metadata deep-dive,\
+        \ table structure analysis, and technical mapping. Common use cases include\
+        \ identifying the primary dimensions for grouping in a report, verifying the\
+        \ data type of a specific metric to avoid casting errors, identifying the\
+        \ time granularity of the datasource, and understanding which columns are\
+        \ available for join operations. Behavioral notes: The tool returns the latest\
+        \ schema as reflected in the cluster's segments. Note that Druid datasources\
+        \ are schema-flexible, so different segments could technically have slightly\
+        \ different columns, but this tool provides a consolidated view. Keywords:\
+        \ schema metadata, data typing, Druid dimensions, metric definitions, technical\
+        \ profiling, schema verification, data shape analysis. Caveats: Some columns\
+        \ might contain complex structures like 'Complex' or 'Nested' that require\
+        \ specific Druid functions (e.g., 'JSON_VALUE') for extraction. Knowing the\
+        \ granularity and partitioning of the datasource can help the AI write much\
+        \ more efficient queries. This tool allows the AI to act as a truly expert\
+        \ data analyst, ensuring its queries are semantically meaningful and optimized\
+        \ for the underlying data distribution, which is key for maintaining high\
+        \ performance in large-scale environments. It ensures the AI is fully prepared\
+        \ for any data challenge by providing a detailed blueprint of the target datasource."
+      properties: null
+      required: null
+    listAllSegments:
+      description: "Retrieve a list of all data segments stored in the cluster."
+      usageIntent: null
+      discoveryHint: "Retrieve a comprehensive and exhaustive list of all data segments\
+        \ currently stored across all datasources within the Apache Druid cluster.\
+        \ Segments are the fundamental, atomic units of storage and distribution in\
+        \ Druid; each segment represents a specific time interval of data for a specific\
+        \ datasource and contains the actual compressed columnar data and indexes.\
+        \ This tool provides the ultimate 'under the hood' view of the cluster's storage,\
+        \ allowing the AI to see exactly how data is partitioned, how large each piece\
+        \ is, and where it is located. Synonyms for this action include segment metadata\
+        \ retrieval, storage audit, data partitioning review, cluster-wide segment\
+        \ listing, and segment inventory. Common use cases include performing deep\
+        \ diagnostics on query performance (e.g., finding datasources with too many\
+        \ tiny segments that need compaction), auditing the exact time range coverage\
+        \ of a dataset, and verifying that data has been correctly distributed across\
+        \ historical nodes. Behavioral notes: The output includes detailed metadata\
+        \ for each segment, such as its unique ID, its version, its size in bytes,\
+        \ its row count, and its interval. Keywords: segment metadata, data partitioning,\
+        \ storage distribution, deep storage audit, cluster inventory, segment health,\
+        \ storage profiling. Caveats: In a large-scale production cluster, there can\
+        \ be millions of segments. Calling this tool without specific filters can\
+        \ result in a massive response that is difficult to process and can put pressure\
+        \ on the Coordinator's memory. The AI should prioritize using filters (e.g.,\
+        \ by datasource or time range) whenever possible. This tool allows an AI to\
+        \ act as a system tuner, identifying fragmentation issues and suggesting 'compaction'\
+        \ tasks to merge small segments into larger, more efficient ones. It provides\
+        \ the most detailed possible map of the cluster's physical data layout, ensuring\
+        \ that administrators and the AI can maintain the system at peak performance.\
+        \ Security-wise, it is a read-only operation on metadata. Performance-wise,\
+        \ it can be slow on very large clusters due to the sheer volume of segment\
+        \ records. This tool is the final word on what is actually stored in Druid,\
+        \ providing total transparency for data auditing and system optimization.\
+        \ It ensures the AI has complete visibility into the cluster's primary data\
+        \ storage layer."
+      properties: null
+      required: null
+  modelSemantics: null

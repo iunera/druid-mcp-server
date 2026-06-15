@@ -62,6 +62,18 @@ The **Model Context Protocol (MCP)** is a standardized protocol that enables AI 
 
 *Learn more about enterprise AI solutions at [iunera.com](https://www.iunera.com)*
 
+## 🌊 Y̊pipe: AI-Powered UI for Druid
+
+Experience your data like never before with **[Y̊pipe](https://ypipe.com)**, a local desktop application that makes offline AI practical, designed by iunera. It leverages this **Druid MCP Server** to provide a seamless, conversational interface for your Druid cluster.
+
+*   **Natural Language Queries:** Ask questions in plain English and get results instantly.
+*   **Local & Secure:** Runs completely locally with support for offline models (CPU/GPU).
+*   **Plug & Play:** Works out-of-the-box with the Development Druid Installation.
+
+[**Get Ypipe on GitHub →**](https://github.com/iunera/ypipe)
+
+*The easiest way to test iunera/druid-mcp-server is [ypipe.com](https://ypipe.com) / [https://github.com/iunera/ypipe](https://github.com/iunera/ypipe)*
+
 ## 🛠️ Comprehensive Tools Summary
 
 ### 📊 Data Management Tools (12 tools)
