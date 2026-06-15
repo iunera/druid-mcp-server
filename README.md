@@ -35,6 +35,18 @@ Experience your data like never before with **[Y̊pipe (formerly Data-Philter)](
 
 *The easiest way to test iunera/druid-mcp-server is [ypipe.com](https://ypipe.com) / [https://github.com/iunera/ypipe](https://github.com/iunera/ypipe)*
 
+### 📋 Ypipe Integration Blueprint
+
+For seamless integration, we provide a predefined Ypipe integration blueprint file:
+* **Blueprint File**: [druid.ypipe](examples/ypipe/druid.ypipe)
+* **Configuration Guide**: [Ypipe Example Documentation](examples/ypipe/README.md)
+
+This blueprint allows you to easily connect and configure the Druid MCP server in [Ypipe](https://ypipe.com) through a visual workspace.
+
+| Ypipe Workspace Flow | Druid Node Configuration |
+| --- | --- |
+| ![Ypipe Workspace Flow](examples/ypipe/ypipe-screenshot-1.png) | ![Ypipe Druid Node](examples/ypipe/ypipe-screenshot-2.png) |
+
 ## Features
 
 - Spring AI MCP Server integration
@@ -78,10 +90,11 @@ The prompts interface shows all AI-assisted guidance templates available for var
 A ready-to-use MCP configuration file is provided at `mcp-servers-config.json` that can be used with LLM clients to connect to this Druid MCP server.
 
 #### Examples
-The configuration includes both transport options:
+The configuration includes multiple integration and transport options:
 
-* [STDIO default)](examples/stdio/README.md) (: see examples/stdio/README.md - server is spawned by the MCP client over STDIO.
-* [Streamable HTTP (profile: http)](examples/streamable-http/README.md) : see examples/streamable-http/README.md - single /mcp endpoint per MCP 2025-06-18.
+* [STDIO (default)](examples/stdio/README.md): see examples/stdio/README.md - server is spawned by the MCP client over STDIO.
+* [Streamable HTTP (profile: http)](examples/streamable-http/README.md): see examples/streamable-http/README.md - single /mcp endpoint per MCP 2025-06-18.
+* [Ypipe Blueprint](examples/ypipe/README.md): see examples/ypipe/README.md - configure and run the Druid MCP Server inside the [Ypipe](https://ypipe.com) desktop client using the [druid.ypipe](examples/ypipe/druid.ypipe) blueprint.
 
 
 #### Docker examples using environment variables:
