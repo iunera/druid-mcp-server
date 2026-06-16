@@ -45,14 +45,10 @@ class BasicSecurityEnabledContextTest {
     void beansPresentWhenEnabled() {
         System.out.println("[DEBUG_LOG] Checking presence of basic security beans when enabled");
 
-        assertFalse(applicationContext.getBeansOfType(ReadAuthenticationTools.class).isEmpty(),
-                "ReadAuthenticationTools should be present when enabled");
-        assertFalse(applicationContext.getBeansOfType(ReadAuthorizationTools.class).isEmpty(),
-                "ReadAuthorizationTools should be present when enabled");
-        assertFalse(applicationContext.getBeansOfType(WriteAuthenticationTools.class).isEmpty(),
-                "WriteAuthenticationTools should be present when enabled and not readonly");
-        assertFalse(applicationContext.getBeansOfType(WriteAuthorizationTools.class).isEmpty(),
-                "WriteAuthorizationTools should be present when enabled and not readonly");
+        assertFalse(applicationContext.getBeansOfType(AuthenticationTools.class).isEmpty(),
+                "AuthenticationTools should be present when enabled");
+        assertFalse(applicationContext.getBeansOfType(AuthorizationTools.class).isEmpty(),
+                "AuthorizationTools should be present when enabled");
 
         // also verify property binding
         assertTrue(druidProperties.getExtension().getDruidBasicSecurity().isEnabled(),

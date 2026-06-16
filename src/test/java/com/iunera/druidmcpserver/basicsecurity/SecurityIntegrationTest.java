@@ -41,26 +41,18 @@ class SecurityIntegrationTest {
     private SecurityRepository securityRepository;
 
     @Autowired
-    private ReadAuthenticationTools readAuthenticationTools;
+    private AuthenticationTools authenticationTools;
 
     @Autowired
-    private WriteAuthenticationTools writeAuthenticationTools;
-
-    @Autowired
-    private ReadAuthorizationTools readAuthorizationTools;
-
-    @Autowired
-    private WriteAuthorizationTools writeAuthorizationTools;
+    private AuthorizationTools authorizationTools;
 
     @Test
     void testSecurityServicesAreInjected() {
         System.out.println("[DEBUG_LOG] Testing security services injection");
 
         assertNotNull(securityRepository, "SecurityRepository should be injected");
-        assertNotNull(readAuthenticationTools, "ReadAuthenticationTools should be injected");
-        assertNotNull(writeAuthenticationTools, "WriteAuthenticationTools should be injected");
-        assertNotNull(readAuthorizationTools, "ReadAuthorizationTools should be injected");
-        assertNotNull(writeAuthorizationTools, "WriteAuthorizationTools should be injected");
+        assertNotNull(authenticationTools, "AuthenticationTools should be injected");
+        assertNotNull(authorizationTools, "AuthorizationTools should be injected");
 
         System.out.println("[DEBUG_LOG] All security services are properly injected");
     }
@@ -69,20 +61,20 @@ class SecurityIntegrationTest {
     void testAuthenticationToolsMethods() {
         System.out.println("[DEBUG_LOG] Testing AuthenticationTools methods");
 
-        // Check that key methods exist
-        Method[] readMethods = readAuthenticationTools.getClass().getDeclaredMethods();
-        Method[] writeMethods = writeAuthenticationTools.getClass().getDeclaredMethods();
+        // Use AopUtils to get the target class if proxied
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(authenticationTools);
+        Method[] methods = targetClass.getDeclaredMethods();
 
-        boolean hasListUsers = Arrays.stream(readMethods)
+        boolean hasListUsers = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("listAuthenticationUsers"));
-        boolean hasCreateUser = Arrays.stream(writeMethods)
+        boolean hasCreateUser = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("createAuthenticationUser"));
-        boolean hasSetPassword = Arrays.stream(writeMethods)
+        boolean hasSetPassword = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("setUserPassword"));
 
-        assertTrue(hasListUsers, "ReadAuthenticationTools should have listAuthenticationUsers method");
-        assertTrue(hasCreateUser, "WriteAuthenticationTools should have createAuthenticationUser method");
-        assertTrue(hasSetPassword, "WriteAuthenticationTools should have setUserPassword method");
+        assertTrue(hasListUsers, "AuthenticationTools should have listAuthenticationUsers method");
+        assertTrue(hasCreateUser, "AuthenticationTools should have createAuthenticationUser method");
+        assertTrue(hasSetPassword, "AuthenticationTools should have setUserPassword method");
 
         System.out.println("[DEBUG_LOG] AuthenticationTools methods verified");
     }
@@ -91,23 +83,23 @@ class SecurityIntegrationTest {
     void testAuthorizationToolsMethods() {
         System.out.println("[DEBUG_LOG] Testing AuthorizationTools methods");
 
-        // Check that key methods exist
-        Method[] readMethods = readAuthorizationTools.getClass().getDeclaredMethods();
-        Method[] writeMethods = writeAuthorizationTools.getClass().getDeclaredMethods();
+        // Use AopUtils to get the target class if proxied
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(authorizationTools);
+        Method[] methods = targetClass.getDeclaredMethods();
 
-        boolean hasListRoles = Arrays.stream(readMethods)
+        boolean hasListRoles = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("listRoles"));
-        boolean hasCreateRole = Arrays.stream(writeMethods)
+        boolean hasCreateRole = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("createRole"));
-        boolean hasSetPermissions = Arrays.stream(writeMethods)
+        boolean hasSetPermissions = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("setRolePermissions"));
-        boolean hasAssignRole = Arrays.stream(writeMethods)
+        boolean hasAssignRole = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("assignRoleToUser"));
 
-        assertTrue(hasListRoles, "ReadAuthorizationTools should have listRoles method");
-        assertTrue(hasCreateRole, "WriteAuthorizationTools should have createRole method");
-        assertTrue(hasSetPermissions, "WriteAuthorizationTools should have setRolePermissions method");
-        assertTrue(hasAssignRole, "WriteAuthorizationTools should have assignRoleToUser method");
+        assertTrue(hasListRoles, "AuthorizationTools should have listRoles method");
+        assertTrue(hasCreateRole, "AuthorizationTools should have createRole method");
+        assertTrue(hasSetPermissions, "AuthorizationTools should have setRolePermissions method");
+        assertTrue(hasAssignRole, "AuthorizationTools should have assignRoleToUser method");
 
         System.out.println("[DEBUG_LOG] AuthorizationTools methods verified");
     }
@@ -116,22 +108,15 @@ class SecurityIntegrationTest {
     void testSecurityToolReturnCorrectTypes() {
         System.out.println("[DEBUG_LOG] Testing security tools return correct types");
 
-        // Test that methods return String (as required by MCP tools)
-        Method[] authReadMethods = readAuthenticationTools.getClass().getSuperclass().getDeclaredMethods();
-        Method[] authWriteMethods = writeAuthenticationTools.getClass().getSuperclass().getDeclaredMethods();
-        Method[] authzReadMethods = readAuthorizationTools.getClass().getSuperclass().getDeclaredMethods();
-        Method[] authzWriteMethods = writeAuthorizationTools.getClass().getSuperclass().getDeclaredMethods();
+        Class<?> authClass = org.springframework.aop.support.AopUtils.getTargetClass(authenticationTools);
+        Method[] authMethods = authClass.getDeclaredMethods();
+        Class<?> authzClass = org.springframework.aop.support.AopUtils.getTargetClass(authorizationTools);
+        Method[] authzMethods = authzClass.getDeclaredMethods();
 
         // Check authentication methods
-        for (Method method : authReadMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get")) {
-                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
-                assertEquals(String.class, method.getReturnType(),
-                        "AuthenticationTools method " + method.getName() + " should return String");
-            }
-        }
-        for (Method method : authWriteMethods) {
-            if (method.getName().startsWith("create") || method.getName().startsWith("delete") ||
+        for (Method method : authMethods) {
+            if (method.getName().startsWith("list") || method.getName().startsWith("get") ||
+                method.getName().startsWith("create") || method.getName().startsWith("delete") ||
                 method.getName().startsWith("set")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
@@ -140,15 +125,9 @@ class SecurityIntegrationTest {
         }
 
         // Check authorization methods
-        for (Method method : authzReadMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get")) {
-                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
-                assertEquals(String.class, method.getReturnType(),
-                        "AuthorizationTools method " + method.getName() + " should return String");
-            }
-        }
-        for (Method method : authzWriteMethods) {
-            if (method.getName().startsWith("create") || method.getName().startsWith("delete") ||
+        for (Method method : authzMethods) {
+            if (method.getName().startsWith("list") || method.getName().startsWith("get") ||
+                method.getName().startsWith("create") || method.getName().startsWith("delete") ||
                 method.getName().startsWith("set") || method.getName().startsWith("assign") ||
                 method.getName().startsWith("unassign")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
@@ -169,7 +148,7 @@ class SecurityIntegrationTest {
         // or successful responses if Druid is running with security enabled
 
         try {
-            String result = readAuthenticationTools.listAuthenticationUsers("db");
+            String result = authenticationTools.listAuthenticationUsers("db");
             assertNotNull(result, "listAuthenticationUsers should return a non-null result");
             assertInstanceOf(String.class, result, "listAuthenticationUsers should return a String");
             System.out.println("[DEBUG_LOG] listAuthenticationUsers result: " +
@@ -186,7 +165,7 @@ class SecurityIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing AuthorizationTools basic functionality");
 
         try {
-            String result = readAuthorizationTools.listRoles("db");
+            String result = authorizationTools.listRoles("db");
             assertNotNull(result, "listRoles should return a non-null result");
             assertInstanceOf(String.class, result, "listRoles should return a String");
             System.out.println("[DEBUG_LOG] listRoles result: " +
@@ -226,19 +205,14 @@ class SecurityIntegrationTest {
     void testSecurityToolParameterCount() {
         System.out.println("[DEBUG_LOG] Testing security tool parameter counts");
 
-        // Test that methods have the expected number of parameters
-        Method[] authReadMethods = readAuthenticationTools.getClass().getDeclaredMethods();
+        Class<?> authClass = org.springframework.aop.support.AopUtils.getTargetClass(authenticationTools);
+        Method[] authMethods = authClass.getDeclaredMethods();
 
-        for (Method method : authReadMethods) {
+        for (Method method : authMethods) {
             if (method.getName().equals("listAuthenticationUsers")) {
                 assertEquals(1, method.getParameterCount(),
                            "listAuthenticationUsers should have 1 parameter (authenticatorName)");
-            }
-        }
-
-        Method[] authWriteMethods = writeAuthenticationTools.getClass().getDeclaredMethods();
-        for (Method method : authWriteMethods) {
-            if (method.getName().equals("createAuthenticationUser")) {
+            } else if (method.getName().equals("createAuthenticationUser")) {
                 assertEquals(2, method.getParameterCount(),
                            "createAuthenticationUser should have 2 parameters (authenticatorName, userName)");
             } else if (method.getName().equals("setUserPassword")) {
@@ -247,9 +221,10 @@ class SecurityIntegrationTest {
             }
         }
 
-        Method[] authzWriteMethods = writeAuthorizationTools.getClass().getDeclaredMethods();
+        Class<?> authzClass = org.springframework.aop.support.AopUtils.getTargetClass(authorizationTools);
+        Method[] authzMethods = authzClass.getDeclaredMethods();
 
-        for (Method method : authzWriteMethods) {
+        for (Method method : authzMethods) {
             if (method.getName().equals("assignRoleToUser")) {
                 assertEquals(3, method.getParameterCount(),
                            "assignRoleToUser should have 3 parameters (authorizerName, userName, roleName)");

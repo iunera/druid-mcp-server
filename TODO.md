@@ -34,3 +34,15 @@ https://www.linkedin.com/pulse/spring-ai-recipe-controlling-mcp-tool-visibility-
 we replace the readonly mode by a tool filtering. We want to use https://www.linkedin.com/pulse/spring-ai-recipe-controlling-mcp-tool-visibility-craig-walls-tjbfc/
 technique. 
 the idea is that we define profile and in this profile we define the tools we want to enable or not. advice me first and get me an implemetation plan. If we do that we get rid of the @ConditionalOnProperty annotations in the Writer* classes. 
+
+
+/Users/chris/git/github/iunera/druid-mcp-server/all_tools.txt many tools are expensive in llm tokens and context size. lets try to consolidate the tools. 
+I have in mind that e.g. we combine tools like listDatasources and showDatasourceDetails because they are acutally the same. Also getting the segment data can be part of the datasources.
+
+Furthermore the whole src/main/java/com/iunera/druidmcpserver/monitoring/health package can be combined in a handful of tools 
+
+make a suggestions in an refactoring plan. 
+
+
+lets get rid of the readonly property. This is legacy. 
+

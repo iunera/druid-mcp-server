@@ -44,18 +44,14 @@ class SegmentIntegrationTest {
     private SegmentResources segmentResources;
 
     @Autowired
-    private ReadSegmentTools readSegmentTools;
-
-    @Autowired
-    private WriteSegmentTools writeSegmentTools;
+    private SegmentTools segmentTools;
 
     @Test
     void testSegmentServicesAreInjected() {
         System.out.println("[DEBUG_LOG] Testing segment services injection");
 
         assertNotNull(segmentResources, "SegmentResources should be injected");
-        assertNotNull(readSegmentTools, "ReadSegmentTools should be injected");
-        assertNotNull(writeSegmentTools, "WriteSegmentTools should be injected");
+        assertNotNull(segmentTools, "SegmentTools should be injected");
 
         System.out.println("[DEBUG_LOG] All segment services are properly injected");
     }
@@ -88,29 +84,25 @@ class SegmentIntegrationTest {
 
     @Test
     void testSegmentToolProviderMethods() {
-        System.out.println("[DEBUG_LOG] Testing ReadSegmentTools and WriteSegmentTools methods");
+        System.out.println("[DEBUG_LOG] Testing SegmentTools methods");
 
-        // Check that read methods exist on ReadSegmentTools
-        Method[] readMethods = readSegmentTools.getClass().getSuperclass().getDeclaredMethods();
-        boolean hasListAllSegments = Arrays.stream(readMethods)
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(segmentTools);
+        Method[] methods = targetClass.getDeclaredMethods();
+        boolean hasListAllSegments = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("listAllSegments"));
-        boolean hasGetSegmentMetadata = Arrays.stream(readMethods)
+        boolean hasGetSegmentMetadata = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("getSegmentMetadata"));
-
-        assertTrue(hasListAllSegments, "ReadSegmentTools should have listAllSegments method");
-        assertTrue(hasGetSegmentMetadata, "ReadSegmentTools should have getSegmentMetadata method");
-
-        // Check that write methods exist on WriteSegmentTools
-        Method[] writeMethods = writeSegmentTools.getClass().getSuperclass().getDeclaredMethods();
-        boolean hasEnableSegment = Arrays.stream(writeMethods)
+        boolean hasEnableSegment = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("enableSegment"));
-        boolean hasDisableSegment = Arrays.stream(writeMethods)
+        boolean hasDisableSegment = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("disableSegment"));
 
-        assertTrue(hasEnableSegment, "WriteSegmentTools should have enableSegment method");
-        assertTrue(hasDisableSegment, "WriteSegmentTools should have disableSegment method");
+        assertTrue(hasListAllSegments, "SegmentTools should have listAllSegments method");
+        assertTrue(hasGetSegmentMetadata, "SegmentTools should have getSegmentMetadata method");
+        assertTrue(hasEnableSegment, "SegmentTools should have enableSegment method");
+        assertTrue(hasDisableSegment, "SegmentTools should have disableSegment method");
 
-        System.out.println("[DEBUG_LOG] Read/Write SegmentTools methods verified");
+        System.out.println("[DEBUG_LOG] SegmentTools methods verified");
     }
 
     @Test
@@ -132,23 +124,15 @@ class SegmentIntegrationTest {
     void testSegmentToolReturnCorrectTypes() {
         System.out.println("[DEBUG_LOG] Testing segment tool return correct types");
 
-        // Test that methods return String (as required by MCP tools)
-        Method[] readMethods = readSegmentTools.getClass().getSuperclass().getDeclaredMethods();
-        Method[] writeMethods = writeSegmentTools.getClass().getSuperclass().getDeclaredMethods();
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(segmentTools);
+        Method[] segmentMethods = targetClass.getDeclaredMethods();
 
-        // Check ReadSegmentTools methods
-        for (Method method : readMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get")) {
+        for (Method method : segmentMethods) {
+            if (method.getName().startsWith("list") || method.getName().startsWith("get") ||
+                method.getName().startsWith("enable") || method.getName().startsWith("disable")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
-                        "ReadSegmentTools method " + method.getName() + " should return String");
-            }
-        }
-        for (Method method : writeMethods) {
-            if (method.getName().startsWith("enable") || method.getName().startsWith("disable")) {
-                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
-                assertEquals(String.class, method.getReturnType(),
-                        "WriteSegmentTools method " + method.getName() + " should return String");
+                        "SegmentTools method " + method.getName() + " should return String");
             }
         }
 

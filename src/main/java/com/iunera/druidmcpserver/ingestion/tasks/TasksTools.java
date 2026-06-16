@@ -23,16 +23,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 @Component
-public class ReadTasksTools {
+public class TasksTools {
 
     private final TasksRepository tasksRepository;
     private final ObjectMapper objectMapper;
 
-    public ReadTasksTools(TasksRepository tasksRepository, ObjectMapper objectMapper) {
+    public TasksTools(TasksRepository tasksRepository, ObjectMapper objectMapper) {
         this.tasksRepository = tasksRepository;
         this.objectMapper = objectMapper;
     }
-
 
     /**
      * Get task raw details
@@ -187,4 +186,18 @@ public class ReadTasksTools {
         }
     }
 
+    /**
+     * Kill a task
+     */
+    @McpTool(description = "Kill/shutdown a Druid task by task ID")
+    public String killTask(String taskId) {
+        try {
+            JsonNode result = tasksRepository.killTask(taskId);
+            return objectMapper.writeValueAsString(result);
+        } catch (RestClientException e) {
+            return String.format("Error killing task: %s", e.getMessage());
+        } catch (Exception e) {
+            return String.format("Failed to kill task: %s", e.getMessage());
+        }
+    }
 }

@@ -35,10 +35,7 @@ class TasksIntegrationTest {
     private TasksRepository tasksRepository;
 
     @Autowired
-    private ReadTasksTools readTasksTools;
-
-    @Autowired
-    private WriteTasksTools writeTasksTools;
+    private TasksTools tasksTools;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -47,7 +44,7 @@ class TasksIntegrationTest {
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing context loading for tasks components");
         assertNotNull(tasksRepository);
-        assertNotNull(writeTasksTools);
+        assertNotNull(tasksTools);
         assertNotNull(objectMapper);
         System.out.println("[DEBUG_LOG] All tasks components loaded successfully");
     }
@@ -59,19 +56,19 @@ class TasksIntegrationTest {
         // These tests will likely fail with connection errors when Druid is not running
         // but should handle the errors gracefully
 
-        String runningTasks = readTasksTools.listRunningTasks();
+        String runningTasks = tasksTools.listRunningTasks();
         assertNotNull(runningTasks);
         System.out.println("[DEBUG_LOG] Running tasks result: " + runningTasks);
 
-        String pendingTasks = readTasksTools.listPendingTasks();
+        String pendingTasks = tasksTools.listPendingTasks();
         assertNotNull(pendingTasks);
         System.out.println("[DEBUG_LOG] Pending tasks result: " + pendingTasks);
 
-        String waitingTasks = readTasksTools.listWaitingTasks();
+        String waitingTasks = tasksTools.listWaitingTasks();
         assertNotNull(waitingTasks);
         System.out.println("[DEBUG_LOG] Waiting tasks result: " + waitingTasks);
 
-        String completedTasks = readTasksTools.listCompletedTasks();
+        String completedTasks = tasksTools.listCompletedTasks();
         assertNotNull(completedTasks);
         System.out.println("[DEBUG_LOG] Completed tasks result: " + completedTasks);
 
@@ -83,7 +80,7 @@ class TasksIntegrationTest {
     void testKillTaskWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing task killing with invalid ID");
 
-        String result = writeTasksTools.killTask("invalid-task-id");
+        String result = tasksTools.killTask("invalid-task-id");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Kill task result: " + result);
 
@@ -97,7 +94,7 @@ class TasksIntegrationTest {
     void testGetTaskRawDetailsWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing task raw details retrieval with invalid ID");
 
-        String result = readTasksTools.getTaskRawDetails("invalid-task-id");
+        String result = tasksTools.getTaskRawDetails("invalid-task-id");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Get task raw details result: " + result);
 
@@ -111,7 +108,7 @@ class TasksIntegrationTest {
     void testGetTaskIngestionSpecWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing task ingestion spec retrieval with invalid ID");
 
-        String result = readTasksTools.getTaskIngestionSpec("invalid-task-id");
+        String result = tasksTools.getTaskIngestionSpec("invalid-task-id");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Get task ingestion spec result: " + result);
 
@@ -126,7 +123,7 @@ class TasksIntegrationTest {
     void testGetTaskReportsWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing task reports retrieval with invalid ID");
 
-        String result = readTasksTools.getTaskReports("invalid-task-id");
+        String result = tasksTools.getTaskReports("invalid-task-id");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Get task reports result: " + result);
 
@@ -141,7 +138,7 @@ class TasksIntegrationTest {
     void testGetTaskLogWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing task log retrieval with invalid ID");
 
-        String result = readTasksTools.getTaskLog("invalid-task-id");
+        String result = tasksTools.getTaskLog("invalid-task-id");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Get task log result: " + result);
 
@@ -155,7 +152,7 @@ class TasksIntegrationTest {
     void testGetTaskLogWithOffsetAndInvalidId() {
         System.out.println("[DEBUG_LOG] Testing task log with offset retrieval with invalid ID");
 
-        String result = readTasksTools.getTaskLogWithOffset("invalid-task-id", 100L);
+        String result = tasksTools.getTaskLogWithOffset("invalid-task-id", 100L);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Get task log with offset result: " + result);
 
@@ -169,7 +166,7 @@ class TasksIntegrationTest {
     void testGetTaskStatusWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing task status retrieval with invalid ID");
 
-        String result = readTasksTools.getTaskStatus("invalid-task-id");
+        String result = tasksTools.getTaskStatus("invalid-task-id");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Get task status result: " + result);
 
@@ -184,27 +181,27 @@ class TasksIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing task operations error handling");
 
         // Test operations with empty string ID
-        String killResult = writeTasksTools.killTask("");
+        String killResult = tasksTools.killTask("");
         assertNotNull(killResult);
         System.out.println("[DEBUG_LOG] Kill with empty ID: " + killResult);
 
-        String detailsResult = readTasksTools.getTaskRawDetails("");
+        String detailsResult = tasksTools.getTaskRawDetails("");
         assertNotNull(detailsResult);
         System.out.println("[DEBUG_LOG] Get details with empty ID: " + detailsResult);
 
-        String specResult = readTasksTools.getTaskIngestionSpec("");
+        String specResult = tasksTools.getTaskIngestionSpec("");
         assertNotNull(specResult);
         System.out.println("[DEBUG_LOG] Get spec with empty ID: " + specResult);
 
-        String reportsResult = readTasksTools.getTaskReports("");
+        String reportsResult = tasksTools.getTaskReports("");
         assertNotNull(reportsResult);
         System.out.println("[DEBUG_LOG] Get reports with empty ID: " + reportsResult);
 
-        String logResult = readTasksTools.getTaskLog("");
+        String logResult = tasksTools.getTaskLog("");
         assertNotNull(logResult);
         System.out.println("[DEBUG_LOG] Get log with empty ID: " + logResult);
 
-        String statusResult = readTasksTools.getTaskStatus("");
+        String statusResult = tasksTools.getTaskStatus("");
         assertNotNull(statusResult);
         System.out.println("[DEBUG_LOG] Get status with empty ID: " + statusResult);
 
@@ -216,17 +213,17 @@ class TasksIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing task log offset validation");
 
         // Test with negative offset
-        String result1 = readTasksTools.getTaskLogWithOffset("test-task", -1L);
+        String result1 = tasksTools.getTaskLogWithOffset("test-task", -1L);
         assertNotNull(result1);
         System.out.println("[DEBUG_LOG] Get log with negative offset: " + result1);
 
         // Test with zero offset
-        String result2 = readTasksTools.getTaskLogWithOffset("test-task", 0L);
+        String result2 = tasksTools.getTaskLogWithOffset("test-task", 0L);
         assertNotNull(result2);
         System.out.println("[DEBUG_LOG] Get log with zero offset: " + result2);
 
         // Test with large offset
-        String result3 = readTasksTools.getTaskLogWithOffset("test-task", 999999L);
+        String result3 = tasksTools.getTaskLogWithOffset("test-task", 999999L);
         assertNotNull(result3);
         System.out.println("[DEBUG_LOG] Get log with large offset: " + result3);
 
