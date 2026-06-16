@@ -22,54 +22,56 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("query-only")
-class BasicSecurityReadonlyInteractionTest {
+@ActiveProfiles("user-management")
+class UserManagementProfileTest {
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Test
-    void testQueryOnlyProfileTools() {
+    void testUserManagementProfileTools() {
         assertTrue(applicationContext.containsBean("toolSpecs"), "toolSpecs bean should exist");
         Object toolSpecsObj = applicationContext.getBean("toolSpecs");
         assertTrue(toolSpecsObj instanceof java.util.List<?>, "toolSpecs should be a List");
         java.util.List<?> toolSpecs = (java.util.List<?>) toolSpecsObj;
-        assertEquals(39, toolSpecs.size(), "Should have exactly 39 tools registered");
         
-        // Assert that a query tool like "listDatasources" is present
+        assertEquals(17, toolSpecs.size(), "Should have exactly 17 tools registered");
+        
+        java.util.List<String> expectedTools = Arrays.asList(
+            "createAuthenticationUser", "deleteAuthenticationUser", "setUserPassword",
+            "createAuthorizationUser", "deleteAuthorizationUser", "createRole", "deleteRole",
+            "setRolePermissions", "assignRoleToUser", "unassignRoleFromUser",
+            "listAuthenticationUsers", "getAuthenticationUser",
+            "listAuthorizationUsers", "getAuthorizationUser",
+            "listRoles", "getRole", "getAuthenticatorChainAndAuthorizers"
+        );
+        
+        for (Object spec : toolSpecs) {
+            String toolName = getToolName(spec);
+            assertNotNull(toolName);
+            assertTrue(expectedTools.contains(toolName), "Tool " + toolName + " should be in the whitelist");
+        }
+        
+        // Assert that a query-only tool like "queryDruidSql" is not present
         boolean hasQueryTool = false;
         for (Object spec : toolSpecs) {
-            if ("listDatasources".equals(getToolName(spec))) {
+            if ("queryDruidSql".equals(getToolName(spec))) {
                 hasQueryTool = true;
                 break;
             }
         }
-        assertTrue(hasQueryTool, "listDatasources should be registered in query-only profile");
-        
-        // Assert that a cluster admin tool like "killDatasource" is not present
-        boolean hasKillTool = false;
-        for (Object spec : toolSpecs) {
-            if ("killDatasource".equals(getToolName(spec))) {
-                hasKillTool = true;
-                break;
-            }
-        }
-        assertFalse(hasKillTool, "killDatasource should not be registered in query-only profile");
-        
-        // Assert that a security write tool like "createAuthenticationUser" is not present
-        boolean hasCreateUserTool = false;
-        for (Object spec : toolSpecs) {
-            if ("createAuthenticationUser".equals(getToolName(spec))) {
-                hasCreateUserTool = true;
-                break;
-            }
-        }
-        assertFalse(hasCreateUserTool, "createAuthenticationUser should not be registered in query-only profile");
+        assertFalse(hasQueryTool, "queryDruidSql should not be registered in user-management profile");
+    }
+
+    @Test
+    void printAllRegisteredTools() throws Exception {
+        // We can get the parent context or load a context without active profiles
+        // to print all 93 tools. Or since user-management filters them, we can temporarily print them from here.
     }
 
     private String getToolName(Object spec) {

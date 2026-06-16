@@ -22,8 +22,27 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class DruidMcpServerApplicationTests {
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private org.springframework.context.ApplicationContext applicationContext;
+
     @Test
     void contextLoads() {
+    }
+
+    @Test
+    void printAllTools() throws Exception {
+        Object toolSpecsObj = applicationContext.getBean("toolSpecs");
+        java.util.List<?> toolSpecs = (java.util.List<?>) toolSpecsObj;
+        java.util.List<String> names = new java.util.ArrayList<>();
+        for (Object spec : toolSpecs) {
+            java.lang.reflect.Method toolMethod = spec.getClass().getMethod("tool");
+            Object tool = toolMethod.invoke(spec);
+            String name = (String) tool.getClass().getMethod("name").invoke(tool);
+            names.add(name);
+        }
+        java.util.Collections.sort(names);
+        java.nio.file.Files.write(java.nio.file.Paths.get("all_tools.txt"), names);
+        System.out.println("[DEBUG_LOG] Wrote " + names.size() + " tool names to all_tools.txt");
     }
 
 }

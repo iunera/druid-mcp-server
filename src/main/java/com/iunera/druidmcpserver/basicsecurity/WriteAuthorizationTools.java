@@ -24,7 +24,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
-@ConditionalOnProperty(prefix = "druid.mcp.readonly", name = "enabled", havingValue = "false", matchIfMissing = true)
 @ConditionalOnProperty(prefix = "druid.extension.druid-basic-security", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Component
 public class WriteAuthorizationTools {

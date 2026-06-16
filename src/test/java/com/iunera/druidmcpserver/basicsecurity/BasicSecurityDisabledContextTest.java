@@ -30,9 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest
 @TestPropertySource(properties = {
-        "druid.extension.druid-basic-security.enabled=false",
-        // even if readonly is false, feature flag should dominate
-        "druid.mcp.readonly.enabled=false"
+        "druid.extension.druid-basic-security.enabled=false"
 })
 class BasicSecurityDisabledContextTest {
 

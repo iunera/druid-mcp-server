@@ -26,7 +26,6 @@ import org.springframework.web.client.RestClientException;
 import java.util.HashMap;
 import java.util.Map;
 
-@ConditionalOnProperty(prefix = "druid.mcp.readonly", name = "enabled", havingValue = "false", matchIfMissing = true)
 @Component
 public class IngestionSpecTools {
 

@@ -44,8 +44,8 @@ druid:
       enabled: true
 
   mcp:
-    readonly:
-      enabled: false
+    tools:
+      enabled: []
     metrics:
       enabled: true
 
