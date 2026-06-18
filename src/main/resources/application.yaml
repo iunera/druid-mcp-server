@@ -16,7 +16,7 @@
 
 spring:
   profiles:
-    default: stdio
+    default: http,query-only
   application:
     name: druid-mcp-server
   config:
@@ -31,17 +31,13 @@ druid:
   router:
     url: http://localhost:8888
   coordinator:
-    url: http://localhost:8081
+    url: ""
   auth:
     username: ""
     password: ""
   ssl:
     enabled: false
     skip-verification: false
-
-  extension:
-    druid-basic-security:
-      enabled: true
 
   mcp:
     tools:
