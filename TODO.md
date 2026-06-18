@@ -58,7 +58,7 @@ query-only
 Health-Investigation
 
 
-Rework the ypipe integration blueprint [druid.ypipe](examples/ypipe/druid.ypipe) 
+Rework the ypipe integration blueprint [druid.ypipe](examples/ypipe/druid.ypipe) consider this https://github.com/iunera/ypipe/blob/main/docs/McpIntegrationBlueprints.md
 
 Rework the readme.md and the development.md 
 the default settings are starting in stdio and enabling query-only profile. 

@@ -10,6 +10,13 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - **Spring Boot: upgraded to 4.1.0** - Modularized testing support, updated configuration defaults.
 - **Spring AI: upgraded to 2.0.0** - Consolidated Model Context Protocol (MCP) server support, migrated annotations to standard core `org.springframework.ai.mcp.annotation.*` packages.
 - **Jackson 3 Integration**: Migrated JSON mapping from Jackson 2 to Jackson 3 (`tools.jackson.*`), using `JsonMapper` and updating the underlying MCP SDK to `mcp-json-jackson3`.
+- **Basic Security Activation**: Relocated basic security configurations. Removed the global `druid.extension.druid-basic-security.enabled` configuration property.
+- **Conditional Tool Activation**: Basic security tools (`SecurityTools` and `SecurityRepository`) are now conditionally activated only when the `user-management` profile is active AND the Coordinator URL (`druid.coordinator.url`) is set.
+- **Client Splitting**: Separated the Router and Coordinator rest clients into `DruidRouterRestClientConfig` and `DruidCoordinatorRestClientConfig` classes. The Coordinator rest client is now conditionally initialized only when a coordinator URL is configured.
+- **Cleaned Annotations**: Removed fully qualified annotation naming for `@Profile` and `@ConditionalOnExpression` across basic security files to utilize clean, standard Java import statements.
+
+### Breaking Change
+- **druid.mcp.readonly.enabled** is not implemented anmore. Rather use the `query-only` and `health-investigation` profiles. 
 
 ## [1.8.0] - 2026-03-03
 
