@@ -21,17 +21,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Verify that basic security beans are loaded when the feature flag is enabled.
+ * Verify that basic security beans are loaded when the user-management profile is active and coordinator url is set.
  */
 @SpringBootTest
 @TestPropertySource(properties = {
-        // ensure feature is enabled
-        "druid.extension.druid-basic-security.enabled=true"
+        "spring.profiles.active=user-management",
+        "druid.coordinator.url=http://localhost:8081"
 })
 class BasicSecurityEnabledContextTest {
 
@@ -46,12 +47,11 @@ class BasicSecurityEnabledContextTest {
         System.out.println("[DEBUG_LOG] Checking presence of basic security beans when enabled");
 
         assertFalse(applicationContext.getBeansOfType(SecurityTools.class).isEmpty(),
-                "SecurityTools should be present when enabled");
+                "SecurityTools should be present when user-management profile is active and coordinator url is set");
 
-        // also verify property binding
-        assertTrue(druidProperties.getExtension().getDruidBasicSecurity().isEnabled(),
-                "DruidProperties should bind enabled=true");
+        assertEquals("http://localhost:8081", druidProperties.getCoordinator().getUrl(),
+                "DruidProperties coordinator url should be set");
 
-        System.out.println("[DEBUG_LOG] Basic security beans are present and property binding verified");
+        System.out.println("[DEBUG_LOG] Basic security beans are present verified");
     }
 }

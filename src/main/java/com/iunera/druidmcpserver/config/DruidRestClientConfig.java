@@ -16,7 +16,6 @@
 
 package com.iunera.druidmcpserver.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
@@ -38,17 +37,7 @@ public class DruidRestClientConfig {
         this.druidProperties = druidProperties;
     }
 
-    @Bean("druidRouterRestClient")
-    public RestClient druidRouterRestClient() {
-        return createRestClient(druidProperties.getRouter().getUrl());
-    }
-
-    @Bean("druidCoordinatorRestClient")
-    public RestClient druidCoordinatorRestClient() {
-        return createRestClient(druidProperties.getCoordinator().getUrl());
-    }
-
-    private RestClient createRestClient(String baseUrl) {
+    public RestClient createRestClient(String baseUrl) {
         RestClient.Builder builder = RestClient.builder()
                 .baseUrl(baseUrl);
 
@@ -95,8 +84,6 @@ public class DruidRestClientConfig {
                 throw new RuntimeException("Failed to configure SSL context for skip verification", e);
             }
         }
-        // If sslEnabled is true but skipSslVerification is false, use system default truststore
-        // This is the default behavior of HttpClient, so no additional configuration needed
 
         return httpClientBuilder.build();
     }

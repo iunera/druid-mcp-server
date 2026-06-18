@@ -27,7 +27,10 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("user-management")
+@org.springframework.test.context.TestPropertySource(properties = {
+        "spring.profiles.active=user-management",
+        "druid.coordinator.url=http://localhost:8081"
+})
 class UserManagementProfileTest {
 
     @Autowired

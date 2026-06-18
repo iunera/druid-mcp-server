@@ -14,6 +14,3 @@ druid:
         - "getSupervisors"
         - "getTasks"
         - "getTaskDetails"
-        - "manageAuthentication"
-        - "manageAuthorization"
-        - "manageSecurityAssignments"

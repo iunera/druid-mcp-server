@@ -32,8 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * and that the @McpTool annotations are working correctly.
  */
 @SpringBootTest
+@org.springframework.test.context.ActiveProfiles("user-management")
 @TestPropertySource(properties = {
-        "druid.router.url=http://localhost:8888"
+        "druid.router.url=http://localhost:8888",
+        "druid.coordinator.url=http://localhost:8081"
 })
 class SecurityIntegrationTest {
 

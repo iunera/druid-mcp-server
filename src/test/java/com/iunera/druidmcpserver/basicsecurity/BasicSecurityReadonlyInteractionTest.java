@@ -27,6 +27,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@org.springframework.test.context.TestPropertySource(properties = {
+        "druid.coordinator.url=http://localhost:8081"
+})
 @ActiveProfiles("query-only")
 class BasicSecurityReadonlyInteractionTest {
 
@@ -39,7 +42,7 @@ class BasicSecurityReadonlyInteractionTest {
         Object toolSpecsObj = applicationContext.getBean("toolSpecs");
         assertTrue(toolSpecsObj instanceof java.util.List<?>, "toolSpecs should be a List");
         java.util.List<?> toolSpecs = (java.util.List<?>) toolSpecsObj;
-        assertEquals(14, toolSpecs.size(), "Should have exactly 14 tools registered");
+        assertEquals(11, toolSpecs.size(), "Should have exactly 11 tools registered");
         
         // Assert that a query tool like "getDatasources" is present
         boolean hasQueryTool = false;
@@ -61,7 +64,7 @@ class BasicSecurityReadonlyInteractionTest {
         }
         assertFalse(hasKillTool, "manageDatasourceOrSegment should not be registered in query-only profile");
         
-        // Assert that a security tool like "manageAuthentication" is present in query-only profile whitelist
+        // Assert that a security tool like "manageAuthentication" is not present because query-only profile does not have it enabled
         boolean hasManageAuthTool = false;
         for (Object spec : toolSpecs) {
             if ("manageAuthentication".equals(getToolName(spec))) {
@@ -69,7 +72,7 @@ class BasicSecurityReadonlyInteractionTest {
                 break;
             }
         }
-        assertTrue(hasManageAuthTool, "manageAuthentication should be registered in query-only profile");
+        assertFalse(hasManageAuthTool, "manageAuthentication should not be registered in query-only profile");
     }
 
     private String getToolName(Object spec) {

@@ -22,11 +22,13 @@ import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
-@ConditionalOnProperty(prefix = "druid.extension.druid-basic-security", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Profile("user-management")
+@ConditionalOnExpression("!'${druid.coordinator.url:}'.isEmpty()")
 @Component
 public class SecurityTools {
 

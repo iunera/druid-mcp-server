@@ -21,16 +21,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Verify that basic security beans are NOT loaded when the feature flag is disabled.
+ * Verify that basic security beans are NOT loaded when either condition is missing (e.g. active profile is not user-management, or coordinator url is empty).
  */
 @SpringBootTest
 @TestPropertySource(properties = {
-        "druid.extension.druid-basic-security.enabled=false"
+        "spring.profiles.active=query-only",
+        "druid.coordinator.url="
 })
 class BasicSecurityDisabledContextTest {
 
@@ -45,12 +47,11 @@ class BasicSecurityDisabledContextTest {
         System.out.println("[DEBUG_LOG] Checking absence of basic security beans when disabled");
 
         assertTrue(applicationContext.getBeansOfType(SecurityTools.class).isEmpty(),
-                "SecurityTools should NOT be present when disabled");
+                "SecurityTools should NOT be present when user-management profile is inactive and coordinator url is empty");
 
-        // also verify property binding reflects false
-        assertFalse(druidProperties.getExtension().getDruidBasicSecurity().isEnabled(),
-                "DruidProperties should bind enabled=false");
+        assertTrue(druidProperties.getCoordinator().getUrl().isEmpty(),
+                "DruidProperties coordinator url should be empty");
 
-        System.out.println("[DEBUG_LOG] Basic security beans are absent and property binding verified");
+        System.out.println("[DEBUG_LOG] Basic security beans are absent verified");
     }
 }

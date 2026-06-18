@@ -48,7 +48,6 @@ lets get rid of the readonly property. This is legacy.  SecurityTools
 
 secritytools werden dann aktiviert wenn der coordinator gesetzt ist. 
 
-we still need to support the
-
 DRUID_MCP_READONLY_ENABLED
-DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED
+
+We still need to support the legacy readonly mode parameter druid.mcp.readonly.enabled: tru

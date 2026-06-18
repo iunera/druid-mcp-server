@@ -16,6 +16,8 @@
 
 package com.iunera.druidmcpserver.basicsecurity;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Profile;
 import tools.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -26,6 +28,8 @@ import org.springframework.web.client.RestClientException;
  * Repository for Druid Security API operations
  * Handles both authentication and authorization API calls
  */
+@Profile("user-management")
+@ConditionalOnExpression("!'${druid.coordinator.url:}'.isEmpty()")
 @Repository
 public class SecurityRepository {
 
