@@ -50,4 +50,18 @@ secritytools werden dann aktiviert wenn der coordinator gesetzt ist.
 
 DRUID_MCP_READONLY_ENABLED
 
-We still need to support the legacy readonly mode parameter druid.mcp.readonly.enabled: tru
+We still need to support the legacy readonly mode parameter druid.mcp.readonly.enabled: true
+if this is set we only allow the activation of the following profiles 
+http
+stdio
+query-only
+Health-Investigation
+
+
+Rework the ypipe integration blueprint [druid.ypipe](examples/ypipe/druid.ypipe) 
+
+Rework the readme.md and the development.md 
+the default settings are starting in stdio and enabling query-only profile. 
+Document the behaviour we've changed. If you are not sure about things written there asked back howto proceed with it. be careful and work over it a couple of times. 
+Document which profile has which tool and which tool is using which druid api functions. 
+
