@@ -16,6 +16,8 @@
 
 package com.iunera.druidmcpserver.filter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.BeansException;
@@ -28,6 +30,7 @@ import java.util.List;
 @Component
 public class McpToolFilterPostProcessor implements BeanPostProcessor {
 
+    private static final Logger log = LoggerFactory.getLogger(McpToolFilterPostProcessor.class);
     private final McpToolProperties properties;
 
     public McpToolFilterPostProcessor(McpToolProperties properties) {
@@ -47,7 +50,7 @@ public class McpToolFilterPostProcessor implements BeanPostProcessor {
                     filtered.add(obj);
                 }
             }
-            System.out.println("[DEBUG_LOG] McpToolFilterPostProcessor filtered toolSpecs from " + list.size() + " to " + filtered.size());
+            log.info("McpToolFilterPostProcessor filtered toolSpecs from {} to {}", list.size(), filtered.size());
             return filtered;
         }
         if ("syncTools".equals(beanName) && bean instanceof List<?> list) {
@@ -67,7 +70,7 @@ public class McpToolFilterPostProcessor implements BeanPostProcessor {
                     filtered.add(obj);
                 }
             }
-            System.out.println("[DEBUG_LOG] McpToolFilterPostProcessor filtered syncTools from " + list.size() + " to " + filtered.size());
+            log.info("McpToolFilterPostProcessor filtered syncTools from {} to {}", list.size(), filtered.size());
             return filtered;
         }
         if (bean instanceof ToolCallbackProvider provider) {
