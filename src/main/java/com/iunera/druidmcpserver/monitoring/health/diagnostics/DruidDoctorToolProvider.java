@@ -25,6 +25,7 @@ import com.iunera.druidmcpserver.monitoring.health.repository.ClusterRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.ServerRepository;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 
 /**
@@ -59,10 +60,31 @@ public class DruidDoctorToolProvider {
     }
 
     /**
-     * Comprehensive cluster health diagnosis with recommendations
+     * Diagnose Druid cluster health, configuration, or performance.
      */
-    @McpTool(description = "Perform comprehensive Druid cluster health diagnosis with automated recommendations and issue detection")
-    public String diagnoseCluster() {
+    @McpTool(description = "Perform automated diagnostic health checks, configuration audits, or query performance analysis. Parameters: [mode] (Enum: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION, required).")
+    public String diagnoseCluster(
+            @McpToolParam(description = "The diagnostic mode to run: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION", required = true) String mode
+    ) {
+        if (mode == null) {
+            return "Error: [mode] parameter is required. Allowed values: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION";
+        }
+        String diagMode = mode.toUpperCase();
+        switch (diagMode) {
+            case "COMPREHENSIVE":
+                return runComprehensiveDiagnosis();
+            case "QUICK":
+                return runQuickHealthCheck();
+            case "PERFORMANCE":
+                return runAnalyzePerformance();
+            case "CONFIGURATION":
+                return runValidateConfiguration();
+            default:
+                return "Error: Invalid [mode] value: " + mode + ". Allowed values: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION";
+        }
+    }
+
+    private String runComprehensiveDiagnosis() {
         var diagnosis = objectMapper.createObjectNode();
         var issues = objectMapper.createArrayNode();
         var recommendations = objectMapper.createArrayNode();
@@ -117,11 +139,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    /**
-     * Quick health check with immediate action items
-     */
-    @McpTool(description = "Perform quick Druid cluster health check with immediate action items for critical issues")
-    public String quickHealthCheck() {
+    private String runQuickHealthCheck() {
         var quickCheck = objectMapper.createObjectNode();
         var criticalIssues = objectMapper.createArrayNode();
         var immediateActions = objectMapper.createArrayNode();
@@ -145,11 +163,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    /**
-     * Analyze cluster performance and provide optimization recommendations
-     */
-    @McpTool(description = "Analyze Druid cluster performance and provide optimization recommendations")
-    public String analyzePerformance() {
+    private String runAnalyzePerformance() {
         var analysis = objectMapper.createObjectNode();
         var performanceIssues = objectMapper.createArrayNode();
         var optimizations = objectMapper.createArrayNode();
@@ -175,11 +189,7 @@ public class DruidDoctorToolProvider {
         }
     }
 
-    /**
-     * Validate cluster configuration and provide best practice recommendations
-     */
-    @McpTool(description = "Validate Druid cluster configuration and provide best practice recommendations")
-    public String validateConfiguration() {
+    private String runValidateConfiguration() {
         var validation = objectMapper.createObjectNode();
         var configIssues = objectMapper.createArrayNode();
         var bestPractices = objectMapper.createArrayNode();

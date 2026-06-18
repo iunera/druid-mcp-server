@@ -19,6 +19,7 @@ package com.iunera.druidmcpserver.datamanagement.compaction;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -37,114 +38,90 @@ public class CompactionConfigTools {
     }
 
     /**
-     * View compaction configuration for all datasources
+     * Get compaction configuration
      */
-    @McpTool(description = "View compaction configuration for all Druid datasources. Returns an array of compaction configurations.")
-    public String viewAllCompactionConfigs() {
+    @McpTool(description = "View compaction configuration or configuration change history for datasources. Parameters: [datasource] (String, optional), and [includeHistory] (Boolean, optional) to retrieve configuration history.")
+    public String getCompactionConfig(
+            @McpToolParam(description = "Name of the datasource (optional)", required = false) String datasource,
+            @McpToolParam(description = "Whether to retrieve configuration change history (optional)", required = false) Boolean includeHistory
+    ) {
         try {
+            if (datasource != null && !datasource.trim().isEmpty()) {
+                if (includeHistory != null && includeHistory) {
+                    JsonNode result = compactionConfigRepository.getCompactionConfigHistory(datasource);
+                    return objectMapper.writeValueAsString(result);
+                }
+                JsonNode result = compactionConfigRepository.getCompactionConfigForDatasource(datasource);
+                return objectMapper.writeValueAsString(result);
+            }
             JsonNode result = compactionConfigRepository.getAllCompactionConfigs();
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error retrieving compaction configurations: %s", e.getMessage());
+            return String.format("Error getting compaction config: %s", e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process compaction configurations response: %s", e.getMessage());
+            return String.format("Failed to process compaction config request: %s", e.getMessage());
         }
     }
 
     /**
-     * View compaction configuration for a specific datasource
+     * Get compaction status
      */
-    @McpTool(description = "View compaction configuration for a specific Druid datasource. Provide the datasource name as parameter.")
-    public String viewCompactionConfigForDatasource(String datasourceName) {
+    @McpTool(description = "Retrieve the current status of compaction runs and progress. Parameters: [datasource] (String, optional).")
+    public String getCompactionStatus(
+            @McpToolParam(description = "Name of the datasource to filter by (optional)", required = false) String datasource
+    ) {
         try {
-            JsonNode result = compactionConfigRepository.getCompactionConfigForDatasource(datasourceName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error retrieving compaction configuration for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process compaction configuration response for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * View compaction configuration history for a specific datasource
-     */
-    @McpTool(description = "View compaction configuration change history for a specific Druid datasource. Provide the datasource name as parameter.")
-    public String viewCompactionConfigHistory(String datasourceName) {
-        try {
-            JsonNode result = compactionConfigRepository.getCompactionConfigHistory(datasourceName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error retrieving compaction configuration history for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process compaction configuration history response for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * View compaction status for all datasources
-     */
-    @McpTool(description = "View compaction status for all Druid datasources. Shows the current state of compaction tasks and progress.")
-    public String viewCompactionStatus() {
-        try {
+            if (datasource != null && !datasource.trim().isEmpty()) {
+                JsonNode result = compactionConfigRepository.getCompactionStatusForDatasource(datasource);
+                return objectMapper.writeValueAsString(result);
+            }
             JsonNode result = compactionConfigRepository.getCompactionStatus();
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error retrieving compaction status: %s", e.getMessage());
+            return String.format("Error getting compaction status: %s", e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process compaction status response: %s", e.getMessage());
+            return String.format("Failed to process compaction status request: %s", e.getMessage());
         }
     }
 
     /**
-     * View compaction status for a specific datasource
+     * Manage compaction configuration (UPSERT, DELETE)
      */
-    @McpTool(description = "View compaction status for a specific Druid datasource. Shows the current state of compaction tasks and progress for the datasource. Provide the datasource name as parameter.")
-    public String viewCompactionStatusForDatasource(String datasourceName) {
+    @McpTool(description = "Add, update, or remove a compaction configuration. Parameters: [action] (Enum: UPSERT, DELETE, required), [datasource] (String, required), and [configJson] (String, optional) containing the compaction configuration spec.")
+    public String manageCompaction(
+            @McpToolParam(description = "Action to perform: UPSERT, DELETE (required)", required = true) String action,
+            @McpToolParam(description = "Name of the datasource (required)", required = true) String datasource,
+            @McpToolParam(description = "Compaction configuration JSON string (required for UPSERT)", required = false) String configJson
+    ) {
         try {
-            JsonNode result = compactionConfigRepository.getCompactionStatusForDatasource(datasourceName);
-            return objectMapper.writeValueAsString(result);
+            if (action == null) {
+                return "Error: [action] parameter is required";
+            }
+            if (datasource == null || datasource.trim().isEmpty()) {
+                return "Error: [datasource] parameter is required";
+            }
+            switch (action.toUpperCase()) {
+                case "UPSERT":
+                    if (configJson == null || configJson.trim().isEmpty()) {
+                        return "Error: [configJson] is required for UPSERT action";
+                    }
+                    Map<String, Object> config = objectMapper.readValue(configJson,
+                            objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+                    config.put("dataSource", datasource);
+                    JsonNode upsertResult = compactionConfigRepository.setCompactionConfigForDatasource(datasource, config);
+                    return objectMapper.writeValueAsString(upsertResult);
+
+                case "DELETE":
+                    JsonNode deleteResult = compactionConfigRepository.deleteCompactionConfigForDatasource(datasource);
+                    return objectMapper.writeValueAsString(deleteResult);
+
+                default:
+                    return String.format("Error: Unsupported action '%s'. Supported: UPSERT, DELETE", action);
+            }
         } catch (RestClientException e) {
-            return String.format("Error retrieving compaction status for datasource '%s': %s", datasourceName, e.getMessage());
+            return String.format("Error executing compaction action '%s' on datasource '%s': %s", action, datasource, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process compaction status response for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * Edit compaction configuration for a specific datasource
-     */
-    @McpTool(description = "Edit compaction configuration for a specific Druid datasource. Provide the datasource name and configuration as JSON string. Configuration should include dataSource, taskPriority, inputSegmentSizeBytes, maxRowsPerSegment, skipOffsetFromLatest, tuningConfig, taskContext, granularitySpec, dimensionsSpec, metricsSpec, and transformSpec.")
-    public String editCompactionConfigForDatasource(String datasourceName, String configJson) {
-        try {
-            // Parse the configuration JSON string into a Map
-            Map<String, Object> config = objectMapper.readValue(configJson,
-                    objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
-
-            // Ensure the datasource name is set in the config
-            config.put("dataSource", datasourceName);
-
-            JsonNode result = compactionConfigRepository.setCompactionConfigForDatasource(datasourceName, config);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error setting compaction configuration for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process compaction configuration update for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
-
-    /**
-     * Delete compaction configuration for a specific datasource
-     */
-    @McpTool(description = "Delete compaction configuration for a specific Druid datasource. Provide the datasource name as parameter.")
-    public String deleteCompactionConfigForDatasource(String datasourceName) {
-        try {
-            JsonNode result = compactionConfigRepository.deleteCompactionConfigForDatasource(datasourceName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error deleting compaction configuration for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process compaction configuration deletion for datasource '%s': %s", datasourceName, e.getMessage());
+            return String.format("Failed to process compaction action '%s' request on datasource '%s': %s", action, datasource, e.getMessage());
         }
     }
 }

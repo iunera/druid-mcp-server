@@ -48,7 +48,7 @@ public class FunctionalityHealthToolProviderTest {
     public void testCheckSupervisorHealth() {
         System.out.println("[DEBUG_LOG] Testing checkSupervisorHealth method");
 
-        String result = functionalityHealthToolProvider.checkSupervisorHealth();
+        String result = functionalityHealthToolProvider.checkFunctionalityHealth("SUPERVISORS", false);
         assertNotNull(result, "checkSupervisorHealth should return a result");
         assertFalse(result.isEmpty(), "checkSupervisorHealth result should not be empty");
 
@@ -80,7 +80,7 @@ public class FunctionalityHealthToolProviderTest {
     public void testCheckHistoricalHealth() {
         System.out.println("[DEBUG_LOG] Testing checkHistoricalHealth method");
 
-        String result = functionalityHealthToolProvider.checkHistoricalHealth();
+        String result = functionalityHealthToolProvider.checkFunctionalityHealth("HISTORICALS", false);
         assertNotNull(result, "checkHistoricalHealth should return a result");
         assertFalse(result.isEmpty(), "checkHistoricalHealth result should not be empty");
 
@@ -116,7 +116,7 @@ public class FunctionalityHealthToolProviderTest {
     public void testCheckFunctionalityHealth() {
         System.out.println("[DEBUG_LOG] Testing checkFunctionalityHealth method");
 
-        String result = functionalityHealthToolProvider.checkFunctionalityHealth();
+        String result = functionalityHealthToolProvider.checkFunctionalityHealth("ALL", false);
         assertNotNull(result, "checkFunctionalityHealth should return a result");
         assertFalse(result.isEmpty(), "checkFunctionalityHealth result should not be empty");
 
@@ -156,7 +156,7 @@ public class FunctionalityHealthToolProviderTest {
     public void testQuickFunctionalityCheck() {
         System.out.println("[DEBUG_LOG] Testing quickFunctionalityCheck method");
 
-        String result = functionalityHealthToolProvider.quickFunctionalityCheck();
+        String result = functionalityHealthToolProvider.checkFunctionalityHealth(null, true);
         assertNotNull(result, "quickFunctionalityCheck should return a result");
         assertFalse(result.isEmpty(), "quickFunctionalityCheck result should not be empty");
 
@@ -200,10 +200,10 @@ public class FunctionalityHealthToolProviderTest {
         // All methods should handle errors gracefully and return valid responses
         // even when Druid services are not available
 
-        String supervisorResult = functionalityHealthToolProvider.checkSupervisorHealth();
-        String historicalResult = functionalityHealthToolProvider.checkHistoricalHealth();
-        String functionalityResult = functionalityHealthToolProvider.checkFunctionalityHealth();
-        String quickCheckResult = functionalityHealthToolProvider.quickFunctionalityCheck();
+        String supervisorResult = functionalityHealthToolProvider.checkFunctionalityHealth("SUPERVISORS", false);
+        String historicalResult = functionalityHealthToolProvider.checkFunctionalityHealth("HISTORICALS", false);
+        String functionalityResult = functionalityHealthToolProvider.checkFunctionalityHealth("ALL", false);
+        String quickCheckResult = functionalityHealthToolProvider.checkFunctionalityHealth(null, true);
 
         // All should return non-null, non-empty strings
         assertNotNull(supervisorResult);
@@ -224,7 +224,7 @@ public class FunctionalityHealthToolProviderTest {
     public void testSupervisorHealthAnalysis() {
         System.out.println("[DEBUG_LOG] Testing supervisor health analysis features");
 
-        String result = functionalityHealthToolProvider.checkSupervisorHealth();
+        String result = functionalityHealthToolProvider.checkFunctionalityHealth("SUPERVISORS", false);
 
         try {
             JsonNode jsonResult = objectMapper.readTree(result);
@@ -262,7 +262,7 @@ public class FunctionalityHealthToolProviderTest {
     public void testHistoricalHealthAnalysis() {
         System.out.println("[DEBUG_LOG] Testing historical health analysis features");
 
-        String result = functionalityHealthToolProvider.checkHistoricalHealth();
+        String result = functionalityHealthToolProvider.checkFunctionalityHealth("HISTORICALS", false);
 
         try {
             JsonNode jsonResult = objectMapper.readTree(result);

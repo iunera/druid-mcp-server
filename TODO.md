@@ -44,5 +44,11 @@ Furthermore the whole src/main/java/com/iunera/druidmcpserver/monitoring/health 
 make a suggestions in an refactoring plan. 
 
 
-lets get rid of the readonly property. This is legacy. 
+lets get rid of the readonly property. This is legacy.  SecurityTools
 
+secritytools werden dann aktiviert wenn der coordinator gesetzt ist. 
+
+we still need to support the
+
+DRUID_MCP_READONLY_ENABLED
+DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED

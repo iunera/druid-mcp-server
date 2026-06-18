@@ -88,19 +88,13 @@ class SegmentIntegrationTest {
 
         Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(segmentTools);
         Method[] methods = targetClass.getDeclaredMethods();
-        boolean hasListAllSegments = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("listAllSegments"));
-        boolean hasGetSegmentMetadata = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("getSegmentMetadata"));
-        boolean hasEnableSegment = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("enableSegment"));
-        boolean hasDisableSegment = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("disableSegment"));
+        boolean hasGetSegments = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("getSegments"));
+        boolean hasGetSegmentLoadQueue = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("getSegmentLoadQueue"));
 
-        assertTrue(hasListAllSegments, "SegmentTools should have listAllSegments method");
-        assertTrue(hasGetSegmentMetadata, "SegmentTools should have getSegmentMetadata method");
-        assertTrue(hasEnableSegment, "SegmentTools should have enableSegment method");
-        assertTrue(hasDisableSegment, "SegmentTools should have disableSegment method");
+        assertTrue(hasGetSegments, "SegmentTools should have getSegments method");
+        assertTrue(hasGetSegmentLoadQueue, "SegmentTools should have getSegmentLoadQueue method");
 
         System.out.println("[DEBUG_LOG] SegmentTools methods verified");
     }
@@ -128,8 +122,7 @@ class SegmentIntegrationTest {
         Method[] segmentMethods = targetClass.getDeclaredMethods();
 
         for (Method method : segmentMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get") ||
-                method.getName().startsWith("enable") || method.getName().startsWith("disable")) {
+            if (method.getName().startsWith("get")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "SegmentTools method " + method.getName() + " should return String");

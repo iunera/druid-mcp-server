@@ -52,7 +52,9 @@ class IngestionSpecIntegrationTest {
     void testCreateBatchIngestionTemplate() {
         System.out.println("[DEBUG_LOG] Testing batch ingestion template creation");
 
-        String template = ingestionSpecTools.createBatchIngestionTemplate(
+        String template = ingestionSpecTools.submitIngestion(
+                "GENERATE_TEMPLATE",
+                null,
                 "test-datasource",
                 "local",
                 "/path/to/data"
@@ -78,10 +80,10 @@ class IngestionSpecIntegrationTest {
     void testCreateIngestionSpecWithInvalidJson() {
         System.out.println("[DEBUG_LOG] Testing ingestion spec creation with invalid JSON");
 
-        String result = ingestionSpecTools.createIngestionSpec("invalid json");
+        String result = ingestionSpecTools.submitIngestion("SUBMIT_SPEC", "invalid json", null, null, null);
 
         assertNotNull(result);
-        assertTrue(result.startsWith("Failed to process ingestion spec"));
+        assertTrue(result.startsWith("Failed to process ingestion"));
 
         System.out.println("[DEBUG_LOG] Invalid JSON test result: " + result);
         System.out.println("[DEBUG_LOG] Invalid JSON handling test passed");
@@ -92,7 +94,7 @@ class IngestionSpecIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing ingestion spec creation with missing type field");
 
         String invalidSpec = "{\"spec\": {\"dataSchema\": {}}}";
-        String result = ingestionSpecTools.createIngestionSpec(invalidSpec);
+        String result = ingestionSpecTools.submitIngestion("SUBMIT_SPEC", invalidSpec, null, null, null);
 
         assertNotNull(result);
         assertTrue(result.contains("must contain a 'type' field"));
@@ -106,7 +108,7 @@ class IngestionSpecIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing ingestion spec creation with missing spec field");
 
         String invalidSpec = "{\"type\": \"index_parallel\"}";
-        String result = ingestionSpecTools.createIngestionSpec(invalidSpec);
+        String result = ingestionSpecTools.submitIngestion("SUBMIT_SPEC", invalidSpec, null, null, null);
 
         assertNotNull(result);
         assertTrue(result.contains("must contain a 'spec' field"));
@@ -161,7 +163,7 @@ class IngestionSpecIntegrationTest {
                 }
                 """;
 
-        String result = ingestionSpecTools.createIngestionSpec(validSpec);
+        String result = ingestionSpecTools.submitIngestion("SUBMIT_SPEC", validSpec, null, null, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Valid spec submission result: " + result);
 

@@ -19,8 +19,10 @@ package com.iunera.druidmcpserver.datamanagement.datasource;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
+import com.iunera.druidmcpserver.datamanagement.segments.SegmentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,56 +32,57 @@ import java.util.Map;
 public class DatasourceTools {
 
     private final DatasourceRepository datasourceRepository;
+    private final SegmentRepository segmentRepository;
     private final ObjectMapper objectMapper;
 
     public DatasourceTools(DatasourceRepository datasourceRepository,
+                           SegmentRepository segmentRepository,
                            ObjectMapper objectMapper) {
         this.datasourceRepository = datasourceRepository;
+        this.segmentRepository = segmentRepository;
         this.objectMapper = objectMapper;
     }
 
     /**
-     * List all datasource names
+     * Get datasources (list all or show details for specific)
      */
-    @McpTool(description = "List all available Apache Druid datasources tables.")
-    public String listDatasources() {
+    @McpTool(description = "List all available Apache Druid datasources or get detailed information for a specific datasource. Parameters: [datasourceName] (String, optional) to fetch details for a single datasource, and [detailed] (Boolean, optional) to include schema and column specifications.")
+    public String getDatasources(
+            @McpToolParam(description = "Name of the datasource to get details for (optional)", required = false) String datasourceName,
+            @McpToolParam(description = "Whether to include detailed columns and data types (optional)", required = false) Boolean detailed
+    ) {
         try {
             JsonNode result = datasourceRepository.getAllDatasources();
 
-            // Create a list to hold only datasource names
-            List<String> datasourceNames = new ArrayList<>();
-
-            for (int i = 0; i < result.size(); i++) {
-                JsonNode datasource = result.get(i);
-                String datasourceName = datasource.has("TABLE_NAME") ?
-                        datasource.get("TABLE_NAME").asText() : "datasource_" + i;
-                datasourceNames.add(datasourceName);
+            if (datasourceName == null || datasourceName.trim().isEmpty()) {
+                if (detailed != null && detailed) {
+                    List<Map<String, Object>> detailedList = new ArrayList<>();
+                    for (int i = 0; i < result.size(); i++) {
+                        JsonNode datasource = result.get(i);
+                        String currentName = datasource.has("TABLE_NAME") ?
+                                datasource.get("TABLE_NAME").asText() : "datasource_" + i;
+                        detailedList.add(datasourceRepository.buildDatasourceInfo(datasource, currentName));
+                    }
+                    return objectMapper.writeValueAsString(detailedList);
+                } else {
+                    List<String> datasourceNames = new ArrayList<>();
+                    for (int i = 0; i < result.size(); i++) {
+                        JsonNode datasource = result.get(i);
+                        String name = datasource.has("TABLE_NAME") ?
+                                datasource.get("TABLE_NAME").asText() : "datasource_" + i;
+                        datasourceNames.add(name);
+                    }
+                    return objectMapper.writeValueAsString(datasourceNames);
+                }
             }
 
-            return objectMapper.writeValueAsString(datasourceNames);
-        } catch (RestClientException e) {
-            return String.format("Error listing datasources: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process datasources response: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Show detailed information for a specific datasource including column names and data types
-     */
-    @McpTool(description = "Show detailed information for a specific Druid datasource including column information with names and data types")
-    public String showDatasourceDetails(String datasourceName) {
-        try {
-            JsonNode result = datasourceRepository.getAllDatasources();
-
-            // Find the specific datasource
+            // Find specific datasource details
             for (int i = 0; i < result.size(); i++) {
                 JsonNode datasource = result.get(i);
-                String currentDatasourceName = datasource.has("TABLE_NAME") ?
+                String currentName = datasource.has("TABLE_NAME") ?
                         datasource.get("TABLE_NAME").asText() : "datasource_" + i;
 
-                if (currentDatasourceName.equals(datasourceName)) {
-                    // Get detailed information for this datasource
+                if (currentName.equals(datasourceName)) {
                     Map<String, Object> datasourceInfo = datasourceRepository.buildDatasourceInfo(datasource, datasourceName);
                     return objectMapper.writeValueAsString(datasourceInfo);
                 }
@@ -87,27 +90,62 @@ public class DatasourceTools {
 
             return String.format("Datasource '%s' not found", datasourceName);
         } catch (RestClientException e) {
-            return String.format("Error showing datasource '%s': %s", datasourceName, e.getMessage());
+            return String.format("Error getting datasources: %s", e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process datasource '%s' response: %s", datasourceName, e.getMessage());
+            return String.format("Failed to process datasources request: %s", e.getMessage());
         }
     }
 
     /**
-     * Kill a datasource permanently with all its data and metadata
+     * Manage a datasource or its segments
      */
-    @McpTool(description = "Kill a Druid datasource permanently, removing all data and metadata for the specified time interval. Use with extreme caution as this operation is irreversible.")
-    public String killDatasource(String datasourceName, String interval) {
+    @McpTool(description = "Modify segment states or permanently drop a datasource. Parameters: [action] (Enum: ENABLE_SEGMENT, DISABLE_SEGMENT, KILL_DATASOURCE, required), [datasource] (String, required), [segmentId] (String, optional) to target a specific segment, and [interval] (String, optional) to specify the time range for killing data.")
+    public String manageDatasourceOrSegment(
+            @McpToolParam(description = "Action to perform: ENABLE_SEGMENT, DISABLE_SEGMENT, KILL_DATASOURCE (required)", required = true) String action,
+            @McpToolParam(description = "Name of the datasource (required)", required = true) String datasource,
+            @McpToolParam(description = "Name/ID of the segment (required only for ENABLE_SEGMENT/DISABLE_SEGMENT)", required = false) String segmentId,
+            @McpToolParam(description = "Time interval for KILL_DATASOURCE, e.g. 1000-01-01/2025-07-06 (required only for KILL_DATASOURCE)", required = false) String interval
+    ) {
         try {
-            JsonNode result = datasourceRepository.killDatasource(datasourceName, interval);
-            if (result == null) {
-                return String.format("Kill task for datasource '%s' was submitted successfully (no response body)", datasourceName);
+            if (action == null) {
+                return "Error: [action] parameter is required";
             }
-            return objectMapper.writeValueAsString(result);
+            if (datasource == null) {
+                return "Error: [datasource] parameter is required";
+            }
+
+            switch (action.toUpperCase()) {
+                case "ENABLE_SEGMENT":
+                    if (segmentId == null || segmentId.trim().isEmpty()) {
+                        return "Error: [segmentId] is required for ENABLE_SEGMENT action";
+                    }
+                    JsonNode enableResult = segmentRepository.enableSegment(datasource, segmentId);
+                    return objectMapper.writeValueAsString(enableResult);
+
+                case "DISABLE_SEGMENT":
+                    if (segmentId == null || segmentId.trim().isEmpty()) {
+                        return "Error: [segmentId] is required for DISABLE_SEGMENT action";
+                    }
+                    JsonNode disableResult = segmentRepository.disableSegment(datasource, segmentId);
+                    return objectMapper.writeValueAsString(disableResult);
+
+                case "KILL_DATASOURCE":
+                    if (interval == null || interval.trim().isEmpty()) {
+                        return "Error: [interval] is required for KILL_DATASOURCE action";
+                    }
+                    JsonNode killResult = datasourceRepository.killDatasource(datasource, interval);
+                    if (killResult == null) {
+                        return String.format("Kill task for datasource '%s' was submitted successfully (no response body)", datasource);
+                    }
+                    return objectMapper.writeValueAsString(killResult);
+
+                default:
+                    return String.format("Error: Unsupported action '%s'. Supported: ENABLE_SEGMENT, DISABLE_SEGMENT, KILL_DATASOURCE", action);
+            }
         } catch (RestClientException e) {
-            return String.format("Error killing datasource '%s': %s", datasourceName, e.getMessage());
+            return String.format("Error executing action '%s' on datasource '%s': %s", action, datasource, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process kill datasource '%s' response: %s", datasourceName, e.getMessage());
+            return String.format("Failed to process action '%s' request on datasource '%s': %s", action, datasource, e.getMessage());
         }
     }
 }

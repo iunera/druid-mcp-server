@@ -19,6 +19,7 @@ package com.iunera.druidmcpserver.ingestion.supervisors;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -34,77 +35,55 @@ public class SupervisorsTools {
     }
 
     /**
-     * List all supervisors
+     * Get supervisors (list all or get status of specific)
      */
-    @McpTool(description = "List all Druid supervisors")
-    public String listSupervisors() {
+    @McpTool(description = "List all supervisors or query details of a specific supervisor. Parameters: [supervisorId] (String, optional) to get status details for a single supervisor.")
+    public String getSupervisors(
+            @McpToolParam(description = "ID of the supervisor (optional)", required = false) String supervisorId
+    ) {
         try {
+            if (supervisorId != null && !supervisorId.trim().isEmpty()) {
+                JsonNode result = supervisorsRepository.getSupervisorStatus(supervisorId);
+                return objectMapper.writeValueAsString(result);
+            }
             JsonNode result = supervisorsRepository.getAllSupervisors();
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error listing supervisors: %s", e.getMessage());
+            return String.format("Error getting supervisors: %s", e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to list supervisors: %s", e.getMessage());
+            return String.format("Failed to process supervisors request: %s", e.getMessage());
         }
     }
 
     /**
-     * Get supervisor status
+     * Manage supervisor state (suspend, resume, terminate)
      */
-    @McpTool(description = "Get the status of a Druid supervisor by supervisor ID")
-    public String getSupervisorStatus(String supervisorId) {
+    @McpTool(description = "Suspend, resume, or terminate a supervisor's execution. Parameters: [supervisorId] (String, required), and [action] (Enum: SUSPEND, RESUME, TERMINATE, required).")
+    public String manageSupervisor(
+            @McpToolParam(description = "ID of the supervisor (required)", required = true) String supervisorId,
+            @McpToolParam(description = "Action to perform: SUSPEND, RESUME, TERMINATE (required)", required = true) String action
+    ) {
         try {
-            JsonNode result = supervisorsRepository.getSupervisorStatus(supervisorId);
-            return objectMapper.writeValueAsString(result);
+            if (supervisorId == null || supervisorId.trim().isEmpty()) {
+                return "Error: [supervisorId] parameter is required";
+            }
+            if (action == null || action.trim().isEmpty()) {
+                return "Error: [action] parameter is required";
+            }
+            switch (action.toUpperCase()) {
+                case "SUSPEND":
+                    return objectMapper.writeValueAsString(supervisorsRepository.suspendSupervisor(supervisorId));
+                case "RESUME":
+                    return objectMapper.writeValueAsString(supervisorsRepository.resumeSupervisor(supervisorId));
+                case "TERMINATE":
+                    return objectMapper.writeValueAsString(supervisorsRepository.terminateSupervisor(supervisorId));
+                default:
+                    return String.format("Error: Unsupported action '%s'. Supported: SUSPEND, RESUME, TERMINATE", action);
+            }
         } catch (RestClientException e) {
-            return String.format("Error getting supervisor status: %s", e.getMessage());
+            return String.format("Error executing action '%s' on supervisor '%s': %s", action, supervisorId, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to get supervisor status: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Suspend a supervisor
-     */
-    @McpTool(description = "Suspend a Druid supervisor by supervisor ID")
-    public String suspendSupervisor(String supervisorId) {
-        try {
-            JsonNode result = supervisorsRepository.suspendSupervisor(supervisorId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error suspending supervisor: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to suspend supervisor: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Start/Resume a supervisor
-     */
-    @McpTool(description = "Start or resume a Druid supervisor by supervisor ID")
-    public String startSupervisor(String supervisorId) {
-        try {
-            JsonNode result = supervisorsRepository.resumeSupervisor(supervisorId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error starting supervisor: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to start supervisor: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Terminate a supervisor
-     */
-    @McpTool(description = "Terminate a Druid supervisor by supervisor ID. Use with extreme caution as this operation is irreversible.")
-    public String terminateSupervisor(String supervisorId) {
-        try {
-            JsonNode result = supervisorsRepository.terminateSupervisor(supervisorId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error terminating supervisor: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to terminate supervisor: %s", e.getMessage());
+            return String.format("Failed to process action '%s' request on supervisor '%s': %s", action, supervisorId, e.getMessage());
         }
     }
 }

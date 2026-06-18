@@ -39,7 +39,7 @@ class DatasourceToolTest {
     void testListDatasourcesReturnsOnlyNames() {
         System.out.println("[DEBUG_LOG] Testing listDatasources - should return only datasource names");
 
-        String result = datasourceTools.listDatasources();
+        String result = datasourceTools.getDatasources(null, null);
         assertNotNull(result, "listDatasources should return a non-null result");
         assertFalse(result.trim().isEmpty(), "listDatasources should return a non-empty result");
 
@@ -62,7 +62,7 @@ class DatasourceToolTest {
     void testShowDatasourceReturnsDetailedInfo() {
         System.out.println("[DEBUG_LOG] Testing showDatasource - should return detailed information");
 
-        String result = datasourceTools.showDatasourceDetails("test_datasource");
+        String result = datasourceTools.getDatasources("test_datasource", null);
         assertNotNull(result, "showDatasource should return a non-null result");
         assertFalse(result.trim().isEmpty(), "showDatasource should return a non-empty result");
 
@@ -84,7 +84,7 @@ class DatasourceToolTest {
     void testShowDatasourceWithNonExistentDatasource() {
         System.out.println("[DEBUG_LOG] Testing showDatasource with non-existent datasource");
 
-        String result = datasourceTools.showDatasourceDetails("definitely_does_not_exist_datasource_12345");
+        String result = datasourceTools.getDatasources("definitely_does_not_exist_datasource_12345", null);
         assertNotNull(result, "showDatasource should return a non-null result even for non-existent datasource");
         assertFalse(result.trim().isEmpty(), "showDatasource should return a non-empty result");
 
@@ -99,7 +99,7 @@ class DatasourceToolTest {
     void testKillDatasourceWithValidParameters() {
         System.out.println("[DEBUG_LOG] Testing killDatasource with valid parameters");
 
-        String result = datasourceTools.killDatasource("test_datasource", "1000-01-01/2025-07-06");
+        String result = datasourceTools.manageDatasourceOrSegment("KILL_DATASOURCE", "test_datasource", null, "1000-01-01/2025-07-06");
         assertNotNull(result, "killDatasource should return a non-null result");
         assertFalse(result.trim().isEmpty(), "killDatasource should return a non-empty result");
 
@@ -118,7 +118,7 @@ class DatasourceToolTest {
     void testKillDatasourceWithInvalidInterval() {
         System.out.println("[DEBUG_LOG] Testing killDatasource with invalid interval format");
 
-        String result = datasourceTools.killDatasource("test_datasource", "invalid-interval");
+        String result = datasourceTools.manageDatasourceOrSegment("KILL_DATASOURCE", "test_datasource", null, "invalid-interval");
         assertNotNull(result, "killDatasource should return a non-null result even with invalid interval");
         assertFalse(result.trim().isEmpty(), "killDatasource should return a non-empty result");
 

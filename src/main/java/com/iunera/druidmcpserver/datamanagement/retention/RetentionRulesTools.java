@@ -19,6 +19,7 @@ package com.iunera.druidmcpserver.datamanagement.retention;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -38,67 +39,55 @@ public class RetentionRulesTools {
     }
 
     /**
-     * View retention rules for all datasources
+     * Get or manage retention rules
      */
-    @McpTool(description = "View retention rules for all Druid datasources. Returns a JSON object with datasource names as keys and their retention rules as values.")
-    public String viewAllRetentionRules() {
+    @McpTool(description = "View, fetch history, or update retention rules for a datasource. Parameters: [datasource] (String, optional), [action] (Enum: GET, GET_HISTORY, UPDATE, required), and [rulesJson] (String, optional) containing the retention rules JSON array.")
+    public String getOrManageRetentionRules(
+            @McpToolParam(description = "Action to perform: GET, GET_HISTORY, UPDATE (required)", required = true) String action,
+            @McpToolParam(description = "Name of the datasource (optional for GET, required for GET_HISTORY and UPDATE)", required = false) String datasource,
+            @McpToolParam(description = "Retention rules JSON array (required only for UPDATE action)", required = false) String rulesJson
+    ) {
         try {
-            JsonNode result = retentionRulesRepository.getAllRetentionRules();
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error retrieving retention rules: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process retention rules response: %s", e.getMessage());
-        }
-    }
+            if (action == null) {
+                return "Error: [action] parameter is required";
+            }
 
-    /**
-     * View retention rules for a specific datasource
-     */
-    @McpTool(description = "View retention rules for a specific Druid datasource. Provide the datasource name as parameter.")
-    public String viewRetentionRulesForDatasource(String datasourceName) {
-        try {
-            JsonNode result = retentionRulesRepository.getRetentionRulesForDatasource(datasourceName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error retrieving retention rules for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process retention rules response for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
+            switch (action.toUpperCase()) {
+                case "GET":
+                    if (datasource != null && !datasource.trim().isEmpty()) {
+                        JsonNode result = retentionRulesRepository.getRetentionRulesForDatasource(datasource);
+                        return objectMapper.writeValueAsString(result);
+                    }
+                    JsonNode allResult = retentionRulesRepository.getAllRetentionRules();
+                    return objectMapper.writeValueAsString(allResult);
 
-    /**
-     * View retention rule history for a specific datasource
-     */
-    @McpTool(description = "View retention rule change history for a specific Druid datasource. Provide the datasource name as parameter.")
-    public String viewRetentionRuleHistory(String datasourceName) {
-        try {
-            JsonNode result = retentionRulesRepository.getRetentionRuleHistory(datasourceName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error retrieving retention rule history for datasource '%s': %s", datasourceName, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process retention rule history response for datasource '%s': %s", datasourceName, e.getMessage());
-        }
-    }
+                case "GET_HISTORY":
+                    if (datasource == null || datasource.trim().isEmpty()) {
+                        return "Error: [datasource] is required for GET_HISTORY action";
+                    }
+                    JsonNode historyResult = retentionRulesRepository.getRetentionRuleHistory(datasource);
+                    return objectMapper.writeValueAsString(historyResult);
 
-    /**
-     * Edit retention rules for a specific datasource
-     */
-    @McpTool(description = "Edit retention rules for a specific Druid datasource. Provide the datasource name and rules as JSON string. Rules should be an array of rule objects with type, period, and other properties.")
-    public String editRetentionRulesForDatasource(String datasourceName, String rulesJson) {
-        try {
-            // Parse the rules JSON string into a List of Maps
-            List<Map<String, Object>> rules = objectMapper.readValue(rulesJson,
-                    objectMapper.getTypeFactory().constructCollectionType(List.class,
-                            objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)));
+                case "UPDATE":
+                    if (datasource == null || datasource.trim().isEmpty()) {
+                        return "Error: [datasource] is required for UPDATE action";
+                    }
+                    if (rulesJson == null || rulesJson.trim().isEmpty()) {
+                        return "Error: [rulesJson] is required for UPDATE action";
+                    }
+                    List<Map<String, Object>> rules = objectMapper.readValue(rulesJson,
+                            objectMapper.getTypeFactory().constructCollectionType(List.class,
+                                    objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)));
+                    JsonNode updateResult = retentionRulesRepository.setRetentionRulesForDatasource(datasource, rules);
+                    return objectMapper.writeValueAsString(updateResult);
 
-            JsonNode result = retentionRulesRepository.setRetentionRulesForDatasource(datasourceName, rules);
-            return objectMapper.writeValueAsString(result);
+                default:
+                    return String.format("Error: Unsupported action '%s'. Supported: GET, GET_HISTORY, UPDATE", action);
+            }
         } catch (RestClientException e) {
-            return String.format("Error setting retention rules for datasource '%s': %s", datasourceName, e.getMessage());
+            return String.format("Error executing retention rules action '%s' on datasource '%s': %s", action, datasource, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process retention rules update for datasource '%s': %s", datasourceName, e.getMessage());
+            return String.format("Failed to process retention rules action '%s' request on datasource '%s': %s", action, datasource, e.getMessage());
         }
     }
 }

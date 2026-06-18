@@ -19,6 +19,7 @@ package com.iunera.druidmcpserver.datamanagement.lookup;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -37,108 +38,83 @@ public class LookupTools {
     }
 
     /**
-     * List all available Druid lookups from the coordinator
+     * Get lookups configuration or status
      */
-    @McpTool(description = "List all available Druid lookups from the coordinator")
-    public String listLookups() {
+    @McpTool(description = "Get configuration or status of lookups for all or a specific tier. Parameters: [tier] (String, optional), [lookupName] (String, optional) to fetch a specific lookup, and [includeStatus] (Boolean, optional) to fetch lookup propagation status instead of configuration.")
+    public String getLookups(
+            @McpToolParam(description = "Name of the lookup tier (optional)", required = false) String tier,
+            @McpToolParam(description = "Name of the lookup (optional)", required = false) String lookupName,
+            @McpToolParam(description = "Whether to fetch lookup propagation status instead of configuration (optional)", required = false) Boolean includeStatus
+    ) {
         try {
+            if (includeStatus != null && includeStatus) {
+                if (tier != null && !tier.trim().isEmpty()) {
+                    JsonNode result = lookupRepository.getLookupStatusForTier(tier);
+                    return objectMapper.writeValueAsString(result);
+                }
+                JsonNode result = lookupRepository.getLookupStatus();
+                return objectMapper.writeValueAsString(result);
+            }
+
+            if (tier != null && !tier.trim().isEmpty()) {
+                if (lookupName != null && !lookupName.trim().isEmpty()) {
+                    JsonNode result = lookupRepository.getLookup(tier, lookupName);
+                    return objectMapper.writeValueAsString(result);
+                }
+                JsonNode result = lookupRepository.getLookupsForTier(tier);
+                return objectMapper.writeValueAsString(result);
+            }
+
             JsonNode result = lookupRepository.getAllLookups();
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error listing lookups: %s", e.getMessage());
+            return String.format("Error getting lookups: %s", e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process lookups response: %s", e.getMessage());
+            return String.format("Failed to process lookups request: %s", e.getMessage());
         }
     }
 
     /**
-     * Get lookup configurations for a specific tier
+     * Manage lookup configuration
      */
-    @McpTool(description = "Get lookup configurations for a specific tier")
-    public String getLookupsForTier(String tier) {
+    @McpTool(description = "Create, update, or delete a lookup configuration. Parameters: [action] (Enum: UPSERT, DELETE, required), [tier] (String, required), [lookupName] (String, required), and [configJson] (String, optional) containing the lookup spec.")
+    public String manageLookup(
+            @McpToolParam(description = "Action to perform: UPSERT, DELETE (required)", required = true) String action,
+            @McpToolParam(description = "Name of the lookup tier (required)", required = true) String tier,
+            @McpToolParam(description = "Name of the lookup (required)", required = true) String lookupName,
+            @McpToolParam(description = "Lookup specification JSON string (required for UPSERT)", required = false) String configJson
+    ) {
         try {
-            JsonNode result = lookupRepository.getLookupsForTier(tier);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error getting lookups for tier '%s': %s", tier, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process lookups response for tier '%s': %s", tier, e.getMessage());
-        }
-    }
+            if (action == null) {
+                return "Error: [action] parameter is required";
+            }
+            if (tier == null || tier.trim().isEmpty()) {
+                return "Error: [tier] parameter is required";
+            }
+            if (lookupName == null || lookupName.trim().isEmpty()) {
+                return "Error: [lookupName] parameter is required";
+            }
 
-    /**
-     * Get specific lookup configuration
-     */
-    @McpTool(description = "Get configuration for a specific lookup by tier and name")
-    public String getLookup(String tier, String lookupName) {
-        try {
-            JsonNode result = lookupRepository.getLookup(tier, lookupName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error getting lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process lookup response for '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        }
-    }
+            switch (action.toUpperCase()) {
+                case "UPSERT":
+                    if (configJson == null || configJson.trim().isEmpty()) {
+                        return "Error: [configJson] is required for UPSERT action";
+                    }
+                    Map<String, Object> config = objectMapper.readValue(configJson, Map.class);
+                    JsonNode result = lookupRepository.createOrUpdateLookup(tier, lookupName, config);
+                    return objectMapper.writeValueAsString(result);
 
-    /**
-     * Get lookup status for all tiers
-     */
-    @McpTool(description = "Get lookup status for all tiers")
-    public String getLookupStatus() {
-        try {
-            JsonNode result = lookupRepository.getLookupStatus();
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error getting lookup status: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to process lookup status response: %s", e.getMessage());
-        }
-    }
+                case "DELETE":
+                    JsonNode deleteResult = lookupRepository.deleteLookup(tier, lookupName);
+                    return objectMapper.writeValueAsString(deleteResult);
 
-    /**
-     * Get lookup status for a specific tier
-     */
-    @McpTool(description = "Get lookup status for a specific tier")
-    public String getLookupStatusForTier(String tier) {
-        try {
-            JsonNode result = lookupRepository.getLookupStatusForTier(tier);
-            return objectMapper.writeValueAsString(result);
+                default:
+                    return String.format("Error: Unsupported action '%s'. Supported: UPSERT, DELETE", action);
+            }
         } catch (RestClientException e) {
-            return String.format("Error getting lookup status for tier '%s': %s", tier, e.getMessage());
+            return String.format("Error executing lookup action '%s' on '%s' in tier '%s': %s", action, lookupName, tier, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process lookup status response for tier '%s': %s", tier, e.getMessage());
-        }
-    }
-
-    /**
-     * Create or update a lookup configuration
-     */
-    @McpTool(description = "Create or update a lookup configuration. Provide tier, lookup name, and configuration as JSON string")
-    public String createOrUpdateLookup(String tier, String lookupName, String configJson) {
-        try {
-            Map<String, Object> config = objectMapper.readValue(configJson, Map.class);
-            JsonNode result = lookupRepository.createOrUpdateLookup(tier, lookupName, config);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error creating/updating lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to create/update lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        }
-    }
-
-    /**
-     * Delete a lookup configuration
-     */
-    @McpTool(description = "Delete a lookup configuration by tier and name")
-    public String deleteLookup(String tier, String lookupName) {
-        try {
-            JsonNode result = lookupRepository.deleteLookup(tier, lookupName);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error deleting lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to delete lookup '%s' in tier '%s': %s", lookupName, tier, e.getMessage());
+            return String.format("Failed to process lookup action '%s' request on '%s' in tier '%s': %s", action, lookupName, tier, e.getMessage());
         }
     }
 }

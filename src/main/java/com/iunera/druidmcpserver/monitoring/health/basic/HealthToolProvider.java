@@ -24,6 +24,7 @@ import com.iunera.druidmcpserver.monitoring.health.repository.ClusterRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.ServerRepository;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -56,250 +57,107 @@ public class HealthToolProvider {
     }
 
     /**
-     * Check overall Druid cluster health
+     * Get cluster status metrics or metadata
      */
-    @McpTool(description = "Check overall Druid cluster health including coordinator and router status")
-    public String checkClusterHealth() {
-        var healthReport = objectMapper.createObjectNode();
-
-        // Check coordinator health
+    @McpTool(description = "Check overall health or fetch specific metadata/properties from coordinators or routers. Parameters: [aspect] (Enum: OVERALL, COORDINATOR, ROUTER, LEADER, METADATA, PROPERTIES, SELF_DISCOVERY_COORDINATOR, SELF_DISCOVERY_ROUTER, optional).")
+    public String getClusterStatus(
+            @McpToolParam(description = "Aspect to retrieve: OVERALL, COORDINATOR, ROUTER, LEADER, METADATA, PROPERTIES, SELF_DISCOVERY_COORDINATOR, SELF_DISCOVERY_ROUTER (optional, defaults to OVERALL)", required = false) String aspect
+    ) {
+        String queryAspect = aspect == null ? "OVERALL" : aspect.toUpperCase();
         try {
-            JsonNode coordinatorHealth = healthStatusRepository.getCoordinatorHealth();
-            healthReport.set("coordinator_health", coordinatorHealth);
-        } catch (RestClientException e) {
-            healthReport.put("coordinator_health_error", e.getMessage());
-        }
-
-        // Check router health
-        try {
-            JsonNode routerHealth = healthStatusRepository.getRouterHealth();
-            healthReport.set("router_health", routerHealth);
-        } catch (RestClientException e) {
-            healthReport.put("router_health_error", e.getMessage());
-        }
-
-        // Check leader info
-        try {
-            JsonNode leaderInfo = clusterRepository.getLeaderInfo();
-            healthReport.set("leader_info", leaderInfo);
-        } catch (RestClientException e) {
-            healthReport.put("leader_info_error", e.getMessage());
-        }
-
-        // Check datasource count
-        try {
-            JsonNode datasources = datasourceRepository.getAllDatasources();
-            if (datasources.isArray()) {
-                healthReport.put("datasource_count", datasources.size());
+            switch (queryAspect) {
+                case "COORDINATOR":
+                    return healthStatusRepository.getCoordinatorHealth().toString();
+                case "ROUTER":
+                    return healthStatusRepository.getRouterHealth().toString();
+                case "SELF_DISCOVERY_COORDINATOR":
+                    return healthStatusRepository.getCoordinatorSelfDiscovered().toString();
+                case "SELF_DISCOVERY_ROUTER":
+                    return healthStatusRepository.getRouterSelfDiscovered().toString();
+                case "LEADER":
+                    return clusterRepository.getLeaderInfo().toString();
+                case "METADATA":
+                    return clusterRepository.getClusterMetadata().toString();
+                case "PROPERTIES":
+                    var propertiesNode = objectMapper.createObjectNode();
+                    try {
+                        propertiesNode.set("coordinator", healthStatusRepository.getCoordinatorProperties());
+                    } catch (Exception e) {
+                        propertiesNode.put("coordinator_error", e.getMessage());
+                    }
+                    try {
+                        propertiesNode.set("router", healthStatusRepository.getRouterProperties());
+                    } catch (Exception e) {
+                        propertiesNode.put("router_error", e.getMessage());
+                    }
+                    return propertiesNode.toString();
+                case "OVERALL":
+                default:
+                    var healthReport = objectMapper.createObjectNode();
+                    try {
+                        healthReport.set("coordinator_health", healthStatusRepository.getCoordinatorHealth());
+                    } catch (RestClientException e) {
+                        healthReport.put("coordinator_health_error", e.getMessage());
+                    }
+                    try {
+                        healthReport.set("router_health", healthStatusRepository.getRouterHealth());
+                    } catch (RestClientException e) {
+                        healthReport.put("router_health_error", e.getMessage());
+                    }
+                    try {
+                        healthReport.set("leader_info", clusterRepository.getLeaderInfo());
+                    } catch (RestClientException e) {
+                        healthReport.put("leader_info_error", e.getMessage());
+                    }
+                    try {
+                        JsonNode datasources = datasourceRepository.getAllDatasources();
+                        if (datasources.isArray()) {
+                            healthReport.put("datasource_count", datasources.size());
+                        }
+                    } catch (RestClientException e) {
+                        healthReport.put("datasource_count_error", e.getMessage());
+                    }
+                    try {
+                        JsonNode segments = segmentRepository.getAllSegments();
+                        if (segments.isArray()) {
+                            healthReport.put("segment_count", segments.size());
+                        }
+                    } catch (RestClientException e) {
+                        healthReport.put("segment_count_error", e.getMessage());
+                    }
+                    return healthReport.toString();
             }
         } catch (RestClientException e) {
-            healthReport.put("datasource_count_error", e.getMessage());
+            return objectMapper.createObjectNode()
+                    .put("error", String.format("Failed to get cluster status for aspect %s: %s", queryAspect, e.getMessage()))
+                    .toString();
         }
+    }
 
-        // Check segment count
+    /**
+     * Get status of nodes / servers
+     */
+    @McpTool(description = "List registered servers, their detailed status, or single node status. Parameters: [serverName] (String, optional), and [detailed] (Boolean, optional) to include complete node metadata.")
+    public String getNodesStatus(
+            @McpToolParam(description = "Name of the server to filter by (optional, use 'broker' to get broker status)", required = false) String serverName,
+            @McpToolParam(description = "Whether to retrieve full node metadata details (optional)", required = false) Boolean detailed
+    ) {
         try {
-            JsonNode segments = segmentRepository.getAllSegments();
-            if (segments.isArray()) {
-                healthReport.put("segment_count", segments.size());
+            if (serverName != null && !serverName.trim().isEmpty()) {
+                if ("broker".equalsIgnoreCase(serverName)) {
+                    return serverRepository.getBrokerStatus().toString();
+                }
+                return serverRepository.getServerStatus(serverName).toString();
             }
-        } catch (RestClientException e) {
-            healthReport.put("segment_count_error", e.getMessage());
-        }
 
-        return healthReport.toString();
-    }
+            if (detailed != null && detailed) {
+                return serverRepository.getAllServersStatusWithDetails().toString();
+            }
 
-    /**
-     * Get coordinator health status
-     */
-    @McpTool(description = "Get Druid coordinator health status")
-    public String getCoordinatorHealth() {
-        try {
-            JsonNode result = healthStatusRepository.getCoordinatorHealth();
-            return result.toString();
+            return serverRepository.getAllServersStatus().toString();
         } catch (RestClientException e) {
             return objectMapper.createObjectNode()
-                    .put("error", "Failed to get coordinator health: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get router health status
-     */
-    @McpTool(description = "Get Druid router health status")
-    public String getRouterHealth() {
-        try {
-            JsonNode result = healthStatusRepository.getRouterHealth();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get router health: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get coordinator self-discovery status
-     */
-    @McpTool(description = "Get Druid coordinator self-discovery status")
-    public String getCoordinatorSelfDiscovered() {
-        try {
-            JsonNode result = healthStatusRepository.getCoordinatorSelfDiscovered();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get coordinator self-discovery status: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get router self-discovery status
-     */
-    @McpTool(description = "Get Druid router self-discovery status")
-    public String getRouterSelfDiscovered() {
-        try {
-            JsonNode result = healthStatusRepository.getRouterSelfDiscovered();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get router self-discovery status: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get all servers status
-     */
-    @McpTool(description = "Get status of all Druid servers")
-    public String getAllServersStatus() {
-        try {
-            JsonNode result = serverRepository.getAllServersStatus();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get servers status: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get all servers status with details
-     */
-    @McpTool(description = "Get detailed status of all Druid servers")
-    public String getAllServersStatusWithDetails() {
-        try {
-            JsonNode result = serverRepository.getAllServersStatusWithDetails();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get detailed servers status: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get specific server status
-     */
-    @McpTool(description = "Get status of a specific Druid server")
-    public String getServerStatus(String serverName) {
-        try {
-            JsonNode result = serverRepository.getServerStatus(serverName);
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get server status for " + serverName + ": " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get cluster metadata
-     */
-    @McpTool(description = "Get Druid cluster configuration metadata")
-    public String getClusterMetadata() {
-        try {
-            JsonNode result = clusterRepository.getClusterMetadata();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get cluster metadata: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get leader information
-     */
-    @McpTool(description = "Get Druid cluster leader information")
-    public String getLeaderInfo() {
-        try {
-            JsonNode result = clusterRepository.getLeaderInfo();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get leader info: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Check if coordinator is leader
-     */
-    @McpTool(description = "Check if coordinator is the cluster leader")
-    public String isCoordinatorLeader() {
-        try {
-            JsonNode result = clusterRepository.isCoordinatorLeader();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to check coordinator leader status: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get coordinator properties
-     */
-    @McpTool(description = "Get Druid coordinator properties")
-    public String getCoordinatorProperties() {
-        try {
-            JsonNode result = healthStatusRepository.getCoordinatorProperties();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get coordinator properties: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get router properties
-     */
-    @McpTool(description = "Get Druid router properties")
-    public String getRouterProperties() {
-        try {
-            JsonNode result = healthStatusRepository.getRouterProperties();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get router properties: " + e.getMessage())
-                    .toString();
-        }
-    }
-
-    /**
-     * Get broker status
-     */
-    @McpTool(description = "Get Druid broker status through router")
-    public String getBrokerStatus() {
-        try {
-            JsonNode result = serverRepository.getBrokerStatus();
-            return result.toString();
-        } catch (RestClientException e) {
-            return objectMapper.createObjectNode()
-                    .put("error", "Failed to get broker status: " + e.getMessage())
+                    .put("error", String.format("Failed to get nodes status: %s", e.getMessage()))
                     .toString();
         }
     }

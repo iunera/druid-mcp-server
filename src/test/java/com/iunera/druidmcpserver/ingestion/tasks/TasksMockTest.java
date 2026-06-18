@@ -58,23 +58,23 @@ class TasksMockTest {
     void testListTasksWithMockData() {
         System.out.println("[DEBUG_LOG] Testing task listing with mock data");
 
-        String runningTasks = tasksTools.listRunningTasks();
+        String runningTasks = tasksTools.getTasks("RUNNING");
         assertNotNull(runningTasks);
         assertTrue(runningTasks.contains("sample-task-1"));
         assertTrue(runningTasks.contains("index_parallel"));
         System.out.println("[DEBUG_LOG] Running tasks result: " + runningTasks);
 
-        String pendingTasks = tasksTools.listPendingTasks();
+        String pendingTasks = tasksTools.getTasks("PENDING");
         assertNotNull(pendingTasks);
         assertTrue(pendingTasks.equals("[]")); // Empty array for pending tasks
         System.out.println("[DEBUG_LOG] Pending tasks result: " + pendingTasks);
 
-        String waitingTasks = tasksTools.listWaitingTasks();
+        String waitingTasks = tasksTools.getTasks("WAITING");
         assertNotNull(waitingTasks);
         assertTrue(waitingTasks.equals("[]")); // Empty array for waiting tasks
         System.out.println("[DEBUG_LOG] Waiting tasks result: " + waitingTasks);
 
-        String completedTasks = tasksTools.listCompletedTasks();
+        String completedTasks = tasksTools.getTasks("COMPLETED");
         assertNotNull(completedTasks);
         assertTrue(completedTasks.contains("sample-task-1"));
         System.out.println("[DEBUG_LOG] Completed tasks result: " + completedTasks);
@@ -89,47 +89,47 @@ class TasksMockTest {
         String taskId = "sample-task-1";
 
         // Test getting task details
-        String taskDetails = tasksTools.getTaskRawDetails(taskId);
+        String taskDetails = tasksTools.getTaskDetails(taskId, "RAW_DETAILS", null);
         assertNotNull(taskDetails);
         assertTrue(taskDetails.contains(taskId));
         assertTrue(taskDetails.contains("index_parallel"));
         System.out.println("[DEBUG_LOG] Task details result: " + taskDetails);
 
         // Test getting task status
-        String taskStatus = tasksTools.getTaskStatus(taskId);
+        String taskStatus = tasksTools.getTaskDetails(taskId, "STATUS", null);
         assertNotNull(taskStatus);
         assertTrue(taskStatus.contains(taskId));
         assertTrue(taskStatus.contains("RUNNING"));
         System.out.println("[DEBUG_LOG] Task status result: " + taskStatus);
 
         // Test getting task ingestion spec
-        String ingestionSpec = tasksTools.getTaskIngestionSpec(taskId);
+        String ingestionSpec = tasksTools.getTaskDetails(taskId, "SPEC", null);
         assertNotNull(ingestionSpec);
         assertTrue(ingestionSpec.contains("index_parallel"));
         assertTrue(ingestionSpec.contains("ioConfig"));
         System.out.println("[DEBUG_LOG] Ingestion spec result: " + ingestionSpec);
 
         // Test getting task reports
-        String taskReports = tasksTools.getTaskReports(taskId);
+        String taskReports = tasksTools.getTaskDetails(taskId, "REPORTS", null);
         assertNotNull(taskReports);
         assertTrue(taskReports.contains("ingestionStatsAndErrors"));
         assertTrue(taskReports.contains("processed"));
         System.out.println("[DEBUG_LOG] Task reports result: " + taskReports);
 
         // Test getting task log
-        String taskLog = tasksTools.getTaskLog(taskId);
+        String taskLog = tasksTools.getTaskDetails(taskId, "LOG", null);
         assertNotNull(taskLog);
         assertTrue(taskLog.contains("Sample task log output"));
         System.out.println("[DEBUG_LOG] Task log result: " + taskLog);
 
         // Test getting task log with offset
-        String taskLogWithOffset = tasksTools.getTaskLogWithOffset(taskId, 100);
+        String taskLogWithOffset = tasksTools.getTaskDetails(taskId, "LOG", 100L);
         assertNotNull(taskLogWithOffset);
         assertTrue(taskLogWithOffset.contains("Sample task log output from offset"));
         System.out.println("[DEBUG_LOG] Task log with offset result: " + taskLogWithOffset);
 
         // Test killing task
-        String killResult = tasksTools.killTask(taskId);
+        String killResult = tasksTools.shutdownTask(taskId);
         assertNotNull(killResult);
         assertTrue(killResult.contains(taskId));
         assertTrue(killResult.contains("shutdown"));
@@ -145,27 +145,27 @@ class TasksMockTest {
         String taskId = "sample-task-1";
 
         // Test that all operations return valid JSON (not error messages)
-        String runningTasks = tasksTools.listRunningTasks();
+        String runningTasks = tasksTools.getTasks("RUNNING");
         assertTrue(runningTasks.startsWith("[") || runningTasks.startsWith("{"));
         assertFalse(runningTasks.startsWith("Error"));
 
-        String taskDetails = tasksTools.getTaskRawDetails(taskId);
+        String taskDetails = tasksTools.getTaskDetails(taskId, "RAW_DETAILS", null);
         assertTrue(taskDetails.startsWith("{"));
         assertFalse(taskDetails.startsWith("Error"));
 
-        String taskStatus = tasksTools.getTaskStatus(taskId);
+        String taskStatus = tasksTools.getTaskDetails(taskId, "STATUS", null);
         assertTrue(taskStatus.startsWith("{"));
         assertFalse(taskStatus.startsWith("Error"));
 
-        String ingestionSpec = tasksTools.getTaskIngestionSpec(taskId);
+        String ingestionSpec = tasksTools.getTaskDetails(taskId, "SPEC", null);
         assertTrue(ingestionSpec.startsWith("{"));
         assertFalse(ingestionSpec.startsWith("Error"));
 
-        String taskReports = tasksTools.getTaskReports(taskId);
+        String taskReports = tasksTools.getTaskDetails(taskId, "REPORTS", null);
         assertTrue(taskReports.startsWith("{"));
         assertFalse(taskReports.startsWith("Error"));
 
-        String killResult = tasksTools.killTask(taskId);
+        String killResult = tasksTools.shutdownTask(taskId);
         assertTrue(killResult.startsWith("{"));
         assertFalse(killResult.startsWith("Error"));
 

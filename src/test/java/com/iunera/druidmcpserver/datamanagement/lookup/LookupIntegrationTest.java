@@ -88,19 +88,13 @@ class LookupIntegrationTest {
 
         Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(lookupTools);
         Method[] methods = targetClass.getDeclaredMethods();
-        boolean hasListLookups = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("listLookups"));
-        boolean hasGetLookupStatus = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("getLookupStatus"));
-        boolean hasCreateOrUpdateLookup = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("createOrUpdateLookup"));
-        boolean hasDeleteLookup = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("deleteLookup"));
+        boolean hasGetLookups = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("getLookups"));
+        boolean hasManageLookup = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("manageLookup"));
 
-        assertTrue(hasListLookups, "LookupTools should have listLookups method");
-        assertTrue(hasGetLookupStatus, "LookupTools should have getLookupStatus method");
-        assertTrue(hasCreateOrUpdateLookup, "LookupTools should have createOrUpdateLookup method");
-        assertTrue(hasDeleteLookup, "LookupTools should have deleteLookup method");
+        assertTrue(hasGetLookups, "LookupTools should have getLookups method");
+        assertTrue(hasManageLookup, "LookupTools should have manageLookup method");
 
         System.out.println("[DEBUG_LOG] LookupTools methods verified");
     }
@@ -130,7 +124,7 @@ class LookupIntegrationTest {
 
         // Check that public methods return String
         for (Method method : lookupMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get") || method.getName().startsWith("create") || method.getName().startsWith("delete")) {
+            if (method.getName().startsWith("get") || method.getName().startsWith("manage")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "LookupTools method " + method.getName() + " should return String");

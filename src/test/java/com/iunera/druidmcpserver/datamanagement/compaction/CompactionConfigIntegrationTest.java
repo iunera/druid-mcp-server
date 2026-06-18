@@ -54,7 +54,7 @@ class CompactionConfigIntegrationTest {
         assertNotNull(compactionConfigTools);
 
         // Test that the tool provider handles connection errors gracefully
-        String result = compactionConfigTools.viewAllCompactionConfigs();
+        String result = compactionConfigTools.getCompactionConfig(null, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Compaction config tool provider result: " + result);
 
@@ -68,7 +68,7 @@ class CompactionConfigIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing compaction config for specific datasource");
         String testDatasource = "test-datasource";
 
-        String result = compactionConfigTools.viewCompactionConfigForDatasource(testDatasource);
+        String result = compactionConfigTools.getCompactionConfig(testDatasource, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Compaction config for datasource result: " + result);
 
@@ -83,7 +83,7 @@ class CompactionConfigIntegrationTest {
         String testDatasource = "test-datasource";
         String testConfig = "{\"dataSource\":\"test-datasource\",\"taskPriority\":25,\"inputSegmentSizeBytes\":419430400,\"maxRowsPerSegment\":5000000}";
 
-        String result = compactionConfigTools.editCompactionConfigForDatasource(testDatasource, testConfig);
+        String result = compactionConfigTools.manageCompaction("UPSERT", testDatasource, testConfig);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Edit compaction config result: " + result);
 
@@ -97,7 +97,7 @@ class CompactionConfigIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing compaction config delete functionality");
         String testDatasource = "test-datasource";
 
-        String result = compactionConfigTools.deleteCompactionConfigForDatasource(testDatasource);
+        String result = compactionConfigTools.manageCompaction("DELETE", testDatasource, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Delete compaction config result: " + result);
 
@@ -111,7 +111,7 @@ class CompactionConfigIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing compaction config history functionality");
         String testDatasource = "test-datasource";
 
-        String result = compactionConfigTools.viewCompactionConfigHistory(testDatasource);
+        String result = compactionConfigTools.getCompactionConfig(testDatasource, true);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Compaction config history result: " + result);
 
@@ -124,7 +124,7 @@ class CompactionConfigIntegrationTest {
     void testCompactionStatus() {
         System.out.println("[DEBUG_LOG] Testing compaction status functionality");
 
-        String result = compactionConfigTools.viewCompactionStatus();
+        String result = compactionConfigTools.getCompactionStatus(null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Compaction status result: " + result);
 
@@ -138,7 +138,7 @@ class CompactionConfigIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing compaction status for specific datasource");
         String testDatasource = "test-datasource";
 
-        String result = compactionConfigTools.viewCompactionStatusForDatasource(testDatasource);
+        String result = compactionConfigTools.getCompactionStatus(testDatasource);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Compaction status for datasource result: " + result);
 

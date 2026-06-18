@@ -55,13 +55,13 @@ class HealthIntegrationTest {
 
         // Check that key methods exist
         Method[] methods = healthToolProvider.getClass().getDeclaredMethods();
-        boolean hasCheckClusterHealth = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("checkClusterHealth"));
-        boolean hasGetCoordinatorHealth = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("getCoordinatorHealth"));
+        boolean hasGetClusterStatus = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("getClusterStatus"));
+        boolean hasGetNodesStatus = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("getNodesStatus"));
 
-        assertTrue(hasCheckClusterHealth, "HealthToolProvider should have checkClusterHealth method");
-        assertTrue(hasGetCoordinatorHealth, "HealthToolProvider should have getCoordinatorHealth method");
+        assertTrue(hasGetClusterStatus, "HealthToolProvider should have getClusterStatus method");
+        assertTrue(hasGetNodesStatus, "HealthToolProvider should have getNodesStatus method");
 
         System.out.println("[DEBUG_LOG] HealthToolProvider methods verified");
     }
@@ -70,12 +70,12 @@ class HealthIntegrationTest {
     void testHealthToolReturnCorrectTypes() {
         System.out.println("[DEBUG_LOG] Testing health tool return correct types");
 
-        // Test that methods return String (as required by MCP tools)
-        Method[] healthMethods = healthToolProvider.getClass().getSuperclass().getDeclaredMethods();
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(healthToolProvider);
+        Method[] healthMethods = targetClass.getDeclaredMethods();
 
         // Check that public methods return String
         for (Method method : healthMethods) {
-            if (method.getName().startsWith("check") || method.getName().startsWith("get") || method.getName().startsWith("is")) {
+            if (method.getName().startsWith("get")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
                         "HealthToolProvider method " + method.getName() + " should return String");
@@ -89,27 +89,13 @@ class HealthIntegrationTest {
     void testHealthToolProviderFunctionality() {
         System.out.println("[DEBUG_LOG] Testing HealthToolProvider basic functionality");
 
-        // Test that we can call the methods without exceptions
-        // Note: These will either return error messages if Druid is not available,
-        // or successful responses if Druid is running
-
         try {
-            // Use reflection to call methods if they exist
-            Method[] methods = healthToolProvider.getClass().getDeclaredMethods();
-
-            for (Method method : methods) {
-                if (method.getName().equals("checkClusterHealth") && method.getParameterCount() == 0) {
-                    method.setAccessible(true);
-                    Object result = method.invoke(healthToolProvider);
-                    assertNotNull(result, "checkClusterHealth should return a non-null result");
-                    assertInstanceOf(String.class, result, "checkClusterHealth should return a String");
-                    System.out.println("[DEBUG_LOG] checkClusterHealth result: " + result.toString().substring(0, Math.min(100, result.toString().length())));
-                    break;
-                }
-            }
+            String result = healthToolProvider.getClusterStatus(null);
+            assertNotNull(result, "getClusterStatus should return a non-null result");
+            assertInstanceOf(String.class, result, "getClusterStatus should return a String");
+            System.out.println("[DEBUG_LOG] getClusterStatus result: " + result.substring(0, Math.min(100, result.length())));
         } catch (Exception e) {
             System.out.println("[DEBUG_LOG] Health tool method invocation failed (expected if Druid not available): " + e.getMessage());
-            // This is expected if Druid is not running
         }
 
         System.out.println("[DEBUG_LOG] HealthToolProvider functionality test completed");

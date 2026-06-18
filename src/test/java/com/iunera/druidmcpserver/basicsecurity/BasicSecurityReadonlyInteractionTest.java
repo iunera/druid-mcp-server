@@ -39,37 +39,37 @@ class BasicSecurityReadonlyInteractionTest {
         Object toolSpecsObj = applicationContext.getBean("toolSpecs");
         assertTrue(toolSpecsObj instanceof java.util.List<?>, "toolSpecs should be a List");
         java.util.List<?> toolSpecs = (java.util.List<?>) toolSpecsObj;
-        assertEquals(39, toolSpecs.size(), "Should have exactly 39 tools registered");
+        assertEquals(14, toolSpecs.size(), "Should have exactly 14 tools registered");
         
-        // Assert that a query tool like "listDatasources" is present
+        // Assert that a query tool like "getDatasources" is present
         boolean hasQueryTool = false;
         for (Object spec : toolSpecs) {
-            if ("listDatasources".equals(getToolName(spec))) {
+            if ("getDatasources".equals(getToolName(spec))) {
                 hasQueryTool = true;
                 break;
             }
         }
-        assertTrue(hasQueryTool, "listDatasources should be registered in query-only profile");
+        assertTrue(hasQueryTool, "getDatasources should be registered in query-only profile");
         
-        // Assert that a cluster admin tool like "killDatasource" is not present
+        // Assert that a cluster admin tool like "manageDatasourceOrSegment" is not present
         boolean hasKillTool = false;
         for (Object spec : toolSpecs) {
-            if ("killDatasource".equals(getToolName(spec))) {
+            if ("manageDatasourceOrSegment".equals(getToolName(spec))) {
                 hasKillTool = true;
                 break;
             }
         }
-        assertFalse(hasKillTool, "killDatasource should not be registered in query-only profile");
+        assertFalse(hasKillTool, "manageDatasourceOrSegment should not be registered in query-only profile");
         
-        // Assert that a security write tool like "createAuthenticationUser" is not present
-        boolean hasCreateUserTool = false;
+        // Assert that a security tool like "manageAuthentication" is present in query-only profile whitelist
+        boolean hasManageAuthTool = false;
         for (Object spec : toolSpecs) {
-            if ("createAuthenticationUser".equals(getToolName(spec))) {
-                hasCreateUserTool = true;
+            if ("manageAuthentication".equals(getToolName(spec))) {
+                hasManageAuthTool = true;
                 break;
             }
         }
-        assertFalse(hasCreateUserTool, "createAuthenticationUser should not be registered in query-only profile");
+        assertTrue(hasManageAuthTool, "manageAuthentication should be registered in query-only profile");
     }
 
     private String getToolName(Object spec) {

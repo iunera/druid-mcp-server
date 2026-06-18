@@ -41,98 +41,52 @@ class SecurityIntegrationTest {
     private SecurityRepository securityRepository;
 
     @Autowired
-    private AuthenticationTools authenticationTools;
-
-    @Autowired
-    private AuthorizationTools authorizationTools;
+    private SecurityTools securityTools;
 
     @Test
     void testSecurityServicesAreInjected() {
         System.out.println("[DEBUG_LOG] Testing security services injection");
 
         assertNotNull(securityRepository, "SecurityRepository should be injected");
-        assertNotNull(authenticationTools, "AuthenticationTools should be injected");
-        assertNotNull(authorizationTools, "AuthorizationTools should be injected");
+        assertNotNull(securityTools, "SecurityTools should be injected");
 
         System.out.println("[DEBUG_LOG] All security services are properly injected");
     }
 
     @Test
-    void testAuthenticationToolsMethods() {
-        System.out.println("[DEBUG_LOG] Testing AuthenticationTools methods");
+    void testSecurityToolsMethods() {
+        System.out.println("[DEBUG_LOG] Testing SecurityTools methods");
 
         // Use AopUtils to get the target class if proxied
-        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(authenticationTools);
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(securityTools);
         Method[] methods = targetClass.getDeclaredMethods();
 
-        boolean hasListUsers = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("listAuthenticationUsers"));
-        boolean hasCreateUser = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("createAuthenticationUser"));
-        boolean hasSetPassword = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("setUserPassword"));
+        boolean hasManageAuth = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("manageAuthentication"));
+        boolean hasManageAuthz = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("manageAuthorization"));
+        boolean hasManageAssignments = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("manageSecurityAssignments"));
 
-        assertTrue(hasListUsers, "AuthenticationTools should have listAuthenticationUsers method");
-        assertTrue(hasCreateUser, "AuthenticationTools should have createAuthenticationUser method");
-        assertTrue(hasSetPassword, "AuthenticationTools should have setUserPassword method");
+        assertTrue(hasManageAuth, "SecurityTools should have manageAuthentication method");
+        assertTrue(hasManageAuthz, "SecurityTools should have manageAuthorization method");
+        assertTrue(hasManageAssignments, "SecurityTools should have manageSecurityAssignments method");
 
-        System.out.println("[DEBUG_LOG] AuthenticationTools methods verified");
-    }
-
-    @Test
-    void testAuthorizationToolsMethods() {
-        System.out.println("[DEBUG_LOG] Testing AuthorizationTools methods");
-
-        // Use AopUtils to get the target class if proxied
-        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(authorizationTools);
-        Method[] methods = targetClass.getDeclaredMethods();
-
-        boolean hasListRoles = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("listRoles"));
-        boolean hasCreateRole = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("createRole"));
-        boolean hasSetPermissions = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("setRolePermissions"));
-        boolean hasAssignRole = Arrays.stream(methods)
-                .anyMatch(m -> m.getName().equals("assignRoleToUser"));
-
-        assertTrue(hasListRoles, "AuthorizationTools should have listRoles method");
-        assertTrue(hasCreateRole, "AuthorizationTools should have createRole method");
-        assertTrue(hasSetPermissions, "AuthorizationTools should have setRolePermissions method");
-        assertTrue(hasAssignRole, "AuthorizationTools should have assignRoleToUser method");
-
-        System.out.println("[DEBUG_LOG] AuthorizationTools methods verified");
+        System.out.println("[DEBUG_LOG] SecurityTools methods verified");
     }
 
     @Test
     void testSecurityToolReturnCorrectTypes() {
         System.out.println("[DEBUG_LOG] Testing security tools return correct types");
 
-        Class<?> authClass = org.springframework.aop.support.AopUtils.getTargetClass(authenticationTools);
-        Method[] authMethods = authClass.getDeclaredMethods();
-        Class<?> authzClass = org.springframework.aop.support.AopUtils.getTargetClass(authorizationTools);
-        Method[] authzMethods = authzClass.getDeclaredMethods();
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(securityTools);
+        Method[] methods = targetClass.getDeclaredMethods();
 
-        // Check authentication methods
-        for (Method method : authMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get") ||
-                method.getName().startsWith("create") || method.getName().startsWith("delete") ||
-                method.getName().startsWith("set")) {
+        for (Method method : methods) {
+            if (method.getName().startsWith("manage")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
-                        "AuthenticationTools method " + method.getName() + " should return String");
-            }
-        }
-
-        // Check authorization methods
-        for (Method method : authzMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get") ||
-                method.getName().startsWith("create") || method.getName().startsWith("delete") ||
-                method.getName().startsWith("set") || method.getName().startsWith("assign") ||
-                method.getName().startsWith("unassign")) {
-                System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
-                assertEquals(String.class, method.getReturnType(),
-                        "AuthorizationTools method " + method.getName() + " should return String");
+                        "SecurityTools method " + method.getName() + " should return String");
             }
         }
 
@@ -141,40 +95,19 @@ class SecurityIntegrationTest {
 
     @Test
     void testAuthenticationToolsFunctionality() {
-        System.out.println("[DEBUG_LOG] Testing AuthenticationTools basic functionality");
-
-        // Test that we can call the methods without exceptions
-        // Note: These will return error messages if Druid is not available,
-        // or successful responses if Druid is running with security enabled
+        System.out.println("[DEBUG_LOG] Testing SecurityTools manageAuthentication functionality");
 
         try {
-            String result = authenticationTools.listAuthenticationUsers("db");
-            assertNotNull(result, "listAuthenticationUsers should return a non-null result");
-            assertInstanceOf(String.class, result, "listAuthenticationUsers should return a String");
-            System.out.println("[DEBUG_LOG] listAuthenticationUsers result: " +
+            String result = securityTools.manageAuthentication("db", "LIST", null, null);
+            assertNotNull(result, "manageAuthentication list should return a non-null result");
+            assertInstanceOf(String.class, result, "manageAuthentication list should return a String");
+            System.out.println("[DEBUG_LOG] manageAuthentication list result: " +
                               result.substring(0, Math.min(100, result.length())));
         } catch (Exception e) {
-            System.out.println("[DEBUG_LOG] Authentication tool method failed (expected if Druid security not available): " + e.getMessage());
+            System.out.println("[DEBUG_LOG] Security tool method failed (expected if Druid security not available): " + e.getMessage());
         }
 
-        System.out.println("[DEBUG_LOG] AuthenticationTools functionality test completed");
-    }
-
-    @Test
-    void testAuthorizationToolsFunctionality() {
-        System.out.println("[DEBUG_LOG] Testing AuthorizationTools basic functionality");
-
-        try {
-            String result = authorizationTools.listRoles("db");
-            assertNotNull(result, "listRoles should return a non-null result");
-            assertInstanceOf(String.class, result, "listRoles should return a String");
-            System.out.println("[DEBUG_LOG] listRoles result: " +
-                              result.substring(0, Math.min(100, result.length())));
-        } catch (Exception e) {
-            System.out.println("[DEBUG_LOG] Authorization tool method failed (expected if Druid security not available): " + e.getMessage());
-        }
-
-        System.out.println("[DEBUG_LOG] AuthorizationTools functionality test completed");
+        System.out.println("[DEBUG_LOG] SecurityTools functionality test completed");
     }
 
     @Test
@@ -205,32 +138,19 @@ class SecurityIntegrationTest {
     void testSecurityToolParameterCount() {
         System.out.println("[DEBUG_LOG] Testing security tool parameter counts");
 
-        Class<?> authClass = org.springframework.aop.support.AopUtils.getTargetClass(authenticationTools);
-        Method[] authMethods = authClass.getDeclaredMethods();
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(securityTools);
+        Method[] methods = targetClass.getDeclaredMethods();
 
-        for (Method method : authMethods) {
-            if (method.getName().equals("listAuthenticationUsers")) {
-                assertEquals(1, method.getParameterCount(),
-                           "listAuthenticationUsers should have 1 parameter (authenticatorName)");
-            } else if (method.getName().equals("createAuthenticationUser")) {
-                assertEquals(2, method.getParameterCount(),
-                           "createAuthenticationUser should have 2 parameters (authenticatorName, userName)");
-            } else if (method.getName().equals("setUserPassword")) {
-                assertEquals(3, method.getParameterCount(),
-                           "setUserPassword should have 3 parameters (authenticatorName, userName, password)");
-            }
-        }
-
-        Class<?> authzClass = org.springframework.aop.support.AopUtils.getTargetClass(authorizationTools);
-        Method[] authzMethods = authzClass.getDeclaredMethods();
-
-        for (Method method : authzMethods) {
-            if (method.getName().equals("assignRoleToUser")) {
-                assertEquals(3, method.getParameterCount(),
-                           "assignRoleToUser should have 3 parameters (authorizerName, userName, roleName)");
-            } else if (method.getName().equals("setRolePermissions")) {
-                assertEquals(3, method.getParameterCount(),
-                           "setRolePermissions should have 3 parameters (authorizerName, roleName, permissions)");
+        for (Method method : methods) {
+            if (method.getName().equals("manageAuthentication")) {
+                assertEquals(4, method.getParameterCount(),
+                           "manageAuthentication should have 4 parameters");
+            } else if (method.getName().equals("manageAuthorization")) {
+                assertEquals(4, method.getParameterCount(),
+                           "manageAuthorization should have 4 parameters");
+            } else if (method.getName().equals("manageSecurityAssignments")) {
+                assertEquals(4, method.getParameterCount(),
+                           "manageSecurityAssignments should have 4 parameters");
             }
         }
 

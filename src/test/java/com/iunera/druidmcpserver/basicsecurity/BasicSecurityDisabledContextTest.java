@@ -44,10 +44,8 @@ class BasicSecurityDisabledContextTest {
     void beansAbsentWhenDisabled() {
         System.out.println("[DEBUG_LOG] Checking absence of basic security beans when disabled");
 
-        assertTrue(applicationContext.getBeansOfType(AuthenticationTools.class).isEmpty(),
-                "AuthenticationTools should NOT be present when disabled");
-        assertTrue(applicationContext.getBeansOfType(AuthorizationTools.class).isEmpty(),
-                "AuthorizationTools should NOT be present when disabled");
+        assertTrue(applicationContext.getBeansOfType(SecurityTools.class).isEmpty(),
+                "SecurityTools should NOT be present when disabled");
 
         // also verify property binding reflects false
         assertFalse(druidProperties.getExtension().getDruidBasicSecurity().isEnabled(),

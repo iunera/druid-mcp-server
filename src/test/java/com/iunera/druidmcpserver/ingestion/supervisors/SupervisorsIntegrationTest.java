@@ -57,7 +57,7 @@ class SupervisorsIntegrationTest {
         // This test will likely fail with connection errors when Druid is not running
         // but should handle the errors gracefully
 
-        String result = supervisorsTools.listSupervisors();
+        String result = supervisorsTools.getSupervisors(null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] List supervisors result: " + result);
 
@@ -71,7 +71,7 @@ class SupervisorsIntegrationTest {
     void testGetSupervisorStatusWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing supervisor status retrieval with invalid ID");
 
-        String result = supervisorsTools.getSupervisorStatus("invalid-supervisor-id");
+        String result = supervisorsTools.getSupervisors("invalid-supervisor-id");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Get supervisor status result: " + result);
 
@@ -85,7 +85,7 @@ class SupervisorsIntegrationTest {
     void testSuspendSupervisorWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing supervisor suspension with invalid ID");
 
-        String result = supervisorsTools.suspendSupervisor("invalid-supervisor-id");
+        String result = supervisorsTools.manageSupervisor("invalid-supervisor-id", "SUSPEND");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Suspend supervisor result: " + result);
 
@@ -99,7 +99,7 @@ class SupervisorsIntegrationTest {
     void testStartSupervisorWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing supervisor start/resume with invalid ID");
 
-        String result = supervisorsTools.startSupervisor("invalid-supervisor-id");
+        String result = supervisorsTools.manageSupervisor("invalid-supervisor-id", "RESUME");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Start supervisor result: " + result);
 
@@ -113,7 +113,7 @@ class SupervisorsIntegrationTest {
     void testTerminateSupervisorWithInvalidId() {
         System.out.println("[DEBUG_LOG] Testing supervisor termination with invalid ID");
 
-        String result = supervisorsTools.terminateSupervisor("invalid-supervisor-id");
+        String result = supervisorsTools.manageSupervisor("invalid-supervisor-id", "TERMINATE");
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Terminate supervisor result: " + result);
 
@@ -128,20 +128,20 @@ class SupervisorsIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing supervisor operations error handling");
 
         // Test with null supervisor ID (should be handled gracefully)
-        String listResult = supervisorsTools.listSupervisors();
+        String listResult = supervisorsTools.getSupervisors(null);
         assertNotNull(listResult);
         System.out.println("[DEBUG_LOG] List supervisors with potential connection error: " + listResult);
 
         // Test operations with empty string ID
-        String statusResult = supervisorsTools.getSupervisorStatus("");
+        String statusResult = supervisorsTools.getSupervisors("");
         assertNotNull(statusResult);
         System.out.println("[DEBUG_LOG] Get status with empty ID: " + statusResult);
 
-        String suspendResult = supervisorsTools.suspendSupervisor("");
+        String suspendResult = supervisorsTools.manageSupervisor("", "SUSPEND");
         assertNotNull(suspendResult);
         System.out.println("[DEBUG_LOG] Suspend with empty ID: " + suspendResult);
 
-        String startResult = supervisorsTools.startSupervisor("");
+        String startResult = supervisorsTools.manageSupervisor("", "RESUME");
         assertNotNull(startResult);
         System.out.println("[DEBUG_LOG] Start with empty ID: " + startResult);
 

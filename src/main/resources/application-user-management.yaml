@@ -3,20 +3,6 @@ druid:
   mcp:
     tools:
       enabled:
-        - "createAuthenticationUser"
-        - "deleteAuthenticationUser"
-        - "setUserPassword"
-        - "createAuthorizationUser"
-        - "deleteAuthorizationUser"
-        - "createRole"
-        - "deleteRole"
-        - "setRolePermissions"
-        - "assignRoleToUser"
-        - "unassignRoleFromUser"
-        - "listAuthenticationUsers"
-        - "getAuthenticationUser"
-        - "listAuthorizationUsers"
-        - "getAuthorizationUser"
-        - "listRoles"
-        - "getRole"
-        - "getAuthenticatorChainAndAuthorizers"
+        - "manageAuthentication"
+        - "manageAuthorization"
+        - "manageSecurityAssignments"

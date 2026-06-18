@@ -40,15 +40,10 @@ class UserManagementProfileTest {
         assertTrue(toolSpecsObj instanceof java.util.List<?>, "toolSpecs should be a List");
         java.util.List<?> toolSpecs = (java.util.List<?>) toolSpecsObj;
         
-        assertEquals(17, toolSpecs.size(), "Should have exactly 17 tools registered");
+        assertEquals(3, toolSpecs.size(), "Should have exactly 3 tools registered");
         
         java.util.List<String> expectedTools = Arrays.asList(
-            "createAuthenticationUser", "deleteAuthenticationUser", "setUserPassword",
-            "createAuthorizationUser", "deleteAuthorizationUser", "createRole", "deleteRole",
-            "setRolePermissions", "assignRoleToUser", "unassignRoleFromUser",
-            "listAuthenticationUsers", "getAuthenticationUser",
-            "listAuthorizationUsers", "getAuthorizationUser",
-            "listRoles", "getRole", "getAuthenticatorChainAndAuthorizers"
+            "manageAuthentication", "manageAuthorization", "manageSecurityAssignments"
         );
         
         for (Object spec : toolSpecs) {

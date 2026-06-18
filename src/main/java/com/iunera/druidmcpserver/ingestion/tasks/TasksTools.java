@@ -19,6 +19,7 @@ package com.iunera.druidmcpserver.ingestion.tasks;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -34,170 +35,91 @@ public class TasksTools {
     }
 
     /**
-     * Get task raw details
+     * Get tasks listing
      */
-    @McpTool(description = "Get raw details of a Druid task by task ID")
-    public String getTaskRawDetails(String taskId) {
+    @McpTool(description = "List ingestion tasks matching specific states. Parameters: [state] (Enum: RUNNING, PENDING, WAITING, COMPLETED, optional).")
+    public String getTasks(
+            @McpToolParam(description = "Task state to list: RUNNING, PENDING, WAITING, COMPLETED (optional)", required = false) String state
+    ) {
         try {
-            JsonNode result = tasksRepository.getTaskDetails(taskId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error getting task raw details: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to get task raw details: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Get task ingestion spec
-     */
-    @McpTool(description = "Get the ingestion specification of a Druid task by task ID")
-    public String getTaskIngestionSpec(String taskId) {
-        try {
-            JsonNode result = tasksRepository.getTaskIngestionSpec(taskId);
-            if (result == null) {
-                return String.format("No ingestion spec found for task: %s", taskId);
+            if (state == null || state.trim().isEmpty()) {
+                JsonNode result = tasksRepository.getRunningTasks();
+                return objectMapper.writeValueAsString(result);
             }
-            return objectMapper.writeValueAsString(result);
+            switch (state.toUpperCase()) {
+                case "RUNNING":
+                    return objectMapper.writeValueAsString(tasksRepository.getRunningTasks());
+                case "PENDING":
+                    return objectMapper.writeValueAsString(tasksRepository.getPendingTasks());
+                case "WAITING":
+                    return objectMapper.writeValueAsString(tasksRepository.getWaitingTasks());
+                case "COMPLETED":
+                    return objectMapper.writeValueAsString(tasksRepository.getCompleteTasks());
+                default:
+                    return String.format("Error: Unsupported state '%s'. Supported: RUNNING, PENDING, WAITING, COMPLETED", state);
+            }
         } catch (RestClientException e) {
-            return String.format("Error getting task ingestion spec: %s", e.getMessage());
+            return String.format("Error getting tasks: %s", e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to get task ingestion spec: %s", e.getMessage());
+            return String.format("Failed to process tasks request: %s", e.getMessage());
         }
     }
 
     /**
-     * Get task reports
+     * Get detailed task information
      */
-    @McpTool(description = "Get the reports of a Druid task by task ID")
-    public String getTaskReports(String taskId) {
+    @McpTool(description = "Fetch detailed information, specifications, execution reports, or execution logs for a task. Parameters: [taskId] (String, required), [aspect] (Enum: STATUS, RAW_DETAILS, SPEC, REPORTS, LOG, required), and [logOffset] (Long, optional) to begin reading task logs from a specific byte offset.")
+    public String getTaskDetails(
+            @McpToolParam(description = "ID of the task (required)", required = true) String taskId,
+            @McpToolParam(description = "Aspect to retrieve: STATUS, RAW_DETAILS, SPEC, REPORTS, LOG (required)", required = true) String aspect,
+            @McpToolParam(description = "Byte offset to start reading task logs (optional, used with aspect=LOG)", required = false) Long logOffset
+    ) {
         try {
-            JsonNode result = tasksRepository.getTaskReports(taskId);
-            return objectMapper.writeValueAsString(result);
+            if (taskId == null || taskId.trim().isEmpty()) {
+                return "Error: [taskId] parameter is required";
+            }
+            if (aspect == null || aspect.trim().isEmpty()) {
+                return "Error: [aspect] parameter is required";
+            }
+            switch (aspect.toUpperCase()) {
+                case "STATUS":
+                    return objectMapper.writeValueAsString(tasksRepository.getTaskStatus(taskId));
+                case "RAW_DETAILS":
+                    return objectMapper.writeValueAsString(tasksRepository.getTaskDetails(taskId));
+                case "SPEC":
+                    JsonNode spec = tasksRepository.getTaskIngestionSpec(taskId);
+                    return spec != null ? objectMapper.writeValueAsString(spec) : String.format("No ingestion spec found for task: %s", taskId);
+                case "REPORTS":
+                    return objectMapper.writeValueAsString(tasksRepository.getTaskReports(taskId));
+                case "LOG":
+                    if (logOffset != null) {
+                        return tasksRepository.getTaskLog(taskId, logOffset);
+                    }
+                    return tasksRepository.getTaskLog(taskId);
+                default:
+                    return String.format("Error: Unsupported aspect '%s'. Supported: STATUS, RAW_DETAILS, SPEC, REPORTS, LOG", aspect);
+            }
         } catch (RestClientException e) {
-            return String.format("Error getting task reports: %s", e.getMessage());
+            return String.format("Error getting task details for '%s' (aspect: %s): %s", taskId, aspect, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to get task reports: %s", e.getMessage());
+            return String.format("Failed to process task details request: %s", e.getMessage());
         }
     }
 
     /**
-     * Get task log
+     * Shutdown a task
      */
-    @McpTool(description = "Get the log of a Druid task by task ID")
-    public String getTaskLog(String taskId) {
-        try {
-            String result = tasksRepository.getTaskLog(taskId);
-            return result;
-        } catch (RestClientException e) {
-            return String.format("Error getting task log: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to get task log: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Get task log with offset
-     */
-    @McpTool(description = "Get the log of a Druid task by task ID starting from a specific offset")
-    public String getTaskLogWithOffset(String taskId, long offset) {
-        try {
-            String result = tasksRepository.getTaskLog(taskId, offset);
-            return result;
-        } catch (RestClientException e) {
-            return String.format("Error getting task log with offset: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to get task log with offset: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Get task status
-     */
-    @McpTool(description = "Get the status of a Druid task by task ID")
-    public String getTaskStatus(String taskId) {
-        try {
-            JsonNode result = tasksRepository.getTaskStatus(taskId);
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error getting task status: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to get task status: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * List all running ingestion tasks
-     */
-    @McpTool(description = "List all currently running Druid ingestion tasks")
-    public String listRunningTasks() {
-        try {
-            JsonNode result = tasksRepository.getRunningTasks();
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error listing running tasks: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to list running tasks: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * List all pending ingestion tasks
-     */
-    @McpTool(description = "List all pending Druid ingestion tasks")
-    public String listPendingTasks() {
-        try {
-            JsonNode result = tasksRepository.getPendingTasks();
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error listing pending tasks: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to list pending tasks: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * List all waiting ingestion tasks
-     */
-    @McpTool(description = "List all waiting Druid ingestion tasks")
-    public String listWaitingTasks() {
-        try {
-            JsonNode result = tasksRepository.getWaitingTasks();
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error listing waiting tasks: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to list waiting tasks: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * List all completed ingestion tasks
-     */
-    @McpTool(description = "List all completed Druid ingestion tasks")
-    public String listCompletedTasks() {
-        try {
-            JsonNode result = tasksRepository.getCompleteTasks();
-            return objectMapper.writeValueAsString(result);
-        } catch (RestClientException e) {
-            return String.format("Error listing completed tasks: %s", e.getMessage());
-        } catch (Exception e) {
-            return String.format("Failed to list completed tasks: %s", e.getMessage());
-        }
-    }
-
-    /**
-     * Kill a task
-     */
-    @McpTool(description = "Kill/shutdown a Druid task by task ID")
-    public String killTask(String taskId) {
+    @McpTool(description = "Kill/shutdown a Druid task. Parameters: [taskId] (String, required).")
+    public String shutdownTask(
+            @McpToolParam(description = "ID of the task to shutdown (required)", required = true) String taskId
+    ) {
         try {
             JsonNode result = tasksRepository.killTask(taskId);
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error killing task: %s", e.getMessage());
+            return String.format("Error shutting down task: %s", e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to kill task: %s", e.getMessage());
+            return String.format("Failed to shut down task: %s", e.getMessage());
         }
     }
 }

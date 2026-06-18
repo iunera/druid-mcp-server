@@ -19,7 +19,7 @@ druid:
   mcp:
     security:
       oauth2:
-        enabled: true
+        enabled: false
 
 server:
   port: 8080
