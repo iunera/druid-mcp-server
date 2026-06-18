@@ -177,81 +177,67 @@ For detailed development information including build instructions, testing guide
 
 ## Available Tools by Feature
 
-The MCP server auto-discovers all tools via annotations. In Read-only mode, any tool that would modify the Druid cluster is not registered and will not appear in the MCP client. The lists below reflect the current implementation.
+The MCP server activates tools dynamically based on active Spring profiles (`SPRING_PROFILES_ACTIVE`). The default configuration runs the server in STDIO mode with the `query` profile enabled.
 
-### Data Management
+### Profile: `query` (Default Active Profile)
+Provides safe, read-only data querying and browsing capabilities.
 
-| Feature | Tool | Description | Parameters |
-|---------|------|-------------|------------|
-| **Datasource** | `listDatasources` | List all available Druid datasource names | None |
-| **Datasource** | `showDatasourceDetails` | Show detailed information for a specific datasource including column information | `datasourceName` (String) |
-| **Datasource** | `killDatasource` | Kill a datasource permanently, removing all data and metadata | `datasourceName` (String), `interval` (String) |
-| **Lookup** | `listLookups` | List all available Druid lookups from the coordinator | None |
-| **Lookup** | `getLookupConfig` | Get configuration for a specific lookup | `tier` (String), `lookupName` (String) |
-| **Lookup** | `updateLookupConfig` | Update configuration for a specific lookup | `tier` (String), `lookupName` (String), `config` (String) |
-| **Segments** | `listAllSegments` | List all segments across all datasources | None |
-| **Segments** | `getSegmentMetadata` | Get metadata for specific segments | `datasourceName` (String), `segmentId` (String) |
-| **Segments** | `getSegmentsForDatasource` | Get all segments for a specific datasource | `datasourceName` (String) |
-| **Query** | `queryDruidSql` | Execute a SQL query against Druid datasources | `sqlQuery` (String) |
-| **Retention** | `viewRetentionRules` | View retention rules for all datasources or a specific one | `datasourceName` (String, optional) |
-| **Retention** | `updateRetentionRules` | Update retention rules for a datasource | `datasourceName` (String), `rules` (String) |
-| **Compaction** | `viewAllCompactionConfigs` | View compaction configurations for all datasources | None |
-| **Compaction** | `viewCompactionConfigForDatasource` | View compaction configuration for a specific datasource | `datasourceName` (String) |
-| **Compaction** | `editCompactionConfigForDatasource` | Edit compaction configuration for a datasource | `datasourceName` (String), `config` (String) |
-| **Compaction** | `deleteCompactionConfigForDatasource` | Delete compaction configuration for a datasource | `datasourceName` (String) |
-| **Compaction** | `viewCompactionStatus` | View compaction status for all datasources | None |
-| **Compaction** | `viewCompactionStatusForDatasource` | View compaction status for a specific datasource | `datasourceName` (String) |
+| Tool | Description | Parameters | Druid API Endpoint / Functionality |
+|------|-------------|------------|------------------------------------|
+| `getDatasources` | List all available Apache Druid datasources or get detailed schema for a specific datasource. | `datasourceName` (String, optional), `detailed` (Boolean, optional) | `/druid/v2/sql` (queries system catalogs like `INFORMATION_SCHEMA.TABLES` & `COLUMNS`) |
+| `getLookups` | Get configuration or status of lookups for all or a specific tier. | `tier` (String, optional), `lookupName` (String, optional), `includeStatus` (Boolean, optional) | `/druid/coordinator/v1/lookups/config` & `/status` endpoints |
+| `getSegments` | Fetch segments metadata or details for a specific segment. | `datasource` (String, optional), `segmentId` (String, optional), `detailed` (Boolean, optional), `metadataOnly` (Boolean, optional) | `/druid/coordinator/v1/datasources/{ds}/segments` & system tables (`sys.segments` via `/druid/v2/sql`) |
+| `getSegmentLoadQueue` | Get the load queue status showing segments currently being loaded. | `serverName` (String, optional) | `/druid/coordinator/v1/loadqueue` |
+| `queryDruidSql` | Execute a SQL query against Druid datasources. | `sqlQuery` (String, required) | `/druid/v2/sql` (Router / Broker SQL endpoint) |
 
-### Ingestion Management
+### Profile: `ops`
+Provides administrative control over ingestion specs, tasks, streaming supervisors, retention rules, and compaction.
 
-| Feature | Tool | Description | Parameters |
-|---------|------|-------------|------------|
-| **Ingestion Spec** | `createBatchIngestionTemplate` | Create a batch ingestion template | `datasourceName` (String), `inputSource` (String), `timestampColumn` (String) |
-| **Ingestion Spec** | `createIngestionSpec` | Create and submit an ingestion specification | `specJson` (String) |
-| **Supervisors** | `listSupervisors` | List all streaming ingestion supervisors | None |
-| **Supervisors** | `getSupervisorStatus` | Get status of a specific supervisor | `supervisorId` (String) |
-| **Supervisors** | `suspendSupervisor` | Suspend a streaming supervisor | `supervisorId` (String) |
-| **Supervisors** | `startSupervisor` | Start or resume a streaming supervisor | `supervisorId` (String) |
-| **Supervisors** | `terminateSupervisor` | Terminate a streaming supervisor | `supervisorId` (String) |
-| **Tasks** | `listTasks` | List all ingestion tasks | None |
-| **Tasks** | `getTaskStatus` | Get status of a specific task | `taskId` (String) |
-| **Tasks** | `shutdownTask` | Shutdown a running task | `taskId` (String) |
+| Tool | Description | Parameters | Druid API Endpoint / Functionality |
+|------|-------------|------------|------------------------------------|
+| `getCompactionConfig` | View compaction configuration or configuration change history for datasources. | `datasource` (String, optional), `includeHistory` (Boolean, optional) | `/druid/coordinator/v1/config/compaction` endpoints |
+| `getCompactionStatus` | Retrieve the current status of compaction runs and progress. | `datasource` (String, optional) | `/druid/coordinator/v1/compaction/status` |
+| `manageCompaction` | Add, update, or remove a compaction configuration. | `action` (Enum: UPSERT, DELETE, required), `datasource` (String, required), `configJson` (String, optional) | `/druid/coordinator/v1/config/compaction` (POST/DELETE) |
+| `manageDatasourceOrSegment` | Modify segment states or permanently drop a datasource. | `action` (Enum: ENABLE_SEGMENT, DISABLE_SEGMENT, KILL_DATASOURCE, required), `datasource` (String, required), `segmentId` (String, optional), `interval` (String, optional) | `/druid/coordinator/v1/datasources` & segment POST/DELETE |
+| `manageLookup` | Create, update, or delete a lookup configuration. | `action` (Enum: UPSERT, DELETE, required), `tier` (String, required), `lookupName` (String, required), `configJson` (String, optional) | `/druid/coordinator/v1/lookups/config` (POST/DELETE) |
+| `queryDruidMultiStage` | Execute a multi-stage SQL query (MSQ) against Druid datasources as a task. | `sqlQuery` (String, required) | `/druid/v2/sql/task` (MSQ execution endpoint) |
+| `queryDruidMultiStageWithContext` | Execute a multi-stage SQL query with custom context parameters. | `sqlQuery` (String, required), `contextJson` (String, optional) | `/druid/v2/sql/task` with context configurations |
+| `getMultiStageQueryTaskStatus` | Get the status of a multi-stage query task. | `taskId` (String, required) | `/druid/indexer/v1/task/{taskId}/status` |
+| `cancelMultiStageQueryTask` | Cancel a running multi-stage query task. | `taskId` (String, required) | `/druid/indexer/v1/task/{taskId}/shutdown` (POST) |
+| `getOrManageRetentionRules` | View, fetch history, or update retention rules for a datasource. | `action` (Enum: GET, GET_HISTORY, UPDATE, required), `datasource` (String, optional), `rulesJson` (String, optional) | `/druid/coordinator/v1/rules` |
+| `submitIngestion` | Submit a Druid ingestion specification or generate a simple batch template. | `action` (Enum: SUBMIT_SPEC, GENERATE_TEMPLATE, required), `payloadJson` (String, optional), `datasourceName` (String, optional), `inputSourceType` (String, optional), `inputSourcePath` (String, optional) | `/druid/indexer/v1/task` (POST) |
+| `getSupervisors` | List all supervisors or query details of a specific supervisor. | `supervisorId` (String, optional) | `/druid/indexer/v1/supervisor` |
+| `manageSupervisor` | Suspend, resume, or terminate a supervisor's execution. | `supervisorId` (String, required), `action` (Enum: SUSPEND, RESUME, TERMINATE, required) | `/druid/indexer/v1/supervisor/{id}/(suspend/resume/terminate)` |
+| `getTasks` | List ingestion tasks matching specific states. | `state` (Enum: RUNNING, PENDING, WAITING, COMPLETED, optional) | `/druid/indexer/v1/runningTasks`, `pendingTasks`, `waitingTasks`, `completeTasks` |
+| `getTaskDetails` | Fetch detailed information, specifications, execution reports, or execution logs for a task. | `taskId` (String, required), `aspect` (Enum: STATUS, RAW_DETAILS, SPEC, REPORTS, LOG, required), `logOffset` (Long, optional) | `/druid/indexer/v1/task/{id}` spec, status, reports, and log endpoints |
+| `shutdownTask` | Kill/shutdown a Druid task. | `taskId` (String, required) | `/druid/indexer/v1/task/{id}/shutdown` (POST) |
+| `getClusterStatus` | Check overall health or fetch specific metadata/properties from coordinators or routers. | `aspect` (Enum: OVERALL, COORDINATOR, ROUTER, LEADER, METADATA, PROPERTIES, SELF_DISCOVERY_COORDINATOR, SELF_DISCOVERY_ROUTER, optional) | `/status/health`, `/status/selfDiscovered`, `/druid/coordinator/v1/leader`, `/druid/coordinator/v1/config` |
+| `getNodesStatus` | List registered servers, their detailed status, or single node status. | `serverName` (String, optional), `detailed` (Boolean, optional) | `/druid/coordinator/v1/servers` & `/status` |
+| `diagnoseCluster` | Perform automated diagnostic health checks, configuration audits, or query performance analysis. | `mode` (Enum: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION, required) | Orchestrates diagnostic sweeps over active tasks, servers status, segment counts, and APIs |
+| `checkFunctionalityHealth` | Validate operations of ingestion systems, supervisor state transitions, and historical query latency. | `component` (Enum: ALL, SUPERVISORS, HISTORICALS, INGESTION, optional), `quick` (Boolean, optional) | Orchestrates checks over task execution logs and supervisor statuses |
 
-### Monitoring & Health
+### Profile: `permissions`
+Provides basic security authentication and authorization administration.
+> [!IMPORTANT]
+> Basic security tools are only activated if **both** of the following conditions are met:
+> 1. The `permissions` profile is activated (`spring.profiles.active=permissions`).
+> 2. The Coordinator URL (`druid.coordinator.url`) is set and non-empty.
 
-| Feature | Tool | Description | Parameters |
-|---------|------|-------------|------------|
-| **Basic Health** | `checkClusterHealth` | Check overall cluster health status | None |
-| **Basic Health** | `getServiceStatus` | Get status of specific Druid services | `serviceType` (String) |
-| **Basic Health** | `getClusterConfiguration` | Get cluster configuration information | None |
-| **Diagnostics** | `runDruidDoctor` | Run comprehensive cluster diagnostics | None |
-| **Diagnostics** | `analyzePerformanceIssues` | Analyze cluster performance issues | None |
-| **Diagnostics** | `generateHealthReport` | Generate detailed health report | None |
-| **Functionality** | `testQueryFunctionality` | Test query functionality across services | None |
-| **Functionality** | `testIngestionFunctionality` | Test ingestion functionality | None |
-| **Functionality** | `validateClusterConnectivity` | Validate connectivity between cluster components | None |
+| Tool | Description | Parameters | Druid API Endpoint / Functionality |
+|------|-------------|------------|------------------------------------|
+| `manageAuthentication` | Administer basic security users and credentials. | `authenticator` (String, required), `action` (Enum: LIST, GET, CREATE, DELETE, SET_PASSWORD, required), `username` (String, optional), `password` (String, optional) | `/druid-ext/basic-security/authentication/db/...` |
+| `manageAuthorization` | Manage security authorization properties, roles, and resource access policies. | `authorizer` (String, required), `action` (Enum: LIST_USERS, GET_USER, CREATE_USER, DELETE_USER, LIST_ROLES, GET_ROLE, CREATE_ROLE, DELETE_ROLE, SET_PERMISSIONS, required), `name` (String, optional), `permissionsJson` (String, optional) | `/druid-ext/basic-security/authorization/db/...` |
+| `manageSecurityAssignments` | Configure mapping rules assigning roles to users, or retrieve the configured authenticator chains. | `authorizer` (String, required), `action` (Enum: ASSIGN_ROLE, UNASSIGN_ROLE, GET_CHAIN, required), `username` (String, optional), `roleName` (String, optional) | `/druid-ext/basic-security/authorization/db/...` & `/status/properties` |
 
-### Basic Security
+### Profile: `health`
+Provides active health checking, cluster status, diagnostics, and doctor recommendation scans.
 
-| Feature | Tool | Description | Parameters |
-|---------|------|-------------|------------|
-| **Authentication** | `listAuthenticationUsers` | List all users in the Druid authentication system for a specific authenticator | `authenticatorName` (String) |
-| **Authentication** | `getAuthenticationUser` | Get details of a specific user from the Druid authentication system | `authenticatorName` (String), `userName` (String) |
-| **Authentication** | `createAuthenticationUser` | Create a new user in the Druid authentication system | `authenticatorName` (String), `userName` (String) |
-| **Authentication** | `deleteAuthenticationUser` | Delete a user from the Druid authentication system. Use with caution as this action cannot be undone. | `authenticatorName` (String), `userName` (String) |
-| **Authentication** | `setUserPassword` | Set or update the password for a user in the Druid authentication system | `authenticatorName` (String), `userName` (String), `password` (String) |
-| **Authorization** | `listAuthorizationUsers` | List all users in the Druid authorization system for a specific authorizer | `authorizerName` (String) |
-| **Authorization** | `getAuthorizationUser` | Get details of a specific user from the Druid authorization system including their roles | `authorizerName` (String), `userName` (String) |
-| **Authorization** | `listRoles` | List all roles in the Druid authorization system for a specific authorizer | `authorizerName` (String) |
-| **Authorization** | `getRole` | Get details of a specific role from the Druid authorization system including its permissions | `authorizerName` (String), `roleName` (String) |
-| **Authorization** | `createAuthorizationUser` | Create a new user in the Druid authorization system | `authorizerName` (String), `userName` (String) |
-| **Authorization** | `deleteAuthorizationUser` | Delete a user from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName` (String), `userName` (String) |
-| **Authorization** | `createRole` | Create a new role in the Druid authorization system | `authorizerName` (String), `roleName` (String) |
-| **Authorization** | `deleteRole` | Delete a role from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName` (String), `roleName` (String) |
-| **Authorization** | `setRolePermissions` | Set permissions for a role in the Druid authorization system. Provide permissions as JSON array. | `authorizerName` (String), `roleName` (String), `permissions` (String) |
-| **Authorization** | `assignRoleToUser` | Assign a role to a user in the Druid authorization system | `authorizerName` (String), `userName` (String), `roleName` (String) |
-| **Authorization** | `unassignRoleFromUser` | Unassign a role from a user in the Druid authorization system | `authorizerName` (String), `userName` (String), `roleName` (String) |
-| **Configuration** | `getAuthenticatorChainAndAuthorizers` | Get configured authenticatorChain and authorizers form the Basic Auth configuration. This information is important for any other security tool and LLMs need to call this tool first. | None |
+| Tool | Description | Parameters | Druid API Endpoint / Functionality |
+|------|-------------|------------|------------------------------------|
+| `getClusterStatus` | Check overall health or fetch specific metadata/properties from coordinators or routers. | `aspect` (Enum: OVERALL, COORDINATOR, ROUTER, LEADER, METADATA, PROPERTIES, SELF_DISCOVERY_COORDINATOR, SELF_DISCOVERY_ROUTER, optional) | `/status/health`, `/status/selfDiscovered`, `/druid/coordinator/v1/leader`, `/druid/coordinator/v1/config` |
+| `getNodesStatus` | List registered servers, their detailed status, or single node status. | `serverName` (String, optional), `detailed` (Boolean, optional) | `/druid/coordinator/v1/servers` & `/status` |
+| `diagnoseCluster` | Perform automated diagnostic health checks, configuration audits, or query performance analysis. | `mode` (Enum: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION, required) | Orchestrates diagnostic sweeps over active tasks, servers status, segment counts, and APIs |
+| `checkFunctionalityHealth` | Validate operations of ingestion systems, supervisor state transitions, and historical query latency. | `component` (Enum: ALL, SUPERVISORS, HISTORICALS, INGESTION, optional), `quick` (Boolean, optional) | Orchestrates checks over task execution logs and supervisor statuses |
 
 ## Available Resources by Feature
 
@@ -290,9 +276,8 @@ The application can be configured using environment variables, which is the reco
 - `DRUID_SSL_SKIP_VERIFICATION`: Skips SSL certificate verification (true/false).
 
 #### MCP Server Configuration
-- `DRUID_MCP_SECURITY_OAUTH2_ENABLED`: Enables or disables OAuth2 security for client authentication (true/false).
-- `DRUID_MCP_READONLY_ENABLED`: Enables or disables read-only mode (true/false).
-- `DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED`: Enables or disables the basic security feature (true/false). When disabled, basic security tools are not registered.
+- `DRUID_MCP_SECURITY_OAUTH2_ENABLED`: Enables or disables OAuth2 security for HTTP client authentication (true/false).
+- `SPRING_PROFILES_ACTIVE`: Comma-separated list of profiles to activate (e.g. `query`, `ops`, `permissions`, `health` for tools capabilities, or `http` to enable HTTP server transport instead of default STDIO).
 - `SPRING_AI_MCP_SERVER_NAME`: The name of the MCP server.
 - `SPRING_AI_MCP_SERVER_PROTOCOL`: The protocol used by the MCP server (e.g., `streamable`).
 

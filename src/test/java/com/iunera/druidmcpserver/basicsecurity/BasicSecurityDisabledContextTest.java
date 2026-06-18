@@ -27,11 +27,11 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Verify that basic security beans are NOT loaded when either condition is missing (e.g. active profile is not user-management, or coordinator url is empty).
+ * Verify that basic security beans are NOT loaded when either condition is missing (e.g. active profile is not permissions, or coordinator url is empty).
  */
 @SpringBootTest
 @TestPropertySource(properties = {
-        "spring.profiles.active=query-only",
+        "spring.profiles.active=query",
         "druid.coordinator.url="
 })
 class BasicSecurityDisabledContextTest {
@@ -47,7 +47,7 @@ class BasicSecurityDisabledContextTest {
         System.out.println("[DEBUG_LOG] Checking absence of basic security beans when disabled");
 
         assertTrue(applicationContext.getBeansOfType(SecurityTools.class).isEmpty(),
-                "SecurityTools should NOT be present when user-management profile is inactive and coordinator url is empty");
+                "SecurityTools should NOT be present when permissions profile is inactive and coordinator url is empty");
 
         assertTrue(druidProperties.getCoordinator().getUrl().isEmpty(),
                 "DruidProperties coordinator url should be empty");

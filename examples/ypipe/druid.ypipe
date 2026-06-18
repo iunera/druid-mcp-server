@@ -19,7 +19,7 @@ spec:
       type: "string"
       required: false
       default: ""
-      description: "Base URL of the Apache Druid coordinator (only needed for user-management)"
+      description: "Base URL of the Apache Druid coordinator (only needed for permissions)"
       sensitive: false
     DRUID_AUTH_USERNAME:
       type: "string"
@@ -48,8 +48,8 @@ spec:
     SPRING_PROFILES_ACTIVE:
       type: "string"
       required: true
-      default: "query-only"
-      description: "Comma-separated list of active Spring profiles. Options: query-only, cluster-admin, user-management, health-investigation"
+      default: "query"
+      description: "Comma-separated list of active Spring profiles. Options: query, ops, health, permissions"
       sensitive: false
   mcpConfig:
     type: "stdio"
@@ -126,18 +126,18 @@ spec:
     manageAuthentication:
       description: "Administer basic security users and passwords."
       usageIntent: null
-      discoveryHint: "Create, delete, list users, or set passwords in basic security (only active with user-management profile)."
+      discoveryHint: "Create, delete, list users, or set passwords in basic security (only active with permissions profile)."
       properties: null
       required: null
     manageAuthorization:
       description: "Manage security authorization properties, roles, and resource access policies."
       usageIntent: null
-      discoveryHint: "Manage roles, list roles, or configure permissions (only active with user-management profile)."
+      discoveryHint: "Manage roles, list roles, or configure permissions (only active with permissions profile)."
       properties: null
       required: null
     manageSecurityAssignments:
       description: "Configure mapping rules assigning roles to users, or retrieve the configured authenticator chains."
       usageIntent: null
-      discoveryHint: "Assign or unassign roles to users (only active with user-management profile)."
+      discoveryHint: "Assign or unassign roles to users (only active with permissions profile)."
       properties: null
       required: null

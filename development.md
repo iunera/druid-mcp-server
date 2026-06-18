@@ -226,16 +226,16 @@ class MyTest {
 ```
 @SpringBootTest
 @TestPropertySource(properties = {
-    "druid.broker.url=http://test-broker:8082",
+    "druid.router.url=http://test-router:8888",
     "druid.coordinator.url=http://test-coordinator:8081"
 })
 class MyIntegrationTest {
     @Autowired
-    private DruidConfig druidConfig;
+    private DruidProperties druidProperties;
 
     @Test
     void testConfiguration() {
-        assertNotNull(druidConfig.getDruidBrokerUrl());
+        assertNotNull(druidProperties.getRouter().getUrl());
     }
 }
 ```
@@ -288,67 +288,6 @@ Each feature may contain:
 - Repository - Data access layer for Druid APIs
 - Configuration - Feature-specific configuration classes
 
-### Project Structure
-```
-src/
-├── main/java/com/iunera/druidmcpserver/
-│   ├── DruidMcpServerApplication.java
-│   ├── config/
-│   │   ├── DruidConfig.java
-│   │   └── PromptTemplateService.java
-│   ├── datamanagement/
-│   │   ├── compaction/
-│   │   │   ├── ReadCompactionConfigTools.java
-│   │   │   ├── WriteCompactionConfigTools.java
-│   │   │   ├── CompactionConfigRepository.java
-│   │   │   └── CompactionPrompts.java
-│   │   ├── datasource/
-│   │   │   └── [Datasource management components]
-│   │   ├── lookup/
-│   │   │   └── [Lookup management components]
-│   │   ├── query/
-│   │   │   └── [Query execution components]
-│   │   ├── retention/
-│   │   │   └── [Retention policy components]
-│   │   └── segments/
-│   │       └── [Segment management components]
-│   ├── ingestion/
-│   │   ├── IngestionManagementPrompts.java
-│   │   ├── spec/
-│   │   │   └── [Ingestion specification components]
-│   │   ├── supervisors/
-│   │   │   └── [Supervisor management components]
-│   │   └── tasks/
-│   │       └── [Task management components]
-│   ├── monitoring/health/
-│   │   ├── basic/
-│   │   │   └── [Basic health check components]
-│   │   ├── diagnostics/
-│   │   │   └── [Diagnostic tools components]
-│   │   ├── functionality/
-│   │   │   └── [Functionality health components]
-│   │   ├── prompts/
-│   │   │   └── [Health monitoring prompts]
-│   │   └── repository/
-│   │       └── [Health data repositories]
-│   ├── operations/
-│   │   └── OperationalPrompts.java
-│   ├── readonly/
-│   │   └── ReadonlyModeProperties.java
-│   │   └── ReadonlyRestClientInterceptor.java
-│   └── resources/
-│       └── [Configuration files and templates]
-└── test/java/com/iunera/druidmcpserver/
-    └── [Comprehensive test suite matching main structure]
-```
-
-### Key Technologies
-- Spring Boot 3.5.7 - Main framework
-- Spring AI MCP Server 1.1.0 - MCP protocol implementation (GA Release)
-- Jackson - JSON processing
-- RestClient - HTTP client for Druid communication
-- JUnit 5 - Testing framework
-
 ## MCP Architecture
 The project implements Model Context Protocol (MCP) server with:
 - Tools: Executable functions (`@McpTool` annotation)
@@ -359,17 +298,71 @@ The project implements Model Context Protocol (MCP) server with:
 
 For every Resource we need a separate Tool to access it in addition.
 
+### Profiles and Tools Capabilities Mapping
+
+Tools are whitelisted/grouped using Spring profiles (`spring.profiles.active`). The server uses the following profiles to activate features:
+
+#### 1. `query` (Default Profile)
+Provides safe, read-only analytics, querying, and browsing operations.
+- `getDatasources` (Lists available tables or retrieves columns metadata). Druid Endpoint: `/druid/v2/sql` (system catalog queries)
+- `getLookups` (Retrieves lookup configuration/status for all or specific tiers). Druid Endpoints: `/druid/coordinator/v1/lookups/config`, `/status`
+- `getSegments` (Fetches segment specifications or metadata). Druid Endpoints: `/druid/coordinator/v1/datasources/{ds}/segments`, `/druid/v2/sql` (sys.segments queries)
+- `getSegmentLoadQueue` (Displays segment loading queues per node). Druid Endpoint: `/druid/coordinator/v1/loadqueue`
+- `queryDruidSql` (Runs standard SQL SELECT queries on analytical tables). Druid Endpoint: `/druid/v2/sql`
+
+#### 2. `ops`
+Provides cluster management, data drop operations, compaction, lookups configuration, task/supervisor control, and health/diagnostics tools.
+- `getCompactionConfig` (View compaction configuration/change history). Druid Endpoint: `/druid/coordinator/v1/config/compaction`
+- `getCompactionStatus` (View compaction execution status). Druid Endpoint: `/druid/coordinator/v1/compaction/status`
+- `manageCompaction` (UPSERT or DELETE compaction specifications). Druid Endpoints: `/druid/coordinator/v1/config/compaction`
+- `manageDatasourceOrSegment` (Drop datasources or enable/disable specific segments). Druid Endpoints: `/druid/coordinator/v1/datasources`
+- `manageLookup` (Configure or delete lookups dynamically). Druid Endpoints: `/druid/coordinator/v1/lookups/config`
+- `queryDruidMultiStage` (Launch an MSQ multi-stage query task). Druid Endpoint: `/druid/v2/sql/task`
+- `queryDruidMultiStageWithContext` (Launch an MSQ task with custom contexts). Druid Endpoint: `/druid/v2/sql/task`
+- `getMultiStageQueryTaskStatus` (Query MSQ task status). Druid Endpoint: `/druid/indexer/v1/task/{taskId}/status`
+- `cancelMultiStageQueryTask` (Terminate an MSQ task). Druid Endpoint: `/druid/indexer/v1/task/{taskId}/shutdown`
+- `getOrManageRetentionRules` (Read, view history, or update retention policies). Druid Endpoints: `/druid/coordinator/v1/rules`
+- `submitIngestion` (Launch ingestion jobs or generate simple batch JSON templates). Druid Endpoint: `/druid/indexer/v1/task`
+- `getSupervisors` (List active supervisors or status details). Druid Endpoint: `/druid/indexer/v1/supervisor`
+- `manageSupervisor` (Suspend, resume, or terminate supervisor pipelines). Druid Endpoints: `/druid/indexer/v1/supervisor/{id}/(suspend/resume/terminate)`
+- `getTasks` (Lists ingestion tasks by status). Druid Endpoints: `/druid/indexer/v1/(runningTasks/pendingTasks/waitingTasks/completeTasks)`
+- `getTaskDetails` (Access specs, status, reports, or streams logs for tasks). Druid Endpoints: `/druid/indexer/v1/task/{taskId}`
+- `shutdownTask` (Terminate a running ingestion task). Druid Endpoint: `/druid/indexer/v1/task/{taskId}/shutdown`
+- `getClusterStatus` (Heartbeat status, leaders, configs). Druid Endpoints: `/status/health`, `/druid/coordinator/v1/leader`, `/druid/coordinator/v1/config`
+- `getNodesStatus` (Lists active historicals/brokers/routers status). Druid Endpoints: `/druid/coordinator/v1/servers`, `/status`
+- `diagnoseCluster` (COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION audits). Druid Endpoints: Multi-endpoint coordination (health, tasks, SQL, server lists)
+- `checkFunctionalityHealth` (Smoke-tests ingestion streams and query delays). Druid Endpoints: Multi-endpoint coordinator coordination
+
+#### 3. `permissions`
+Provides authorization and basic security administration.
+> [!NOTE]
+> Basic security tools are only instantiated if `permissions` profile is active AND coordinator URL is configured.
+- `manageAuthentication` (Manage users and passwords). Druid Endpoints: `/druid-ext/basic-security/authentication/db/...`
+- `manageAuthorization` (Manage roles, policies, and permissions). Druid Endpoints: `/druid-ext/basic-security/authorization/db/...`
+- `manageSecurityAssignments` (Assign/unassign roles or retrieve chains configuration). Druid Endpoints: `/druid-ext/basic-security/authorization/db/...` & `/status/properties`
+
+#### 4. `health`
+Provides active monitoring, health diagnostic assessments, and automated doctor reports.
+- `getClusterStatus` (Heartbeat status, leaders, configs). Druid Endpoints: `/status/health`, `/druid/coordinator/v1/leader`, `/druid/coordinator/v1/config`
+- `getNodesStatus` (Lists active historicals/brokers/routers status). Druid Endpoints: `/druid/coordinator/v1/servers`, `/status`
+- `diagnoseCluster` (COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION audits). Druid Endpoints: Multi-endpoint coordination (health, tasks, SQL, server lists)
+- `checkFunctionalityHealth` (Smoke-tests ingestion streams and query delays). Druid Endpoints: Multi-endpoint coordinator coordination
+
+
 ### Key Components
 
 #### Tool Providers
-- `QueryService`: SQL query execution against Druid
-- `DatasourceToolProvider`: Datasource listing functionality
+- `QueryTools` & `MsqQueryTools`: Execute standard SQL queries and multi-stage ingestion queries.
+- `DatasourceTools`: Lists datasources, gets schema tables, columns, and drops data or manages segments.
 
 #### Resource Providers
-- `DatasourceResources`: MCP resource interface for datasource information
+- `DatasourceResources`: Exposes datasource metadata and schemas as MCP resources.
+- `LookupResources`: Exposes lookup structures and tiers as MCP resources.
+- `SegmentResources`: Exposes segment metadata as MCP resources.
 
 #### Configuration
-- `DruidConfig`: Druid connection configuration with RestClient beans
+- `DruidProperties`: Holds type-safe configuration from `application.yaml`.
+- `DruidRouterRestClientConfig` & `DruidCoordinatorRestClientConfig`: Separate RestClient configurations mapping router and coordinator connections conditionally.
 
 ### Transport Modes
 

@@ -27,11 +27,11 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Verify that basic security beans are loaded when the user-management profile is active and coordinator url is set.
+ * Verify that basic security beans are loaded when the permissions profile is active and coordinator url is set.
  */
 @SpringBootTest
 @TestPropertySource(properties = {
-        "spring.profiles.active=user-management",
+        "spring.profiles.active=permissions",
         "druid.coordinator.url=http://localhost:8081"
 })
 class BasicSecurityEnabledContextTest {
@@ -47,7 +47,7 @@ class BasicSecurityEnabledContextTest {
         System.out.println("[DEBUG_LOG] Checking presence of basic security beans when enabled");
 
         assertFalse(applicationContext.getBeansOfType(SecurityTools.class).isEmpty(),
-                "SecurityTools should be present when user-management profile is active and coordinator url is set");
+                "SecurityTools should be present when permissions profile is active and coordinator url is set");
 
         assertEquals("http://localhost:8081", druidProperties.getCoordinator().getUrl(),
                 "DruidProperties coordinator url should be set");

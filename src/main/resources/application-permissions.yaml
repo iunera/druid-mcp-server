@@ -1,4 +1,4 @@
-# User Management profile configuration
+# Permissions profile configuration
 druid:
   mcp:
     tools:

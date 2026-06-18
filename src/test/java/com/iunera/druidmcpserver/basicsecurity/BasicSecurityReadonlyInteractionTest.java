@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @org.springframework.test.context.TestPropertySource(properties = {
         "druid.coordinator.url=http://localhost:8081"
 })
-@ActiveProfiles("query-only")
+@ActiveProfiles("query")
 class BasicSecurityReadonlyInteractionTest {
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Test
-    void testQueryOnlyProfileTools() {
+    void testQueryProfileTools() {
         assertTrue(applicationContext.containsBean("toolSpecs"), "toolSpecs bean should exist");
         Object toolSpecsObj = applicationContext.getBean("toolSpecs");
         assertTrue(toolSpecsObj instanceof java.util.List<?>, "toolSpecs should be a List");
@@ -52,7 +52,7 @@ class BasicSecurityReadonlyInteractionTest {
                 break;
             }
         }
-        assertTrue(hasQueryTool, "getDatasources should be registered in query-only profile");
+        assertTrue(hasQueryTool, "getDatasources should be registered in query profile");
         
         // Assert that a cluster admin tool like "manageDatasourceOrSegment" is not present
         boolean hasKillTool = false;
@@ -62,9 +62,9 @@ class BasicSecurityReadonlyInteractionTest {
                 break;
             }
         }
-        assertFalse(hasKillTool, "manageDatasourceOrSegment should not be registered in query-only profile");
+        assertFalse(hasKillTool, "manageDatasourceOrSegment should not be registered in query profile");
         
-        // Assert that a security tool like "manageAuthentication" is not present because query-only profile does not have it enabled
+        // Assert that a security tool like "manageAuthentication" is not present because query profile does not have it enabled
         boolean hasManageAuthTool = false;
         for (Object spec : toolSpecs) {
             if ("manageAuthentication".equals(getToolName(spec))) {
@@ -72,7 +72,7 @@ class BasicSecurityReadonlyInteractionTest {
                 break;
             }
         }
-        assertFalse(hasManageAuthTool, "manageAuthentication should not be registered in query-only profile");
+        assertFalse(hasManageAuthTool, "manageAuthentication should not be registered in query profile");
     }
 
     private String getToolName(Object spec) {

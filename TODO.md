@@ -10,7 +10,7 @@ We want to have the following profiles with enabled tools
   - query only - list datasources, lookups, compaction, query etc. 
   - cluster administration 
   - user management. when we enable basic security all other profiles are disabled. We need to instantiate twice
-  - health invesitagation
+  - health investigation
   - we want to be able to define tools per datasource (limit datasources)
 
 
@@ -44,24 +44,22 @@ Furthermore the whole src/main/java/com/iunera/druidmcpserver/monitoring/health 
 make a suggestions in an refactoring plan. 
 
 
-lets get rid of the readonly property. This is legacy.  SecurityTools
-
-secritytools werden dann aktiviert wenn der coordinator gesetzt ist. 
-
-DRUID_MCP_READONLY_ENABLED
-
-We still need to support the legacy readonly mode parameter druid.mcp.readonly.enabled: true
-if this is set we only allow the activation of the following profiles 
-http
-stdio
-query-only
-Health-Investigation
-
-
 Rework the ypipe integration blueprint [druid.ypipe](examples/ypipe/druid.ypipe) consider this https://github.com/iunera/ypipe/blob/main/docs/McpIntegrationBlueprints.md
 
 Rework the readme.md and the development.md 
 the default settings are starting in stdio and enabling query-only profile. 
-Document the behaviour we've changed. If you are not sure about things written there asked back howto proceed with it. be careful and work over it a couple of times. 
+Document the behaviour we've changed. If you are not sure about things written there asked back howto proceed with it. be careful and work over it a couple of times. use the alltools.txt for the list of tools. 
 Document which profile has which tool and which tool is using which druid api functions. 
 
+Refactor the code to apply java 25 feature and spring boot 4 feature e.g. Declarative HTTP Clients: Define interface-based HTTP clients natively with @ImportHttpServices  
+advice me first and present an implementation plan. 
+
+rename the profiles 
+cluster-admin = ops 
+health-investigation = health (is included in ops)
+query-only = query 
+user-management = permissions
+
+In the druid.ypipe file, edit the description of the SPRING_PROFILES_ACTIVE configuration variable to explicitly list the choices/suggestions at the end, formatted as:
+    Options: query, ops, health, permissions 
+    

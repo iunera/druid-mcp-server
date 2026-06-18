@@ -16,7 +16,7 @@
 
 spring:
   profiles:
-    default: http,query-only
+    default: http,query
   application:
     name: druid-mcp-server
   config:

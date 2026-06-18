@@ -28,16 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @org.springframework.test.context.TestPropertySource(properties = {
-        "spring.profiles.active=user-management",
+        "spring.profiles.active=permissions",
         "druid.coordinator.url=http://localhost:8081"
 })
-class UserManagementProfileTest {
+class PermissionsProfileTest {
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Test
-    void testUserManagementProfileTools() {
+    void testPermissionsProfileTools() {
         assertTrue(applicationContext.containsBean("toolSpecs"), "toolSpecs bean should exist");
         Object toolSpecsObj = applicationContext.getBean("toolSpecs");
         assertTrue(toolSpecsObj instanceof java.util.List<?>, "toolSpecs should be a List");
@@ -55,7 +55,7 @@ class UserManagementProfileTest {
             assertTrue(expectedTools.contains(toolName), "Tool " + toolName + " should be in the whitelist");
         }
         
-        // Assert that a query-only tool like "queryDruidSql" is not present
+        // Assert that a query tool like "queryDruidSql" is not present
         boolean hasQueryTool = false;
         for (Object spec : toolSpecs) {
             if ("queryDruidSql".equals(getToolName(spec))) {
@@ -63,7 +63,7 @@ class UserManagementProfileTest {
                 break;
             }
         }
-        assertFalse(hasQueryTool, "queryDruidSql should not be registered in user-management profile");
+        assertFalse(hasQueryTool, "queryDruidSql should not be registered in permissions profile");
     }
 
     @Test

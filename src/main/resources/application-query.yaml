@@ -1,4 +1,4 @@
-# Query-only profile configuration
+# Query profile configuration
 druid:
   mcp:
     tools:

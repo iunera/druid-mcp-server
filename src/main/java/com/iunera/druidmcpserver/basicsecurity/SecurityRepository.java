@@ -28,7 +28,7 @@ import org.springframework.web.client.RestClientException;
  * Repository for Druid Security API operations
  * Handles both authentication and authorization API calls
  */
-@Profile("user-management")
+@Profile("permissions")
 @ConditionalOnExpression("!'${druid.coordinator.url:}'.isEmpty()")
 @Repository
 public class SecurityRepository {

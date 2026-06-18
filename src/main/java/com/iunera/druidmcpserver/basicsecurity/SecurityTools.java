@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
-@Profile("user-management")
+@Profile("permissions")
 @ConditionalOnExpression("!'${druid.coordinator.url:}'.isEmpty()")
 @Component
 public class SecurityTools {

@@ -1,4 +1,4 @@
-# Health Investigation profile configuration
+# Health profile configuration
 druid:
   mcp:
     tools:

@@ -1,4 +1,4 @@
-# Cluster Administration profile configuration
+# Ops (Cluster Administration) profile configuration
 druid:
   mcp:
     tools:
@@ -23,3 +23,7 @@ druid:
         - "getSupervisors"
         - "getTasks"
         - "getTaskDetails"
+        - "getClusterStatus"
+        - "getNodesStatus"
+        - "diagnoseCluster"
+        - "checkFunctionalityHealth"
