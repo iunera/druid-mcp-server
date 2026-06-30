@@ -27,14 +27,14 @@ import org.springframework.web.client.RestClientException;
 public class QueryTools {
 
     private final QueryRepository queryRepository;
-    private final TasksRepository tasksRepository;
+    private final SqlSyntaxCorrectionService sqlSyntaxCorrectionService;
     private final ObjectMapper objectMapper;
 
     public QueryTools(QueryRepository queryRepository,
-                      TasksRepository tasksRepository,
+                      SqlSyntaxCorrectionService sqlSyntaxCorrectionService,
                       ObjectMapper objectMapper) {
         this.queryRepository = queryRepository;
-        this.tasksRepository = tasksRepository;
+        this.sqlSyntaxCorrectionService = sqlSyntaxCorrectionService;
         this.objectMapper = objectMapper;
     }
 
@@ -43,13 +43,14 @@ public class QueryTools {
      */
     @McpTool(description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter. In addition call the 'feedback' tool and ask the user for feedback on the first query.")
     public String queryDruidSql(String sqlQuery) {
+        String correctedQuery = sqlSyntaxCorrectionService.correctQuerySyntax(sqlQuery);
         try {
-            JsonNode result = queryRepository.executeSqlQuery(sqlQuery);
+            JsonNode result = queryRepository.executeSqlQuery(correctedQuery);
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error executing SQL query '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Error executing SQL query '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process query response for '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Failed to process query response for '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         }
     }
 }

@@ -31,13 +31,16 @@ public class MsqQueryTools {
 
     private final QueryRepository queryRepository;
     private final TasksRepository tasksRepository;
+    private final SqlSyntaxCorrectionService sqlSyntaxCorrectionService;
     private final ObjectMapper objectMapper;
 
     public MsqQueryTools(QueryRepository queryRepository,
                          TasksRepository tasksRepository,
+                         SqlSyntaxCorrectionService sqlSyntaxCorrectionService,
                          ObjectMapper objectMapper) {
         this.queryRepository = queryRepository;
         this.tasksRepository = tasksRepository;
+        this.sqlSyntaxCorrectionService = sqlSyntaxCorrectionService;
         this.objectMapper = objectMapper;
     }
 
@@ -46,13 +49,14 @@ public class MsqQueryTools {
      */
     @McpTool(description = "Execute a multi-stage SQL query against Druid datasources as a task. This is suitable for complex queries, large datasets, and INSERT/REPLACE operations. Provide the SQL query as a parameter.")
     public String queryDruidMultiStage(String sqlQuery) {
+        String correctedQuery = sqlSyntaxCorrectionService.correctQuerySyntax(sqlQuery);
         try {
-            JsonNode result = queryRepository.executeMultiStageSqlQuery(sqlQuery);
+            JsonNode result = queryRepository.executeMultiStageSqlQuery(correctedQuery);
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error executing multi-stage SQL query '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Error executing multi-stage SQL query '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process multi-stage query response for '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Failed to process multi-stage query response for '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         }
     }
 
@@ -61,6 +65,7 @@ public class MsqQueryTools {
      */
     @McpTool(description = "Execute a multi-stage SQL query with custom context parameters. Provide the SQL query and context as JSON string. Context can include maxNumTasks, taskAssignment, finalizeAggregations, groupByEnableMultiValueUnnesting, etc.")
     public String queryDruidMultiStageWithContext(String sqlQuery, String contextJson) {
+        String correctedQuery = sqlSyntaxCorrectionService.correctQuerySyntax(sqlQuery);
         try {
             Map<String, Object> context = null;
 
@@ -70,12 +75,12 @@ public class MsqQueryTools {
                         objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
             }
 
-            JsonNode result = queryRepository.executeMultiStageSqlQueryWithContext(sqlQuery, context);
+            JsonNode result = queryRepository.executeMultiStageSqlQueryWithContext(correctedQuery, context);
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error executing multi-stage SQL query with context '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Error executing multi-stage SQL query with context '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process multi-stage query with context response for '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Failed to process multi-stage query with context response for '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         }
     }
 
