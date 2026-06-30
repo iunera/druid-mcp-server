@@ -44,10 +44,9 @@ druid:
       enabled: []
     metrics:
       enabled: true
-
-  sql-syntax-correction:
-    enabled: true
-    cache-ttl-ms: 300000
+    sql-syntax-correction:
+      enabled: true
+      cache-ttl-ms: 300000
 
 management:
   endpoints:

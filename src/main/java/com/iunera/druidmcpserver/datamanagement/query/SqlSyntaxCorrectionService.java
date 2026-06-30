@@ -59,7 +59,7 @@ public class SqlSyntaxCorrectionService {
         }
 
         // Return untouched if the feature is disabled
-        if (!druidProperties.getSqlSyntaxCorrection().isEnabled()) {
+        if (!druidProperties.getMcp().getSqlSyntaxCorrection().isEnabled()) {
             return sqlQuery;
         }
 
@@ -241,7 +241,7 @@ public class SqlSyntaxCorrectionService {
     /**
      * Periodically evict schema metadata cache using configuration setting for TTL.
      */
-    @Scheduled(fixedRateString = "${druid.sql-syntax-correction.cache-ttl-ms:300000}")
+    @Scheduled(fixedRateString = "${druid.mcp.sql-syntax-correction.cache-ttl-ms:300000}")
     @CacheEvict(value = "druidMetadata", allEntries = true)
     public void evictMetadataCache() {
         log.info("Evicting Druid schema metadata cache");

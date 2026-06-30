@@ -275,7 +275,8 @@ The application can be configured using environment variables, which is the reco
 - `DRUID_AUTH_PASSWORD`: The password for Druid authentication.
 - `DRUID_SSL_ENABLED`: Enables or disables SSL for Druid connections (true/false).
 - `DRUID_SSL_SKIP_VERIFICATION`: Skips SSL certificate verification (true/false).
-- `DRUID_SQL_SYNTAX_CORRECTION_ENABLED`: Enables or disables automatic SQL syntax correction (default: `true`). When enabled, automatically formats queries, corrects casing, and quotes identifiers for Druid.
+- `DRUID_MCP_SQL_SYNTAX_CORRECTION_ENABLED`: Enables or disables automatic SQL syntax correction (default: `true`). When enabled, automatically formats queries, corrects casing, and quotes identifiers for Druid.
+- `DRUID_MCP_SQL_SYNTAX_CORRECTION_CACHE_TTL_MS`: The Time-To-Live (TTL) in milliseconds for the cached table and column metadata loaded from Druid (default: `300000` / 5 minutes).
 
 #### MCP Server Configuration
 - `DRUID_MCP_SECURITY_OAUTH2_ENABLED`: Enables or disables OAuth2 security for HTTP client authentication (true/false).

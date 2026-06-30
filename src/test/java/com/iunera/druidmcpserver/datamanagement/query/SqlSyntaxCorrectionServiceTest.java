@@ -38,9 +38,11 @@ class SqlSyntaxCorrectionServiceTest {
         druidProperties = Mockito.mock(DruidProperties.class);
         
         // Mock properties to return enabled = true by default
-        DruidProperties.SqlSyntaxCorrection config = Mockito.mock(DruidProperties.SqlSyntaxCorrection.class);
+        DruidProperties.Mcp mcp = Mockito.mock(DruidProperties.Mcp.class);
+        DruidProperties.Mcp.SqlSyntaxCorrection config = Mockito.mock(DruidProperties.Mcp.SqlSyntaxCorrection.class);
         when(config.isEnabled()).thenReturn(true);
-        when(druidProperties.getSqlSyntaxCorrection()).thenReturn(config);
+        when(mcp.getSqlSyntaxCorrection()).thenReturn(config);
+        when(druidProperties.getMcp()).thenReturn(mcp);
         
         service = new SqlSyntaxCorrectionService(metadataLoader, druidProperties);
     }
@@ -48,7 +50,7 @@ class SqlSyntaxCorrectionServiceTest {
     @Test
     void testDisabledBehavior() {
         // Arrange
-        DruidProperties.SqlSyntaxCorrection config = druidProperties.getSqlSyntaxCorrection();
+        DruidProperties.Mcp.SqlSyntaxCorrection config = druidProperties.getMcp().getSqlSyntaxCorrection();
         when(config.isEnabled()).thenReturn(false);
         String sql = "SELECT * FROM potsdam-v8;";
 

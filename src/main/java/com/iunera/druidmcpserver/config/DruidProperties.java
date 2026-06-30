@@ -28,7 +28,6 @@ public class DruidProperties {
     private final Auth auth = new Auth();
     private final Ssl ssl = new Ssl();
     private final Mcp mcp = new Mcp();
-    private final SqlSyntaxCorrection sqlSyntaxCorrection = new SqlSyntaxCorrection();
 
     public Router getRouter() {
         return router;
@@ -48,10 +47,6 @@ public class DruidProperties {
 
     public Mcp getMcp() {
         return mcp;
-    }
-
-    public SqlSyntaxCorrection getSqlSyntaxCorrection() {
-        return sqlSyntaxCorrection;
     }
 
     public static class Router {
@@ -122,9 +117,14 @@ public class DruidProperties {
 
     public static class Mcp {
         private final Metrics metrics = new Metrics();
+        private final SqlSyntaxCorrection sqlSyntaxCorrection = new SqlSyntaxCorrection();
 
         public Metrics getMetrics() {
             return metrics;
+        }
+
+        public SqlSyntaxCorrection getSqlSyntaxCorrection() {
+            return sqlSyntaxCorrection;
         }
 
         public static class Metrics {
@@ -138,26 +138,26 @@ public class DruidProperties {
                 this.enabled = enabled;
             }
         }
-    }
 
-    public static class SqlSyntaxCorrection {
-        private boolean enabled = true;
-        private long cacheTtlMs = 300000; // 5 minutes
+        public static class SqlSyntaxCorrection {
+            private boolean enabled = true;
+            private long cacheTtlMs = 300000; // 5 minutes
 
-        public boolean isEnabled() {
-            return enabled;
-        }
+            public boolean isEnabled() {
+                return enabled;
+            }
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
+            public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
+            }
 
-        public long getCacheTtlMs() {
-            return cacheTtlMs;
-        }
+            public long getCacheTtlMs() {
+                return cacheTtlMs;
+            }
 
-        public void setCacheTtlMs(long cacheTtlMs) {
-            this.cacheTtlMs = cacheTtlMs;
+            public void setCacheTtlMs(long cacheTtlMs) {
+                this.cacheTtlMs = cacheTtlMs;
+            }
         }
     }
 }

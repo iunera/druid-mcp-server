@@ -51,6 +51,12 @@ spec:
       default: "query"
       description: "Comma-separated list of active Spring profiles. Options: query, ops, health, permissions"
       sensitive: false
+    DRUID_MCP_SQL_SYNTAX_CORRECTION_ENABLED:
+      type: "boolean"
+      required: false
+      default: "true"
+      description: "Whether to enable automatic SQL syntax correction to normalize queries (default: true)"
+      sensitive: false
   mcpConfig:
     type: "stdio"
     command: "jbang"
@@ -63,6 +69,7 @@ spec:
       DRUID_AUTH_PASSWORD: "${DRUID_AUTH_PASSWORD}"
       DRUID_SSL_ENABLED: "${DRUID_SSL_ENABLED}"
       DRUID_SSL_SKIP_VERIFICATION: "${DRUID_SSL_SKIP_VERIFICATION}"
+      DRUID_MCP_SQL_SYNTAX_CORRECTION_ENABLED: "${DRUID_MCP_SQL_SYNTAX_CORRECTION_ENABLED}"
       SPRING_PROFILES_ACTIVE: "stdio,${SPRING_PROFILES_ACTIVE}"
     url: null
     headers: null
