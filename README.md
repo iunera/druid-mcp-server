@@ -7,7 +7,7 @@ A comprehensive Model Context Protocol (MCP) server for Apache Druid that provid
 
 ## Overview
 
-This MCP server implements a feature-based architecture where each package represents a distinct functional area of Druid management. The server provides three main types of MCP components:
+This MCP server implements a intend-based architecture where profiles picture their usaae intend and the corresponding area of Druid usage. The server provides three main types of MCP components:
 
 - **Tools** - Executable functions for performing operations
 - **Resources** - Data providers for accessing information  
@@ -49,6 +49,7 @@ This blueprint allows you to easily connect and configure the Druid MCP server i
 
 ## Features
 
+- Pure Java
 - Spring AI MCP Server integration
 - Tool-based architecture for MCP protocol compliance
 - **Tool-based Architecture**: Complete MCP protocol compliance with automatic JSON schema generation
@@ -57,12 +58,7 @@ This blueprint allows you to easily connect and configure the Druid MCP server i
 - Comprehensive error handling
 - **Customizable Prompt Templates**: AI-assisted guidance with template customization
 - **Comprehensive Error Handling**: Graceful error handling with meaningful responses
-
-### Architecture & Organization
-- **Feature-based Package Organization**: Each package represents a distinct Druid management area
-- **Auto-discovery**: Automatic registration of tools, resources, and prompts via annotations
 - **Enterprise Ready**: Production-grade configuration and security features
-
 
 ### MCP Inspector Interface
 
@@ -108,15 +104,15 @@ docker run --rm -i \
 
 # HTTP mode (enable profile 'http' and expose /mcp)
 docker run -p 8080:8080 \
-  -e SPRING_PROFILES_ACTIVE=http \
+  -e SPRING_PROFILES_ACTIVE=http,query \
   -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
   -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
   iunera/druid-mcp-server:latest
 ```
 
 Note on Spring profiles:
-- Default profile: stdio (no SPRING_PROFILES_ACTIVE needed)
-- HTTP profile: set SPRING_PROFILES_ACTIVE=http to enable Streamable HTTP at /mcp
+- Default profile: stdio,query
+- HTTP profile: set SPRING_PROFILES_ACTIVE=http,query to enable Streamable HTTP at /mcp
 
 ### Prerequisites
 - Java 25
@@ -387,8 +383,6 @@ Update your `mcp-servers-config.json` to include environment variables:
         "DRUID_SSL_ENABLED",
         "-e",
         "DRUID_SSL_SKIP_VERIFICATION",
-        "-e",
-        "DRUID_MCP_READONLY_ENABLED",
         "iunera/druid-mcp-server:2.0.0"
       ],
       "env": {
@@ -397,8 +391,7 @@ Update your `mcp-servers-config.json` to include environment variables:
         "DRUID_AUTH_USERNAME": "",
         "DRUID_AUTH_PASSWORD": "",
         "DRUID_SSL_ENABLED": "false",
-        "DRUID_SSL_SKIP_VERIFICATION": "true",
-        "DRUID_MCP_READONLY_ENABLED": "false"
+        "DRUID_SSL_SKIP_VERIFICATION": "true"
       }
     }
   }
@@ -540,61 +533,6 @@ Still supported for backwards compatibility. It is no longer the default and may
 
 Note: The SSE endpoint is secured with OAuth by default. Clients must include a valid bearer token when connecting. For SSO integration support, see [Contact & Support](#contact--support).
 
-
-
-### Read-only Mode
-
-Read-only mode prevents any operation that could mutate your Druid cluster while still allowing safe read operations and SQL queries. When enabled:
-- All HTTP GET requests are allowed
-- HTTP POST is allowed only to the exact path /druid/v2/sql (for SELECT and other read-only SQL)
-- Any other HTTP method (PUT, PATCH, DELETE) is blocked
-- Any other POST endpoint (e.g. ingestion/task endpoints) is blocked
-- MCP write tools are not registered, so they will not appear in your MCP client’s tool list
-
-#### Enable Read-only Mode
-You can enable it using any of the following methods:
-
-1) application.properties
-
-```
-druid.mcp.readonly.enabled=true
-```
-
-2) Environment variable
-
-```bash
-export DRUID_MCP_READONLY_ENABLED=true
-```
-
-3) JVM system property
-
-```bash
-java -Ddruid.mcp.readonly.enabled=true -jar target/druid-mcp-server-2.0.0.jar
-```
-
-4) Docker
-
-```bash
-docker run --rm -p 8080:8080 \
-  -e DRUID_MCP_READONLY_ENABLED=true \
-  iunera/druid-mcp-server:latest
-```
-
-### What changes in read-only mode?
-- Tools that would modify the cluster are disabled and won’t be listed by the MCP client. Examples include:
-    - Segment state changes (enableSegment, disableSegment)
-    - Datasource deletion (killDatasource)
-    - Retention rule edits (editRetentionRulesForDatasource)
-    - Compaction config edits (editCompactionConfigForDatasource, deleteCompactionConfigForDatasource)
-    - Lookup changes (createOrUpdateLookup, deleteLookup)
-    - Supervisor control (suspendSupervisor, startSupervisor, terminateSupervisor)
-    - Task control (killTask)
-    - Multi-stage SQL task operations (queryDruidMultiStage, queryDruidMultiStageWithContext, getMultiStageQueryTaskStatus, cancelMultiStageQueryTask)
-    - Ingestion spec submission and templates (createIngestionSpec, createBatchIngestionTemplate)
-    - Basic security changing tools (e.g., `createAuthenticationUser`, `deleteAuthenticationUser`, `setUserPassword`, `createAuthorizationUser`, `deleteAuthorizationUser`, `createRole`, `deleteRole`, `setRolePermissions`, `assignRoleToUser`, `unassignRoleFromUser`)
-- Read-only-safe tools remain available, including SQL queries (queryDruidSql), metadata and status lookups, health diagnostics, task and segment inspection, etc.
-
-
 ## Metrics Collection
 
 To enhance the product and understand usage patterns, this server collects anonymous usage metrics. This data helps prioritize new features and improvements. You can opt-out of anonymous metrics collection by setting the `druid.mcp.metrics.enabled` to `false.
@@ -694,4 +632,4 @@ Need help? Let
 
 ---
 
-*© 2024 [iunera](https://www.iunera.com). Licensed under the Apache License 2.0.*
+*© 2026 [iunera](https://www.iunera.com). Licensed under the Apache License 2.0.*
