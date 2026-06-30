@@ -29,7 +29,7 @@ Experience your data like never before with **[Y̊pipe (formerly Data-Philter)](
 *   **Local & Secure:** Runs completely locally with support for offline models (CPU/GPU).
 *   **Plug & Play:** Works out-of-the-box with the Development Druid Installation.
 
-[![Ypipe](https://raw.githubusercontent.com/iunera/ypipe/main/github-ypipe-public/assets/screenshot-chat.png)](https://github.com/iunera/ypipe)
+[![Ypipe](https://github.com/iunera/ypipe/blob/main/assets/screenshot-couplings.png?raw=true)](https://github.com/iunera/ypipe)
 
 [**Get Ypipe on GitHub →**](https://github.com/iunera/ypipe)
 
