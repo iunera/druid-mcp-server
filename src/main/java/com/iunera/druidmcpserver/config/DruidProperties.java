@@ -19,13 +19,6 @@ package com.iunera.druidmcpserver.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-/**
- * Configuration properties for connecting to Apache Druid components.
- *
- * Uses Spring Boot relaxed binding so properties can be configured via
- * application.yaml, JVM system properties, or environment variables
- * without any manual environment access in code.
- */
 @Component
 @ConfigurationProperties(prefix = "druid")
 public class DruidProperties {
@@ -34,7 +27,6 @@ public class DruidProperties {
     private final Coordinator coordinator = new Coordinator();
     private final Auth auth = new Auth();
     private final Ssl ssl = new Ssl();
-    private final Extension extension = new Extension();
     private final Mcp mcp = new Mcp();
 
     public Router getRouter() {
@@ -53,18 +45,11 @@ public class DruidProperties {
         return ssl;
     }
 
-    public Extension getExtension() {
-        return extension;
-    }
-
     public Mcp getMcp() {
         return mcp;
     }
 
     public static class Router {
-        /**
-         * Base URL of the Druid Router HTTP endpoint.
-         */
         private String url = "http://localhost:8888";
 
         public String getUrl() {
@@ -77,9 +62,6 @@ public class DruidProperties {
     }
 
     public static class Coordinator {
-        /**
-         * Base URL of the Druid Coordinator HTTP endpoint.
-         */
         private String url = "http://localhost:8081";
 
         public String getUrl() {
@@ -92,13 +74,7 @@ public class DruidProperties {
     }
 
     public static class Auth {
-        /**
-         * Optional basic auth username.
-         */
         private String username;
-        /**
-         * Optional basic auth password.
-         */
         private String password;
 
         public String getUsername() {
@@ -119,13 +95,7 @@ public class DruidProperties {
     }
 
     public static class Ssl {
-        /**
-         * Enable SSL for HTTP client.
-         */
         private boolean enabled = false;
-        /**
-         * If true, the HTTP client will skip certificate verification.
-         */
         private boolean skipVerification = false;
 
         public boolean isEnabled() {
@@ -145,55 +115,19 @@ public class DruidProperties {
         }
     }
 
-    /**
-     * Druid extensions configuration.
-     */
-    public static class Extension {
-        private final DruidBasicSecurity druidBasicSecurity = new DruidBasicSecurity();
-
-        public DruidBasicSecurity getDruidBasicSecurity() {
-            return druidBasicSecurity;
-        }
-    }
-
-    /**
-     * Configuration for Druid Basic Security extension.
-     * Maps property: druid.extension.druid-basic-security.enabled
-     */
-    public static class DruidBasicSecurity {
-        /**
-         * Enable/disable all Basic Security tools and resources in this server.
-         */
-        private boolean enabled = true;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
-
-    /**
-     * MCP-related configuration properties.
-     * Maps properties under `druid.mcp.*`.
-     */
     public static class Mcp {
         private final Metrics metrics = new Metrics();
+        private final SqlSyntaxCorrection sqlSyntaxCorrection = new SqlSyntaxCorrection();
 
         public Metrics getMetrics() {
             return metrics;
         }
 
-        /**
-         * Metrics configuration under `druid.mcp.metrics`.
-         */
+        public SqlSyntaxCorrection getSqlSyntaxCorrection() {
+            return sqlSyntaxCorrection;
+        }
+
         public static class Metrics {
-            /**
-             * Enable/disable Metrics AOP aspect publishing tool execution metrics.
-             * Maps property: druid.mcp.metrics.enabled
-             */
             private boolean enabled = true;
 
             public boolean isEnabled() {
@@ -202,6 +136,27 @@ public class DruidProperties {
 
             public void setEnabled(boolean enabled) {
                 this.enabled = enabled;
+            }
+        }
+
+        public static class SqlSyntaxCorrection {
+            private boolean enabled = true;
+            private long cacheTtlMs = 300000; // 5 minutes
+
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
+            }
+
+            public long getCacheTtlMs() {
+                return cacheTtlMs;
+            }
+
+            public void setCacheTtlMs(long cacheTtlMs) {
+                this.cacheTtlMs = cacheTtlMs;
             }
         }
     }

@@ -16,8 +16,8 @@
 
 package com.iunera.druidmcpserver.monitoring.health.diagnostics;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,7 +48,7 @@ public class DruidDoctorToolProviderTest {
     public void testDiagnoseCluster() {
         System.out.println("[DEBUG_LOG] Testing diagnoseCluster method");
 
-        String result = druidDoctorToolProvider.diagnoseCluster();
+        String result = druidDoctorToolProvider.diagnoseCluster("COMPREHENSIVE");
         assertNotNull(result, "diagnoseCluster should return a result");
         assertFalse(result.isEmpty(), "diagnoseCluster result should not be empty");
 
@@ -76,7 +76,7 @@ public class DruidDoctorToolProviderTest {
     public void testQuickHealthCheck() {
         System.out.println("[DEBUG_LOG] Testing quickHealthCheck method");
 
-        String result = druidDoctorToolProvider.quickHealthCheck();
+        String result = druidDoctorToolProvider.diagnoseCluster("QUICK");
         assertNotNull(result, "quickHealthCheck should return a result");
         assertFalse(result.isEmpty(), "quickHealthCheck result should not be empty");
 
@@ -107,7 +107,7 @@ public class DruidDoctorToolProviderTest {
     public void testAnalyzePerformance() {
         System.out.println("[DEBUG_LOG] Testing analyzePerformance method");
 
-        String result = druidDoctorToolProvider.analyzePerformance();
+        String result = druidDoctorToolProvider.diagnoseCluster("PERFORMANCE");
         assertNotNull(result, "analyzePerformance should return a result");
         assertFalse(result.isEmpty(), "analyzePerformance result should not be empty");
 
@@ -138,7 +138,7 @@ public class DruidDoctorToolProviderTest {
     public void testValidateConfiguration() {
         System.out.println("[DEBUG_LOG] Testing validateConfiguration method");
 
-        String result = druidDoctorToolProvider.validateConfiguration();
+        String result = druidDoctorToolProvider.diagnoseCluster("CONFIGURATION");
         assertNotNull(result, "validateConfiguration should return a result");
         assertFalse(result.isEmpty(), "validateConfiguration result should not be empty");
 
@@ -177,10 +177,10 @@ public class DruidDoctorToolProviderTest {
         // All methods should handle errors gracefully and return valid responses
         // even when Druid services are not available
 
-        String diagnoseResult = druidDoctorToolProvider.diagnoseCluster();
-        String quickCheckResult = druidDoctorToolProvider.quickHealthCheck();
-        String performanceResult = druidDoctorToolProvider.analyzePerformance();
-        String configResult = druidDoctorToolProvider.validateConfiguration();
+        String diagnoseResult = druidDoctorToolProvider.diagnoseCluster("COMPREHENSIVE");
+        String quickCheckResult = druidDoctorToolProvider.diagnoseCluster("QUICK");
+        String performanceResult = druidDoctorToolProvider.diagnoseCluster("PERFORMANCE");
+        String configResult = druidDoctorToolProvider.diagnoseCluster("CONFIGURATION");
 
         // All should return non-null, non-empty strings
         assertNotNull(diagnoseResult);
@@ -202,7 +202,7 @@ public class DruidDoctorToolProviderTest {
         System.out.println("[DEBUG_LOG] Testing comprehensive diagnosis features");
 
         // Test that diagnoseCluster provides comprehensive information
-        String result = druidDoctorToolProvider.diagnoseCluster();
+        String result = druidDoctorToolProvider.diagnoseCluster("COMPREHENSIVE");
 
         try {
             JsonNode jsonResult = objectMapper.readTree(result);

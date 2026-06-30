@@ -16,52 +16,62 @@
 
 package com.iunera.druidmcpserver.datamanagement.query;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
-import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import java.util.Map;
 
-@ConditionalOnProperty(prefix = "druid.mcp.readonly", name = "enabled", havingValue = "false", matchIfMissing = true)
 @Component
 public class MsqQueryTools {
 
     private final QueryRepository queryRepository;
     private final TasksRepository tasksRepository;
+    private final SqlSyntaxCorrectionService sqlSyntaxCorrectionService;
     private final ObjectMapper objectMapper;
 
     public MsqQueryTools(QueryRepository queryRepository,
                          TasksRepository tasksRepository,
+                         SqlSyntaxCorrectionService sqlSyntaxCorrectionService,
                          ObjectMapper objectMapper) {
         this.queryRepository = queryRepository;
         this.tasksRepository = tasksRepository;
+        this.sqlSyntaxCorrectionService = sqlSyntaxCorrectionService;
         this.objectMapper = objectMapper;
     }
 
     /**
      * Execute a multi-stage Druid SQL query as a task
      */
-    @McpTool(description = "Execute a multi-stage SQL query against Druid datasources as a task. This is suitable for complex queries, large datasets, and INSERT/REPLACE operations. Provide the SQL query as a parameter.")
+    @McpTool(
+            description = "Execute a multi-stage SQL query against Druid datasources as a task. This is suitable for complex queries, large datasets, and INSERT/REPLACE operations. Provide the SQL query as a parameter.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = false)
+    )
     public String queryDruidMultiStage(String sqlQuery) {
+        String correctedQuery = sqlSyntaxCorrectionService.correctQuerySyntax(sqlQuery);
         try {
-            JsonNode result = queryRepository.executeMultiStageSqlQuery(sqlQuery);
+            JsonNode result = queryRepository.executeMultiStageSqlQuery(correctedQuery);
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error executing multi-stage SQL query '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Error executing multi-stage SQL query '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process multi-stage query response for '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Failed to process multi-stage query response for '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         }
     }
 
     /**
      * Execute a multi-stage Druid SQL query with custom context parameters
      */
-    @McpTool(description = "Execute a multi-stage SQL query with custom context parameters. Provide the SQL query and context as JSON string. Context can include maxNumTasks, taskAssignment, finalizeAggregations, groupByEnableMultiValueUnnesting, etc.")
+    @McpTool(
+            description = "Execute a multi-stage SQL query with custom context parameters. Provide the SQL query and context as JSON string. Context can include maxNumTasks, taskAssignment, finalizeAggregations, groupByEnableMultiValueUnnesting, etc.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = false)
+    )
     public String queryDruidMultiStageWithContext(String sqlQuery, String contextJson) {
+        String correctedQuery = sqlSyntaxCorrectionService.correctQuerySyntax(sqlQuery);
         try {
             Map<String, Object> context = null;
 
@@ -71,19 +81,22 @@ public class MsqQueryTools {
                         objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
             }
 
-            JsonNode result = queryRepository.executeMultiStageSqlQueryWithContext(sqlQuery, context);
+            JsonNode result = queryRepository.executeMultiStageSqlQueryWithContext(correctedQuery, context);
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error executing multi-stage SQL query with context '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Error executing multi-stage SQL query with context '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process multi-stage query with context response for '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Failed to process multi-stage query with context response for '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         }
     }
 
     /**
      * Get status of a multi-stage query task
      */
-    @McpTool(description = "Get the status of a multi-stage query task. Provide the task ID as a parameter.")
+    @McpTool(
+            description = "Get the status of a multi-stage query task. Provide the task ID as a parameter.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getMultiStageQueryTaskStatus(String taskId) {
         try {
             JsonNode result = tasksRepository.getTaskStatus(taskId);
@@ -98,7 +111,10 @@ public class MsqQueryTools {
     /**
      * Cancel a multi-stage query task
      */
-    @McpTool(description = "Cancel a running multi-stage query task. Provide the task ID as a parameter.")
+    @McpTool(
+            description = "Cancel a running multi-stage query task. Provide the task ID as a parameter.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = true, destructiveHint = false)
+    )
     public String cancelMultiStageQueryTask(String taskId) {
         try {
             JsonNode result = tasksRepository.killTask(taskId);

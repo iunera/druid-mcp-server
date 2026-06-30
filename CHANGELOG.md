@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [2.0.0] - 2026-06-15
+
+### Added
+- **SQL Syntax Correction**: Introduced `SqlSyntaxCorrectionService` to automatically validate and normalize SQL queries before sending them to Druid. This feature strips trailing semicolons, resolves case sensitivity, automatically double-quotes unquoted identifiers (table and column names) avoiding SQL keywords, and protects comments, literals, and quoted elements using a placeholder extraction tokenizer. The feature is switchable via `druid.mcp.sql-syntax-correction.enabled` (default `true`) and caches Druid metadata in-memory using Spring Caching (`@Cacheable` and `@CacheEvict`). This feature queries your Druid metadata on startup of the MCP server and periodically.
+- **MCP Safety Annotations**: Annotated all server tools with `@McpTool.McpAnnotations` (`readOnlyHint`, `idempotentHint`, `destructiveHint`, `openWorldHint`) to specify execution safety semantics. This prevents MCP clients from showing unnecessary warning prompts for safe, read-only tools (like `getDatasources` or `queryDruidSql`).
+- **Renamed and Restructured Spring Profiles**: Introduced shorter, refined Spring profiles to control dynamic tool activation:
+  * `query` (Default): Safe, read-only analytical SQL querying.
+  * `ops`: Administration, ingestion tasks, supervisors, and compaction; includes `health` profile automatically.
+  * `health`: Node status, cluster diagnostics, and functional health doctor checks.
+  * `permissions`: Basic security authentication, roles, and user assignment management.
+
+### Changed
+- **Spring Boot: upgraded to 4.1.0** - Modularized testing support, updated configuration defaults.
+- **Spring AI: upgraded to 2.0.0** - Consolidated Model Context Protocol (MCP) server support, migrated annotations to standard core `org.springframework.ai.mcp.annotation.*` packages.
+- **Jackson 3 Integration**: Migrated JSON mapping from Jackson 2 to Jackson 3 (`tools.jackson.*`), using `JsonMapper` and updating the underlying MCP SDK to `mcp-json-jackson3`.
+- **Basic Security Activation**: Relocated basic security configurations. Removed the global `druid.extension.druid-basic-security.enabled` configuration property.
+- **Conditional Tool Activation**: Basic security tools (`SecurityTools` and `SecurityRepository`) are now conditionally activated only when the `permissions` profile is active AND the Coordinator URL (`druid.coordinator.url`) is set.
+- **Client Splitting**: Separated the Router and Coordinator rest clients into `DruidRouterRestClientConfig` and `DruidCoordinatorRestClientConfig` classes. The Coordinator rest client is now conditionally initialized only when a coordinator URL is configured.
+- **Cleaned Annotations**: Removed fully qualified annotation naming for `@Profile` and `@ConditionalOnExpression` across basic security files to utilize clean, standard Java import statements.
+
+### Breaking Change
+- **druid.mcp.readonly.enabled** is not implemented anymore. Rather use the `query` and `health` profiles. 
+
 ## [1.8.0] - 2026-03-03
 
 ### Added

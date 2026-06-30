@@ -1,0 +1,16 @@
+# Health profile configuration
+druid:
+  mcp:
+    tools:
+      enabled:
+        - "getClusterStatus"
+        - "getNodesStatus"
+        - "diagnoseCluster"
+        - "checkFunctionalityHealth"
+        - "getCompactionStatus"
+        - "getLookups"
+        - "getSegmentLoadQueue"
+        - "getDatasources"
+        - "getSegments"
+        - "getSupervisors"
+        - "getTasks"

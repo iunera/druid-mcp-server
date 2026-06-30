@@ -16,13 +16,14 @@
 
 package com.iunera.druidmcpserver.monitoring.health.functionality;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.datamanagement.segments.SegmentRepository;
 import com.iunera.druidmcpserver.ingestion.supervisors.SupervisorsRepository;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
 import com.iunera.druidmcpserver.monitoring.health.repository.HealthStatusRepository;
-import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 
 /**
@@ -51,10 +52,36 @@ public class FunctionalityHealthToolProvider {
     }
 
     /**
-     * Comprehensive health check for all supervisor functionalities
+     * Check the health of specific or all Druid component functionalities.
      */
-    @McpTool(description = "Check the health of all Druid supervisor functionalities including ingestion status, task health, and performance metrics")
-    public String checkSupervisorHealth() {
+    @McpTool(
+            description = "Validate operations of ingestion systems, supervisor state transitions, and historical query latency. Parameters: [component] (Enum: ALL, SUPERVISORS, HISTORICALS, INGESTION, optional), and [quick] (Boolean, optional) to trigger a rapid smoke check.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
+    public String checkFunctionalityHealth(
+            @McpToolParam(description = "The component to check: ALL, SUPERVISORS, HISTORICALS, INGESTION (optional, defaults to ALL)", required = false) String component,
+            @McpToolParam(description = "Whether to trigger a quick rapid smoke check (optional, defaults to false)", required = false) Boolean quick
+    ) {
+        boolean isQuick = quick != null && quick;
+        if (isQuick) {
+            return runQuickFunctionalityCheck();
+        }
+
+        String comp = component == null ? "ALL" : component.toUpperCase();
+        switch (comp) {
+            case "SUPERVISORS":
+                return runCheckSupervisorHealth();
+            case "HISTORICALS":
+                return runCheckHistoricalHealth();
+            case "INGESTION":
+                return runCheckIngestionHealth();
+            case "ALL":
+            default:
+                return runCheckComprehensiveFunctionalityHealth();
+        }
+    }
+
+    private String runCheckSupervisorHealth() {
         var healthReport = objectMapper.createObjectNode();
         var issues = objectMapper.createArrayNode();
         var recommendations = objectMapper.createArrayNode();
@@ -154,11 +181,7 @@ public class FunctionalityHealthToolProvider {
         return healthReport.toString();
     }
 
-    /**
-     * Comprehensive health check for historical nodes and segment distribution
-     */
-    @McpTool(description = "Check the health of Druid historical nodes including segment distribution, load queue, and performance metrics")
-    public String checkHistoricalHealth() {
+    private String runCheckHistoricalHealth() {
         var healthReport = objectMapper.createObjectNode();
         var issues = objectMapper.createArrayNode();
         var recommendations = objectMapper.createArrayNode();
@@ -193,7 +216,7 @@ public class FunctionalityHealthToolProvider {
                 if (segmentsByServer.size() > 1) {
                     final int[] maxSegments = {0};
                     final int[] minSegments = {Integer.MAX_VALUE};
-                    segmentsByServer.fields().forEachRemaining(entry -> {
+                    segmentsByServer.properties().forEach(entry -> {
                         int count = entry.getValue().asInt();
                         if (count > maxSegments[0]) maxSegments[0] = count;
                         if (count < minSegments[0]) minSegments[0] = count;
@@ -245,18 +268,52 @@ public class FunctionalityHealthToolProvider {
         return healthReport.toString();
     }
 
-    /**
-     * Comprehensive functionality health check combining supervisors and historicals
-     */
-    @McpTool(description = "Perform comprehensive health check of all Druid functionalities including supervisors, historicals, and ingestion pipeline")
-    public String checkFunctionalityHealth() {
+    private String runCheckIngestionHealth() {
+        var healthReport = objectMapper.createObjectNode();
+        var issues = objectMapper.createArrayNode();
+        var recommendations = objectMapper.createArrayNode();
+
+        try {
+            JsonNode runningTasks = tasksRepository.getRunningTasks();
+            JsonNode pendingTasks = tasksRepository.getPendingTasks();
+            JsonNode completeTasks = tasksRepository.getCompleteTasks();
+
+            var taskSummary = objectMapper.createObjectNode();
+            taskSummary.put("running", runningTasks != null && runningTasks.isArray() ? runningTasks.size() : 0);
+            taskSummary.put("pending", pendingTasks != null && pendingTasks.isArray() ? pendingTasks.size() : 0);
+            taskSummary.put("complete", completeTasks != null && completeTasks.isArray() ? completeTasks.size() : 0);
+
+            healthReport.set("task_summary", taskSummary);
+
+            if (pendingTasks != null && pendingTasks.isArray() && pendingTasks.size() > 10) {
+                issues.add("High number of pending tasks: " + pendingTasks.size());
+                recommendations.add("Check task execution capacity and resource availability");
+                healthReport.put("health_status", "WARNING");
+            } else {
+                healthReport.put("health_status", "HEALTHY");
+            }
+
+        } catch (Exception e) {
+            issues.add("Failed to get task information: " + e.getMessage());
+            recommendations.add("Check task API connectivity and permissions");
+            healthReport.put("health_status", "ERROR");
+        }
+
+        healthReport.set("issues", issues);
+        healthReport.set("recommendations", recommendations);
+        healthReport.put("timestamp", System.currentTimeMillis());
+
+        return healthReport.toString();
+    }
+
+    private String runCheckComprehensiveFunctionalityHealth() {
         var healthReport = objectMapper.createObjectNode();
         var overallIssues = objectMapper.createArrayNode();
         var overallRecommendations = objectMapper.createArrayNode();
 
         try {
             // Check supervisor health
-            String supervisorHealthStr = checkSupervisorHealth();
+            String supervisorHealthStr = runCheckSupervisorHealth();
             JsonNode supervisorHealth = objectMapper.readTree(supervisorHealthStr);
             healthReport.set("supervisor_health", supervisorHealth);
 
@@ -269,7 +326,7 @@ public class FunctionalityHealthToolProvider {
             }
 
             // Check historical health
-            String historicalHealthStr = checkHistoricalHealth();
+            String historicalHealthStr = runCheckHistoricalHealth();
             JsonNode historicalHealth = objectMapper.readTree(historicalHealthStr);
             healthReport.set("historical_health", historicalHealth);
 
@@ -341,11 +398,7 @@ public class FunctionalityHealthToolProvider {
         return healthReport.toString();
     }
 
-    /**
-     * Quick functionality check for rapid health assessment
-     */
-    @McpTool(description = "Perform quick functionality health check for rapid assessment of Druid ingestion and query capabilities")
-    public String quickFunctionalityCheck() {
+    private String runQuickFunctionalityCheck() {
         var healthReport = objectMapper.createObjectNode();
         var issues = objectMapper.createArrayNode();
 

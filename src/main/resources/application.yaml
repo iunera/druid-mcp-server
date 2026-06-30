@@ -16,7 +16,7 @@
 
 spring:
   profiles:
-    default: stdio
+    default: stdio,query
   application:
     name: druid-mcp-server
   config:
@@ -25,13 +25,13 @@ spring:
     mcp:
       server:
         name: druid-mcp-server
-        version: 1.8.2
+        version: 2.0.0
 
 druid:
   router:
     url: http://localhost:8888
   coordinator:
-    url: http://localhost:8081
+    url: ""
   auth:
     username: ""
     password: ""
@@ -39,15 +39,14 @@ druid:
     enabled: false
     skip-verification: false
 
-  extension:
-    druid-basic-security:
-      enabled: true
-
   mcp:
-    readonly:
-      enabled: false
+    tools:
+      enabled: []
     metrics:
       enabled: true
+    sql-syntax-correction:
+      enabled: true
+      cache-ttl-ms: 300000
 
 management:
   endpoints:

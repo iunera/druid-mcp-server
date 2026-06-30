@@ -16,10 +16,10 @@
 
 package com.iunera.druidmcpserver.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
-import io.modelcontextprotocol.json.jackson.JacksonMcpJsonMapper;
+import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
 
 import java.io.File;
 
@@ -43,7 +43,7 @@ public class DruidClientStdio {
                         "target/druid-mcp-server-1.2.1.jar")
                 .build();
 
-        var transport = new StdioClientTransport(stdioParams, new JacksonMcpJsonMapper(new ObjectMapper()));
+        var transport = new StdioClientTransport(stdioParams, new JacksonMcpJsonMapper(new tools.jackson.databind.json.JsonMapper()));
 
         new DruidSampleClient(transport).run();
     }

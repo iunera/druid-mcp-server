@@ -43,10 +43,7 @@ class DatasourceIntegrationTest {
     private DatasourceResources datasourceResourceProvider;
 
     @Autowired
-    private WriteDatasourceTools writeDatasourceTools;
-
-    @Autowired
-    private ReadDatasourceTools readDatasourceTools;
+    private DatasourceTools datasourceTools;
 
     @Autowired
     private MsqQueryTools msqQueryTools;
@@ -57,7 +54,7 @@ class DatasourceIntegrationTest {
     @Test
     void testServicesAreInjected() {
         assertNotNull(datasourceResourceProvider, "DatasourceResourceProvider should be injected");
-        assertNotNull(writeDatasourceTools, "WriteDatasourceTools should be injected");
+        assertNotNull(datasourceTools, "DatasourceTools should be injected");
         assertNotNull(msqQueryTools, "MsqQueryTools should be injected");
         assertNotNull(queryTools, "QueryTools should be injected");
     }
@@ -124,9 +121,9 @@ class DatasourceIntegrationTest {
     @Test
     void testDatasourceToolMethod() {
         // Test the new @Tool method for listing datasources
-        String toolResult = readDatasourceTools.listDatasources();
-        assertNotNull(toolResult, "listDatasources tool method should return a non-null result");
-        assertFalse(toolResult.trim().isEmpty(), "listDatasources tool method should return a non-empty result");
+        String toolResult = datasourceTools.getDatasources(null, null);
+        assertNotNull(toolResult, "getDatasources tool method should return a non-null result");
+        assertFalse(toolResult.trim().isEmpty(), "getDatasources tool method should return a non-empty result");
 
         // Debug output to see what we're actually getting
         System.out.println("[DEBUG_LOG] Datasource tool result: " + toolResult);
@@ -139,7 +136,7 @@ class DatasourceIntegrationTest {
     @Test
     void testKillDatasourceToolMethod() {
         // Test the kill datasource @Tool method
-        String killResult = writeDatasourceTools.killDatasource("test_datasource", "1000-01-01/2025-07-06");
+        String killResult = datasourceTools.manageDatasourceOrSegment("KILL_DATASOURCE", "test_datasource", null, "1000-01-01/2025-07-06");
         assertNotNull(killResult, "killDatasource tool method should return a non-null result");
         assertFalse(killResult.trim().isEmpty(), "killDatasource tool method should return a non-empty result");
 

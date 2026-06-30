@@ -90,19 +90,16 @@ get_current_version() {
 # Function to update pom.xml
 update_pom_xml() {
     local new_version="$1"
-    local file="pom.xml"
     
-    if [ ! -f "$file" ]; then
-        print_error "$file not found"
+    if [ ! -f "pom.xml" ]; then
+        print_error "pom.xml not found"
         return 1
     fi
 
-    # Update the project version (the <version> that follows the project's artifactId, not the parent)
-    # Replace only the first <version> after <artifactId>druid-mcp-server</artifactId>
-    sed -i.tmp "/<artifactId>druid-mcp-server<\/artifactId>/,/<version>[^<]*<\/version>/s/<version>[^<]*<\/version>/<version>$new_version<\/version>/" "$file"
-    rm -f "${file}.tmp"
+    # Use Maven versions plugin to update project version
+    ./mvnw versions:set -DnewVersion="$new_version" -DgenerateBackupPoms=false
     
-    print_success "Updated $file"
+    print_success "Updated pom.xml using mvn versions:set"
 }
 
 # Function to update application.yaml
@@ -150,8 +147,9 @@ update_jbang_catalog_json() {
         return 1
     fi
 
-    sed -i.tmp -E "s/(com\.iunera:druid-mcp-server:)[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?/\1$new_version/g" "$file"
-    rm -f "${file}.tmp"
+    local new_url="https://github.com/iunera/druid-mcp-server/releases/download/v${new_version}/druid-mcp-server-${new_version}.jar"
+    local tmp_file="${file}.tmp"
+    jq --arg url "$new_url" '.aliases["druid-mcp-server"]["script-ref"] = $url' "$file" > "$tmp_file" && mv "$tmp_file" "$file"
     
     print_success "Updated $file"
 }

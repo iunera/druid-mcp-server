@@ -1,0 +1,30 @@
+# Ops (Cluster Administration) profile configuration
+druid:
+  mcp:
+    tools:
+      enabled:
+        - "manageCompaction"
+        - "manageDatasourceOrSegment"
+        - "manageSupervisor"
+        - "submitIngestion"
+        - "manageLookup"
+        - "queryDruidMultiStage"
+        - "queryDruidMultiStageWithContext"
+        - "getMultiStageQueryTaskStatus"
+        - "cancelMultiStageQueryTask"
+        - "getRetentionRules"
+        - "manageRetentionRules"
+        - "getDatasources"
+        - "getLookups"
+        - "queryDruidSql"
+        - "getCompactionConfig"
+        - "getCompactionStatus"
+        - "getSegments"
+        - "getSegmentLoadQueue"
+        - "getSupervisors"
+        - "getTasks"
+        - "getTaskDetails"
+        - "getClusterStatus"
+        - "getNodesStatus"
+        - "diagnoseCluster"
+        - "checkFunctionalityHealth"

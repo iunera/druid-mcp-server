@@ -26,8 +26,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer.authorizationServer;
-
 /**
  * OAuth2 Authorization Server configuration. Enabled only when property
  * druid.mcp.security.oauth2.enabled=true.
@@ -43,7 +41,7 @@ public class OauthSecurityConfig {
         return http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
                         .anyRequest().authenticated())
-                .with(authorizationServer(), Customizer.withDefaults())
+                .oauth2AuthorizationServer(Customizer.withDefaults())
                 .oauth2ResourceServer(resource -> resource.jwt(Customizer.withDefaults()))
                 .csrf(CsrfConfigurer::disable)
                 .cors(Customizer.withDefaults())

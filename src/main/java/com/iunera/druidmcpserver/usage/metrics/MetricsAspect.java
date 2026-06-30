@@ -23,7 +23,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +44,7 @@ public class MetricsAspect {
         this.metricsService = metricsService;
     }
 
-    @Around("@annotation(org.springaicommunity.mcp.annotation.McpTool)")
+    @Around("@annotation(org.springframework.ai.mcp.annotation.McpTool)")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();

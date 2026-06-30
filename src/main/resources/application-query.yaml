@@ -1,0 +1,16 @@
+# Query profile configuration
+druid:
+  mcp:
+    tools:
+      enabled:
+        - "getDatasources"
+        - "getLookups"
+        - "queryDruidSql"
+        - "getCompactionConfig"
+        - "getCompactionStatus"
+        - "getRetentionRules"
+        - "getSegments"
+        - "getSegmentLoadQueue"
+        - "getSupervisors"
+        - "getTasks"
+        - "getTaskDetails"

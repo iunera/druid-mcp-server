@@ -21,7 +21,7 @@ import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
 import io.modelcontextprotocol.spec.McpSchema.Role;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
-import org.springaicommunity.mcp.annotation.McpPrompt;
+import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

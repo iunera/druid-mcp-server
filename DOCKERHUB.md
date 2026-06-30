@@ -3,7 +3,7 @@
 [![Docker Image](https://img.shields.io/badge/docker-available-blue.svg)](https://hub.docker.com/r/iunera/druid-mcp-server)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://openjdk.java.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-green.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-green.svg)](https://spring.io/projects/spring-boot)
 
 A comprehensive **Model Context Protocol (MCP) server** for Apache Druid that provides extensive tools, resources, and AI-assisted prompts for managing and analyzing Druid clusters. Built with enterprise-grade reliability and performance in mind.
 
@@ -19,14 +19,13 @@ docker pull iunera/druid-mcp-server:latest
 # STDIO mode (default, recommended for LLM clients that spawn the server)
 docker run --rm -i \
   -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
-  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
+  -e SPRING_PROFILES_ACTIVE=query \
   iunera/druid-mcp-server:latest
 
 # HTTP mode (enable profile 'http' and expose /mcp)
 docker run -p 8080:8080 \
-  -e SPRING_PROFILES_ACTIVE=http \
+  -e SPRING_PROFILES_ACTIVE=http,query \
   -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
-  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
   iunera/druid-mcp-server:latest
 ```
 
@@ -39,9 +38,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=http
-      - DRUID_BROKER_URL=http://druid-broker:8082
-      - DRUID_COORDINATOR_URL=http://druid-coordinator:8081
+      - SPRING_PROFILES_ACTIVE=http,query
+      - DRUID_ROUTER_URL=http://druid-router:8888
       - SPRING_AI_MCP_SERVER_NAME=druid-mcp-server
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/"]
@@ -76,100 +74,78 @@ Experience your data like never before with **[Y̊pipe](https://ypipe.com)**, a 
 
 ## 🛠️ Comprehensive Tools Summary
 
-### 📊 Data Management Tools (12 tools)
-Perfect for data exploration, schema analysis, and datasource lifecycle management:
+The MCP server activates tools dynamically based on active Spring profiles (`SPRING_PROFILES_ACTIVE`).
+
+### 📊 Data Management & Querying Tools (6 tools - `query` profile)
+Perfect for data exploration, schema analysis, and standard querying:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `listDatasources` | Discover all available datasources | None |
-| `showDatasourceDetails` | Get schema and metadata | `datasourceName` |
-| `killDatasource` | Permanently remove datasource | `datasourceName`, `interval` |
-| `listLookups` | Manage lookup tables | None |
-| `getLookupConfig` | Retrieve lookup configuration | `tier`, `lookupName` |
-| `updateLookupConfig` | Modify lookup settings | `tier`, `lookupName`, `config` |
-| `listAllSegments` | View all data segments | None |
-| `getSegmentMetadata` | Analyze segment details | `datasourceName`, `segmentId` |
-| `getSegmentsForDatasource` | List datasource segments | `datasourceName` |
-| `queryDruidSql` | Execute SQL queries | `sqlQuery` |
-| `viewRetentionRules` | Check data retention policies | `datasourceName` (optional) |
-| `updateRetentionRules` | Modify retention settings | `datasourceName`, `rules` |
+| `getDatasources` | List analytical tables or get detailed schema schemas | `datasourceName` (optional), `detailed` (optional) |
+| `getLookups` | Retrieve lookup configurations and tier statuses | `tier` (optional), `lookupName` (optional), `includeStatus` (optional) |
+| `getSegments` | Fetch segments list or metadata details | `datasource` (optional), `segmentId` (optional), `detailed` (optional) |
+| `getSegmentLoadQueue` | View segments currently loading or dropping | `serverName` (optional) |
+| `getRetentionRules` | Retrieve data retention rules and rule history | `datasource` (optional), `includeHistory` (optional) |
+| `queryDruidSql` | Execute standard synchronous analytical SQL SELECT queries | `sqlQuery` (required) |
 
-### 🔄 Compaction Management Tools (5 tools)
-Optimize storage and query performance through intelligent segment compaction:
+### ⚙️ Cluster Administration Tools (10 tools - `ops` profile)
+Perform administrative tasks, compaction management, and multi-stage queries:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `viewAllCompactionConfigs` | List all compaction configurations | None |
-| `viewCompactionConfigForDatasource` | Get specific compaction config | `datasourceName` |
-| `editCompactionConfigForDatasource` | Update compaction settings | `datasourceName`, `config` |
-| `deleteCompactionConfigForDatasource` | Remove compaction config | `datasourceName` |
-| `viewCompactionStatus` | Monitor compaction progress | `datasourceName` (optional) |
+| `getCompactionConfig` | View compaction settings or change history | `datasource` (optional), `includeHistory` (optional) |
+| `getCompactionStatus` | Monitor background compaction runs | `datasource` (optional) |
+| `manageCompaction` | Create, update, or delete compaction rules | `action` (UPSERT/DELETE), `datasource`, `configJson` |
+| `manageDatasourceOrSegment` | Drop datasources or enable/disable segments | `action`, `datasource`, `segmentId`, `interval` |
+| `manageLookup` | Configure or delete tier lookups | `action` (UPSERT/DELETE), `tier`, `lookupName`, `configJson` |
+| `manageRetentionRules` | Update load/drop policies for a datasource | `datasource`, `rulesJson` |
+| `queryDruidMultiStage` | Run asynchronous Multi-Stage SQL tasks (MSQ) | `sqlQuery` |
+| `queryDruidMultiStageWithContext` | Run MSQ tasks with custom context properties | `sqlQuery`, `contextJson` |
+| `getMultiStageQueryTaskStatus` | Retrieve MSQ query execution status | `taskId` |
+| `cancelMultiStageQueryTask` | Abort a running MSQ task | `taskId` |
 
-### 📥 Ingestion Management Tools (10 tools)
-Streamline data ingestion with batch and streaming capabilities:
-
-| Tool | Purpose | Key Parameters |
-|------|---------|----------------|
-| `createBatchIngestionTemplate` | Generate ingestion templates | `datasourceName`, `inputSource`, `timestampColumn` |
-| `createIngestionSpec` | Submit ingestion specifications | `specJson` |
-| `listSupervisors` | Monitor streaming ingestion | None |
-| `getSupervisorStatus` | Check supervisor health | `supervisorId` |
-| `suspendSupervisor` | Pause streaming ingestion | `supervisorId` |
-| `startSupervisor` | Resume streaming ingestion | `supervisorId` |
-| `terminateSupervisor` | Stop streaming ingestion | `supervisorId` |
-| `listTasks` | View all ingestion tasks | None |
-| `getTaskStatus` | Monitor task progress | `taskId` |
-| `shutdownTask` | Stop running tasks | `taskId` |
-
-### 🏥 Monitoring & Health Tools (9 tools)
-Ensure optimal cluster performance with comprehensive monitoring:
+### 📥 Ingestion Tools (6 tools - `ops` profile)
+Control batch and streaming data ingestion:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `checkClusterHealth` | Overall cluster status | None |
-| `getServiceStatus` | Individual service health | `serviceType` |
-| `getClusterConfiguration` | System configuration | None |
-| `runDruidDoctor` | Comprehensive diagnostics | None |
-| `analyzePerformanceIssues` | Performance analysis | None |
-| `generateHealthReport` | Detailed health assessment | None |
-| `testQueryFunctionality` | Validate query services | None |
-| `testIngestionFunctionality` | Validate ingestion pipeline | None |
-| `validateClusterConnectivity` | Network connectivity check | None |
+| `submitIngestion` | Post ingestion job specs or generate batch JSON templates | `action` (SUBMIT_SPEC/GENERATE_TEMPLATE), `payloadJson`, `datasourceName` |
+| `getSupervisors` | List continuous streaming ingestion supervisors | `supervisorId` (optional) |
+| `manageSupervisor` | Suspend, resume, or terminate supervisor streams | `supervisorId`, `action` (SUSPEND/RESUME/TERMINATE) |
+| `getTasks` | List ingestion tasks | `state` (RUNNING/PENDING/WAITING/COMPLETED) |
+| `getTaskDetails` | View specs, status, reports, or task logs | `taskId`, `aspect` (STATUS/RAW_DETAILS/SPEC/REPORTS/LOG) |
+| `shutdownTask` | Stop a running ingestion task | `taskId` |
 
-### 🔐 Basic Security Tools (17 tools)
-Manage users, roles, and permissions with the Druid Basic Security extension:
+### 🏥 Monitoring & Diagnostics Tools (4 tools - `health` profile)
+Validate query performance, configurations, and check system health:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `listAuthenticationUsers` | List all users in the Druid authentication system for a specific authenticator | `authenticatorName` |
-| `getAuthenticationUser` | Get details of a specific user from the Druid authentication system | `authenticatorName`, `userName` |
-| `createAuthenticationUser` | Create a new user in the Druid authentication system | `authenticatorName`, `userName` |
-| `deleteAuthenticationUser` | Delete a user from the Druid authentication system. Use with caution as this action cannot be undone. | `authenticatorName`, `userName` |
-| `setUserPassword` | Set or update the password for a user in the Druid authentication system | `authenticatorName`, `userName`, `password` |
-| `listAuthorizationUsers` | List all users in the Druid authorization system for a specific authorizer | `authorizerName` |
-| `getAuthorizationUser` | Get details of a specific user from the Druid authorization system including their roles | `authorizerName`, `userName` |
-| `listRoles` | List all roles in the Druid authorization system for a specific authorizer | `authorizerName` |
-| `getRole` | Get details of a specific role from the Druid authorization system including its permissions | `authorizerName`, `roleName` |
-| `createAuthorizationUser` | Create a new user in the Druid authorization system | `authorizerName`, `userName` |
-| `deleteAuthorizationUser` | Delete a user from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName`, `userName` |
-| `createRole` | Create a new role in the Druid authorization system | `authorizerName`, `roleName` |
-| `deleteRole` | Delete a role from the Druid authorization system. Use with caution as this action cannot be undone. | `authorizerName`, `roleName` |
-| `setRolePermissions` | Set permissions for a role in the Druid authorization system. Provide permissions as JSON array. | `authorizerName`, `roleName`, `permissions` |
-| `assignRoleToUser` | Assign a role to a user in the Druid authorization system | `authorizerName`, `userName`, `roleName` |
-| `unassignRoleFromUser` | Unassign a role from a user in the Druid authorization system | `authorizerName`, `userName`, `roleName` |
-| `getAuthenticatorChainAndAuthorizers` | Get configured authenticatorChain and authorizers form the Basic Auth configuration. This information is important for any other security tool and LLMs need to call this tool first. | None |
+| `getClusterStatus` | Heartbeat status, leaders, metadata | `aspect` (OVERALL/COORDINATOR/ROUTER/LEADER/PROPERTIES) |
+| `getNodesStatus` | List active server nodes status | `serverName` (optional), `detailed` (optional) |
+| `diagnoseCluster` | COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGuration audits | `mode` |
+| `checkFunctionalityHealth` | Smoke-test latency and active stream pipelines | `component`, `quick` |
+
+### 🔐 Basic Security Tools (3 tools - `permissions` profile)
+Administer users, roles, and resource access policies:
+
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `manageAuthentication` | Create/delete users, list users, set passwords | `authenticator`, `action` (LIST/GET/CREATE/DELETE/SET_PASSWORD), `username` |
+| `manageAuthorization` | Manage roles, permissions, access policies | `authorizer`, `action` (LIST_USERS/GET_ROLE/SET_PERMISSIONS), `name`, `permissionsJson` |
+| `manageSecurityAssignments` | Map roles to users, view authenticator chain | `authorizer`, `action` (ASSIGN_ROLE/UNASSIGN_ROLE/GET_CHAIN), `username`, `roleName` |
 
 ## 🔗 MCP Resources & Prompts
 
-### Resources (4 resource types)
+### Resources
 Direct access to Druid metadata through standardized URIs:
-- `druid://datasource/{datasourceName}` - Datasource information
-- `druid://datasource/{datasourceName}/details` - Detailed schema
+- `druid://datasource/{datasourceName}` - Datasource schema information
+- `druid://datasource/{datasourceName}/details` - Detailed segment data structures
 - `druid://lookup/{tier}/{lookupName}` - Lookup configurations
-- `druid://segment/{segmentId}` - Segment metadata
+- `druid://segment/{segmentId}` - Core segment catalog metadata
 
-### AI-Powered Prompts (12 prompt templates)
-Intelligent guidance for common Druid operations:
+### AI-Powered Prompts
+Intelligent templates for common Druid operations:
 - **Data Analysis**: `data-exploration`, `query-optimization`
 - **Cluster Management**: `health-check`, `cluster-overview`
 - **Ingestion**: `ingestion-troubleshooting`, `ingestion-setup`
@@ -183,16 +159,15 @@ Intelligent guidance for common Druid operations:
 ```bash
 docker run --rm -i \
   -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
-  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
+  -e SPRING_PROFILES_ACTIVE=query \
   iunera/druid-mcp-server:latest
 ```
 
 ### HTTP Transport (Profile: http)
 ```bash
 docker run -p 8080:8080 \
-  -e SPRING_PROFILES_ACTIVE=http \
+  -e SPRING_PROFILES_ACTIVE=http,query \
   -e DRUID_ROUTER_URL=http://your-druid-router:8888 \
-  -e DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081 \
   iunera/druid-mcp-server:latest
 
 # Streamable HTTP endpoint: http://localhost:8080/mcp
@@ -204,15 +179,20 @@ docker run -p 8080:8080 \
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `DRUID_ROUTER_URL` | Druid router endpoint | `http://localhost:8888` |
-| `SPRING_AI_MCP_SERVER_NAME` | MCP server identifier | `druid-mcp-server` |
-| `SERVER_PORT` | HTTP server port | `8080` |
-| `DRUID_MCP_READONLY_ENABLED` | Enables or disables read-only mode. | `false` |
-| `DRUID_EXTENSION_DRUID_BASIC_SECURITY_ENABLED` | Enables or disables the basic security feature. | `true` |
+| `DRUID_COORDINATOR_URL` | Coordinator endpoint (optional, needed for basic security) | `http://localhost:8081` |
+| `DRUID_AUTH_USERNAME` | Username for basic auth authentication | `""` |
+| `DRUID_AUTH_PASSWORD` | Password for basic auth authentication | `""` |
+| `DRUID_SSL_ENABLED` | Enables SSL for connection | `false` |
+| `DRUID_SSL_SKIP_VERIFICATION` | Skip SSL validations | `false` |
+| `DRUID_MCP_SQL_SYNTAX_CORRECTION_ENABLED` | Enables automatic SQL syntax correction | `true` |
+| `DRUID_MCP_SQL_SYNTAX_CORRECTION_CACHE_TTL_MS`| Schema metadata cache TTL in ms | `300000` (5 minutes) |
+| `SPRING_PROFILES_ACTIVE` | Active Spring tool profiles (`query`, `ops`, `health`, `permissions`) | `query` |
+| `SERVER_PORT` | Port for HTTP transport mode | `8080` |
 
 ## 🏗️ Architecture
 
 Built on enterprise-grade technologies:
-- **Spring Boot 3.5.7** - Production-ready framework
+- **Spring Boot 4.1.0** - Production-ready framework
 - **Spring AI MCP Server** - Native MCP protocol support
 - **Java 25** - Latest performance optimizations
 - **Maven** - Reliable dependency management
@@ -225,55 +205,6 @@ Built on enterprise-grade technologies:
 - **Health check endpoints** for monitoring
 - **Configurable authentication** support
 - **Network isolation** ready
-
-## 📈 Use Cases
-
-### For Data Engineers
-- **Automated data pipeline monitoring**
-- **Intelligent ingestion troubleshooting**
-- **Performance optimization guidance**
-- **Retention policy management**
-
-### For Data Analysts
-- **Natural language query assistance**
-- **Schema exploration and discovery**
-- **Data quality assessment**
-- **Query optimization recommendations**
-
-### For DevOps Teams
-- **Cluster health monitoring**
-- **Automated diagnostics**
-- **Emergency response procedures**
-- **Maintenance workflow automation**
-
-*Explore enterprise data solutions at [iunera.com](https://www.iunera.com)*
-
-## 🚀 Getting Started with AI Integration
-
-### Claude Desktop Configuration
-```json
-{
-  "mcpServers": {
-    "druid-mcp-server": {
-      "command": "docker",
-      "args": [
-        "run", "--rm", "-i",
-        "-e", "DRUID_ROUTER_URL=http://your-druid-router:8888",
-        "-e", "DRUID_COORDINATOR_URL=http://your-druid-coordinator:8081",
-        "iunera/druid-mcp-server:latest"
-      ]
-    }
-  }
-}
-```
-
-### Example AI Interactions
-```
-"Show me all datasources and their schemas"
-"Analyze the performance of my ingestion pipeline"
-"Help me optimize this SQL query for better performance"
-"Generate a health report for the cluster"
-```
 
 ## 🤝 Support & Community
 

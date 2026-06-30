@@ -16,10 +16,10 @@
 
 package com.iunera.druidmcpserver.datamanagement.query;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.iunera.druidmcpserver.ingestion.tasks.TasksRepository;
-import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -27,29 +27,33 @@ import org.springframework.web.client.RestClientException;
 public class QueryTools {
 
     private final QueryRepository queryRepository;
-    private final TasksRepository tasksRepository;
+    private final SqlSyntaxCorrectionService sqlSyntaxCorrectionService;
     private final ObjectMapper objectMapper;
 
     public QueryTools(QueryRepository queryRepository,
-                      TasksRepository tasksRepository,
+                      SqlSyntaxCorrectionService sqlSyntaxCorrectionService,
                       ObjectMapper objectMapper) {
         this.queryRepository = queryRepository;
-        this.tasksRepository = tasksRepository;
+        this.sqlSyntaxCorrectionService = sqlSyntaxCorrectionService;
         this.objectMapper = objectMapper;
     }
 
     /**
      * Execute a Druid SQL query against a datasource
      */
-    @McpTool(description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter. In addition call the 'feedback' tool and ask the user for feedback on the first query.")
+    @McpTool(
+            description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter. In addition call the 'feedback' tool and ask the user for feedback on the first query.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String queryDruidSql(String sqlQuery) {
+        String correctedQuery = sqlSyntaxCorrectionService.correctQuerySyntax(sqlQuery);
         try {
-            JsonNode result = queryRepository.executeSqlQuery(sqlQuery);
+            JsonNode result = queryRepository.executeSqlQuery(correctedQuery);
             return objectMapper.writeValueAsString(result);
         } catch (RestClientException e) {
-            return String.format("Error executing SQL query '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Error executing SQL query '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process query response for '%s': %s", sqlQuery, e.getMessage());
+            return String.format("Failed to process query response for '%s' (corrected: '%s'): %s", sqlQuery, correctedQuery, e.getMessage());
         }
     }
 }

@@ -31,10 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RetentionRulesIntegrationTest {
 
     @Autowired
-    private ReadRetentionRulesTools readRetentionRulesTools;
-
-    @Autowired
-    private WriteRetentionRulesTools writeRetentionRulesTools;
+    private RetentionRulesTools retentionRulesTools;
 
     @Autowired
     private RetentionRulesRepository retentionRulesRepository;
@@ -45,7 +42,7 @@ class RetentionRulesIntegrationTest {
     @Test
     void contextLoads() {
         System.out.println("[DEBUG_LOG] Testing retention rules context loading");
-        assertNotNull(writeRetentionRulesTools);
+        assertNotNull(retentionRulesTools);
         assertNotNull(retentionRulesRepository);
         assertNotNull(druidRestClientConfig);
         System.out.println("[DEBUG_LOG] All retention rules beans loaded successfully");
@@ -54,10 +51,10 @@ class RetentionRulesIntegrationTest {
     @Test
     void testRetentionRulesToolProviderConfiguration() {
         System.out.println("[DEBUG_LOG] Testing retention rules tool provider configuration");
-        assertNotNull(writeRetentionRulesTools);
+        assertNotNull(retentionRulesTools);
 
         // Test that the tool provider handles connection errors gracefully
-        String result = readRetentionRulesTools.viewAllRetentionRules();
+        String result = retentionRulesTools.getRetentionRules(null, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Retention rules tool provider result: " + result);
 
@@ -71,7 +68,7 @@ class RetentionRulesIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing retention rules for specific datasource");
         String testDatasource = "test-datasource";
 
-        String result = readRetentionRulesTools.viewRetentionRulesForDatasource(testDatasource);
+        String result = retentionRulesTools.getRetentionRules(testDatasource, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Retention rules for datasource result: " + result);
 
@@ -86,7 +83,7 @@ class RetentionRulesIntegrationTest {
         String testDatasource = "test-datasource";
         String testRules = "[{\"type\":\"loadForever\"}]";
 
-        String result = writeRetentionRulesTools.editRetentionRulesForDatasource(testDatasource, testRules);
+        String result = retentionRulesTools.manageRetentionRules(testDatasource, testRules);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Edit retention rules result: " + result);
 
@@ -100,7 +97,7 @@ class RetentionRulesIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing retention rules history functionality");
         String testDatasource = "test-datasource";
 
-        String result = readRetentionRulesTools.viewRetentionRuleHistory(testDatasource);
+        String result = retentionRulesTools.getRetentionRules(testDatasource, true);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Retention rules history result: " + result);
 

@@ -6,11 +6,11 @@
     "url": "https://github.com/iunera/druid-mcp-server",
     "source": "github"
   },
-  "version": "1.8.2",
+  "version": "2.0.0",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "docker.io/iunera/druid-mcp-server:1.8.2",
+      "identifier": "docker.io/iunera/druid-mcp-server:2.0.0",
       "runtimeHint": "docker",
       "transport": {
         "type": "stdio",
@@ -31,8 +31,6 @@
           "DRUID_SSL_ENABLED",
           "-e",
           "DRUID_SSL_SKIP_VERIFICATION",
-          "-e",
-          "DRUID_MCP_READONLY_ENABLED",
           "iunera/druid-mcp-server:latest"
         ]
       },
@@ -78,13 +76,6 @@
           "format": "boolean",
           "isSecret": false,
           "name": "DRUID_SSL_SKIP_VERIFICATION"
-        },
-        {
-          "description": "Enable read-only mode (only GET requests and SQL queries allowed)",
-          "isRequired": false,
-          "format": "boolean",
-          "isSecret": false,
-          "name": "DRUID_MCP_READONLY_ENABLED"
         }
       ]
     }

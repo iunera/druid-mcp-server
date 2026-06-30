@@ -44,18 +44,14 @@ class LookupIntegrationTest {
     private LookupResources lookupResources;
 
     @Autowired
-    private ReadLookupTools readLookupTools;
-
-    @Autowired
-    private WriteLookupTools writeLookupTools;
+    private LookupTools lookupTools;
 
     @Test
     void testLookupServicesAreInjected() {
         System.out.println("[DEBUG_LOG] Testing lookup services injection");
 
         assertNotNull(lookupResources, "LookupResources should be injected");
-        assertNotNull(readLookupTools, "ReadLookupTools should be injected");
-        assertNotNull(writeLookupTools, "WriteLookupTools should be injected");
+        assertNotNull(lookupTools, "LookupTools should be injected");
 
         System.out.println("[DEBUG_LOG] All lookup services are properly injected");
     }
@@ -90,27 +86,17 @@ class LookupIntegrationTest {
     void testLookupToolProviderMethods() {
         System.out.println("[DEBUG_LOG] Testing LookupTools methods after refactor");
 
-        // ReadLookupTools should contain read-only operations
-        Method[] readMethods = readLookupTools.getClass().getDeclaredMethods();
-        boolean hasListLookups = Arrays.stream(readMethods)
-                .anyMatch(m -> m.getName().equals("listLookups"));
-        boolean hasGetLookupStatus = Arrays.stream(readMethods)
-                .anyMatch(m -> m.getName().equals("getLookupStatus"));
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(lookupTools);
+        Method[] methods = targetClass.getDeclaredMethods();
+        boolean hasGetLookups = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("getLookups"));
+        boolean hasManageLookup = Arrays.stream(methods)
+                .anyMatch(m -> m.getName().equals("manageLookup"));
 
-        assertTrue(hasListLookups, "ReadLookupTools should have listLookups method");
-        assertTrue(hasGetLookupStatus, "ReadLookupTools should have getLookupStatus method");
+        assertTrue(hasGetLookups, "LookupTools should have getLookups method");
+        assertTrue(hasManageLookup, "LookupTools should have manageLookup method");
 
-        // WriteLookupTools should contain write operations
-        Method[] writeMethods = writeLookupTools.getClass().getDeclaredMethods();
-        boolean hasCreateOrUpdateLookup = Arrays.stream(writeMethods)
-                .anyMatch(m -> m.getName().equals("createOrUpdateLookup"));
-        boolean hasDeleteLookup = Arrays.stream(writeMethods)
-                .anyMatch(m -> m.getName().equals("deleteLookup"));
-
-        assertTrue(hasCreateOrUpdateLookup, "WriteLookupTools should have createOrUpdateLookup method");
-        assertTrue(hasDeleteLookup, "WriteLookupTools should have deleteLookup method");
-
-        System.out.println("[DEBUG_LOG] ReadLookupTools and WriteLookupTools methods verified");
+        System.out.println("[DEBUG_LOG] LookupTools methods verified");
     }
 
     @Test
@@ -132,15 +118,16 @@ class LookupIntegrationTest {
     void testLookupToolReturnCorrectTypes() {
         System.out.println("[DEBUG_LOG] Testing lookup tool return correct types");
 
-        // Test that methods return String (as required by MCP tools)
-        Method[] lookupMethods = writeLookupTools.getClass().getSuperclass().getDeclaredMethods();
+        // Use AopUtils to get the target class if proxied
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(lookupTools);
+        Method[] lookupMethods = targetClass.getDeclaredMethods();
 
         // Check that public methods return String
         for (Method method : lookupMethods) {
-            if (method.getName().startsWith("list") || method.getName().startsWith("get") || method.getName().startsWith("create") || method.getName().startsWith("delete")) {
+            if (method.getName().startsWith("get") || method.getName().startsWith("manage")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
-                        "WriteLookupTools method " + method.getName() + " should return String");
+                        "LookupTools method " + method.getName() + " should return String");
             }
         }
 

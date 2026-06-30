@@ -1,0 +1,8 @@
+# Permissions profile configuration
+druid:
+  mcp:
+    tools:
+      enabled:
+        - "manageAuthentication"
+        - "manageAuthorization"
+        - "manageSecurityAssignments"
