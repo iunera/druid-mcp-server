@@ -65,6 +65,7 @@ public class SqlSyntaxCorrectionService {
 
         try {
             // 1. Strip trailing semicolon
+            // Example: "SELECT * FROM potsdam-V8;" -> "SELECT * FROM potsdam-V8"
             String corrected = sqlQuery.replaceAll(";\\s*$", "");
 
             // 2. Fetch schema metadata (cached)
@@ -75,6 +76,8 @@ public class SqlSyntaxCorrectionService {
 
             // 3. Extract and replace literals, quoted identifiers, and comments with placeholders
             // to protect them from being incorrectly modified.
+            // Example input: "SELECT city, 'potsdam-v8' AS name FROM potsdam-V8 WHERE city = \"Potsdam\" -- comment"
+            // Example output: "SELECT city, __LITERAL_0__ AS name FROM potsdam-V8 WHERE city = __QUOTED_IDENTIFIER_0__ __LINE_COMMENT_0__"
             Pattern tokenPattern = Pattern.compile(
                 "(/\\*[\\s\\S]*?\\*/)|(--.*)|('(?:''|[^'])*')|(\"(?:\"\"|[^\"])*\")"
             );
@@ -105,6 +108,8 @@ public class SqlSyntaxCorrectionService {
             String processedSql = sb.toString();
 
             // 4. Correct and quote table names
+            // Example: "... FROM potsdam-V8 ..." (official name is "potsdam-v8")
+            // After this step: "... FROM "potsdam-v8" ..."
             List<String> sortedTables = new ArrayList<>(metadata.keySet());
             // Sort tables by descending length to prevent partial matches (e.g. potsdam-v8 matching potsdam first)
             sortedTables.sort((a, b) -> Integer.compare(b.length(), a.length()));
@@ -128,6 +133,8 @@ public class SqlSyntaxCorrectionService {
             }
 
             // 5. Correct and quote column names for the referenced tables
+            // Example: "SELECT city FROM \"potsdam-v8\"" (official column is "city")
+            // After this step: "SELECT "city" FROM \"potsdam-v8\""
             if (!referencedTables.isEmpty()) {
                 Set<String> columnsToCorrect = new HashSet<>();
                 for (String table : referencedTables) {
@@ -142,7 +149,7 @@ public class SqlSyntaxCorrectionService {
                 sortedCols.sort((a, b) -> Integer.compare(b.length(), a.length()));
 
                 for (String col : sortedCols) {
-                    // Do not auto-quote SQL keywords
+                    // Do not auto-quote SQL keywords (e.g., SELECT, LIMIT, avg)
                     if (SQL_KEYWORDS.contains(col.toLowerCase())) {
                         continue;
                     }
@@ -161,6 +168,8 @@ public class SqlSyntaxCorrectionService {
             }
 
             // 6. Restore comments, literals, and quoted identifiers in reverse order of token extraction
+            // Example input: "SELECT "city", __LITERAL_0__ AS name FROM \"potsdam-v8\" WHERE "city" = __QUOTED_IDENTIFIER_0__ __LINE_COMMENT_0__"
+            // Example output: "SELECT "city", 'potsdam-v8' AS name FROM "potsdam-v8" WHERE "city" = "Potsdam" -- comment"
             for (int i = 0; i < quotedIdentifiers.size(); i++) {
                 processedSql = processedSql.replace("__QUOTED_IDENTIFIER_" + i + "__", quotedIdentifiers.get(i));
             }
