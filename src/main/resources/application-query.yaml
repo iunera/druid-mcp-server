@@ -8,7 +8,7 @@ druid:
         - "queryDruidSql"
         - "getCompactionConfig"
         - "getCompactionStatus"
-        - "getOrManageRetentionRules"
+        - "getRetentionRules"
         - "getSegments"
         - "getSegmentLoadQueue"
         - "getSupervisors"

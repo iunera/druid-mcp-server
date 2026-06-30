@@ -321,7 +321,8 @@ Provides cluster management, data drop operations, compaction, lookups configura
 - `queryDruidMultiStageWithContext` (Launch an MSQ task with custom contexts). Druid Endpoint: `/druid/v2/sql/task`
 - `getMultiStageQueryTaskStatus` (Query MSQ task status). Druid Endpoint: `/druid/indexer/v1/task/{taskId}/status`
 - `cancelMultiStageQueryTask` (Terminate an MSQ task). Druid Endpoint: `/druid/indexer/v1/task/{taskId}/shutdown`
-- `getOrManageRetentionRules` (Read, view history, or update retention policies). Druid Endpoints: `/druid/coordinator/v1/rules`
+- `getRetentionRules` (Read current retention rules or change history). Druid Endpoint: `/druid/coordinator/v1/rules`
+- `manageRetentionRules` (Update retention policies for a datasource). Druid Endpoint: `/druid/coordinator/v1/rules`
 - `submitIngestion` (Launch ingestion jobs or generate simple batch JSON templates). Druid Endpoint: `/druid/indexer/v1/task`
 - `getSupervisors` (List active supervisors or status details). Druid Endpoint: `/druid/indexer/v1/supervisor`
 - `manageSupervisor` (Suspend, resume, or terminate supervisor pipelines). Druid Endpoints: `/druid/indexer/v1/supervisor/{id}/(suspend/resume/terminate)`

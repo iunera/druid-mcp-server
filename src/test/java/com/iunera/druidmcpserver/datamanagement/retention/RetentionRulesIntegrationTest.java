@@ -54,7 +54,7 @@ class RetentionRulesIntegrationTest {
         assertNotNull(retentionRulesTools);
 
         // Test that the tool provider handles connection errors gracefully
-        String result = retentionRulesTools.getOrManageRetentionRules("GET", null, null);
+        String result = retentionRulesTools.getRetentionRules(null, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Retention rules tool provider result: " + result);
 
@@ -68,7 +68,7 @@ class RetentionRulesIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing retention rules for specific datasource");
         String testDatasource = "test-datasource";
 
-        String result = retentionRulesTools.getOrManageRetentionRules("GET", testDatasource, null);
+        String result = retentionRulesTools.getRetentionRules(testDatasource, null);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Retention rules for datasource result: " + result);
 
@@ -83,7 +83,7 @@ class RetentionRulesIntegrationTest {
         String testDatasource = "test-datasource";
         String testRules = "[{\"type\":\"loadForever\"}]";
 
-        String result = retentionRulesTools.getOrManageRetentionRules("UPDATE", testDatasource, testRules);
+        String result = retentionRulesTools.manageRetentionRules(testDatasource, testRules);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Edit retention rules result: " + result);
 
@@ -97,7 +97,7 @@ class RetentionRulesIntegrationTest {
         System.out.println("[DEBUG_LOG] Testing retention rules history functionality");
         String testDatasource = "test-datasource";
 
-        String result = retentionRulesTools.getOrManageRetentionRules("GET_HISTORY", testDatasource, null);
+        String result = retentionRulesTools.getRetentionRules(testDatasource, true);
         assertNotNull(result);
         System.out.println("[DEBUG_LOG] Retention rules history result: " + result);
 

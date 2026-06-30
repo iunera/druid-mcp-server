@@ -39,55 +39,66 @@ public class RetentionRulesTools {
     }
 
     /**
-     * Get or manage retention rules
+     * Retrieve retention rules or change history.
      */
-    @McpTool(description = "View, fetch history, or update retention rules for a datasource. Parameters: [datasource] (String, optional), [action] (Enum: GET, GET_HISTORY, UPDATE, required), and [rulesJson] (String, optional) containing the retention rules JSON array.")
-    public String getOrManageRetentionRules(
-            @McpToolParam(description = "Action to perform: GET, GET_HISTORY, UPDATE (required)", required = true) String action,
-            @McpToolParam(description = "Name of the datasource (optional for GET, required for GET_HISTORY and UPDATE)", required = false) String datasource,
-            @McpToolParam(description = "Retention rules JSON array (required only for UPDATE action)", required = false) String rulesJson
+    @McpTool(
+            description = "Retrieve retention rules or audit history for a specific datasource or all datasources. Parameters: [datasource] (String, optional) to filter by a specific datasource, and [includeHistory] (Boolean, optional) to fetch change history instead of current rules.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
+    public String getRetentionRules(
+            @McpToolParam(description = "Name of the datasource (optional/required for history)", required = false) String datasource,
+            @McpToolParam(description = "Whether to fetch change history instead of current rules (optional)", required = false) Boolean includeHistory
     ) {
         try {
-            if (action == null) {
-                return "Error: [action] parameter is required";
+            if (includeHistory != null && includeHistory) {
+                if (datasource == null || datasource.trim().isEmpty()) {
+                    return "Error: [datasource] is required when includeHistory is true";
+                }
+                JsonNode historyResult = retentionRulesRepository.getRetentionRuleHistory(datasource);
+                return objectMapper.writeValueAsString(historyResult);
             }
 
-            switch (action.toUpperCase()) {
-                case "GET":
-                    if (datasource != null && !datasource.trim().isEmpty()) {
-                        JsonNode result = retentionRulesRepository.getRetentionRulesForDatasource(datasource);
-                        return objectMapper.writeValueAsString(result);
-                    }
-                    JsonNode allResult = retentionRulesRepository.getAllRetentionRules();
-                    return objectMapper.writeValueAsString(allResult);
-
-                case "GET_HISTORY":
-                    if (datasource == null || datasource.trim().isEmpty()) {
-                        return "Error: [datasource] is required for GET_HISTORY action";
-                    }
-                    JsonNode historyResult = retentionRulesRepository.getRetentionRuleHistory(datasource);
-                    return objectMapper.writeValueAsString(historyResult);
-
-                case "UPDATE":
-                    if (datasource == null || datasource.trim().isEmpty()) {
-                        return "Error: [datasource] is required for UPDATE action";
-                    }
-                    if (rulesJson == null || rulesJson.trim().isEmpty()) {
-                        return "Error: [rulesJson] is required for UPDATE action";
-                    }
-                    List<Map<String, Object>> rules = objectMapper.readValue(rulesJson,
-                            objectMapper.getTypeFactory().constructCollectionType(List.class,
-                                    objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)));
-                    JsonNode updateResult = retentionRulesRepository.setRetentionRulesForDatasource(datasource, rules);
-                    return objectMapper.writeValueAsString(updateResult);
-
-                default:
-                    return String.format("Error: Unsupported action '%s'. Supported: GET, GET_HISTORY, UPDATE", action);
+            if (datasource != null && !datasource.trim().isEmpty()) {
+                JsonNode result = retentionRulesRepository.getRetentionRulesForDatasource(datasource);
+                return objectMapper.writeValueAsString(result);
             }
+
+            JsonNode allResult = retentionRulesRepository.getAllRetentionRules();
+            return objectMapper.writeValueAsString(allResult);
         } catch (RestClientException e) {
-            return String.format("Error executing retention rules action '%s' on datasource '%s': %s", action, datasource, e.getMessage());
+            return String.format("Error fetching retention rules (datasource: '%s', history: %s): %s", datasource, includeHistory, e.getMessage());
         } catch (Exception e) {
-            return String.format("Failed to process retention rules action '%s' request on datasource '%s': %s", action, datasource, e.getMessage());
+            return String.format("Failed to process get retention rules request (datasource: '%s', history: %s): %s", datasource, includeHistory, e.getMessage());
+        }
+    }
+
+    /**
+     * Update/manage retention rules.
+     */
+    @McpTool(
+            description = "Update retention rules configuration for a specific datasource. Parameters: [datasource] (String, required), and [rulesJson] (String, required) containing the JSON array of new retention rules.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = true)
+    )
+    public String manageRetentionRules(
+            @McpToolParam(description = "Name of the datasource (required)", required = true) String datasource,
+            @McpToolParam(description = "Retention rules JSON array (required)", required = true) String rulesJson
+    ) {
+        try {
+            if (datasource == null || datasource.trim().isEmpty()) {
+                return "Error: [datasource] is required";
+            }
+            if (rulesJson == null || rulesJson.trim().isEmpty()) {
+                return "Error: [rulesJson] is required";
+            }
+            List<Map<String, Object>> rules = objectMapper.readValue(rulesJson,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class,
+                            objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)));
+            JsonNode updateResult = retentionRulesRepository.setRetentionRulesForDatasource(datasource, rules);
+            return objectMapper.writeValueAsString(updateResult);
+        } catch (RestClientException e) {
+            return String.format("Error updating retention rules for datasource '%s': %s", datasource, e.getMessage());
+        } catch (Exception e) {
+            return String.format("Failed to process update retention rules request for datasource '%s': %s", datasource, e.getMessage());
         }
     }
 }
