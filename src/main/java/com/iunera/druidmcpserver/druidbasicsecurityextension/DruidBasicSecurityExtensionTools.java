@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.basicsecurity;
+package com.iunera.druidmcpserver.druidbasicsecurityextension;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -30,13 +30,13 @@ import org.springframework.web.client.RestClientException;
 @Profile("permissions")
 @ConditionalOnExpression("!'${druid.coordinator.url:}'.isEmpty()")
 @Component
-public class SecurityTools {
+public class DruidBasicSecurityExtensionTools {
 
-    private final SecurityRepository securityRepository;
+    private final DruidBasicSecurityExtensionRepository druidBasicSecurityExtensionRepository;
     private final ObjectMapper objectMapper;
 
-    public SecurityTools(SecurityRepository securityRepository, ObjectMapper objectMapper) {
-        this.securityRepository = securityRepository;
+    public DruidBasicSecurityExtensionTools(DruidBasicSecurityExtensionRepository druidBasicSecurityExtensionRepository, ObjectMapper objectMapper) {
+        this.druidBasicSecurityExtensionRepository = druidBasicSecurityExtensionRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -57,17 +57,17 @@ public class SecurityTools {
         try {
             switch (act) {
                 case "LIST":
-                    return securityRepository.getAllUsers(authenticator).toString();
+                    return druidBasicSecurityExtensionRepository.getAllUsers(authenticator).toString();
                 case "GET":
                     if (username == null) {
                         return "Error: [username] is required for GET action.";
                     }
-                    return securityRepository.getUser(authenticator, username).toString();
+                    return druidBasicSecurityExtensionRepository.getUser(authenticator, username).toString();
                 case "CREATE":
                     if (username == null) {
                         return "Error: [username] is required for CREATE action.";
                     }
-                    securityRepository.createUser(authenticator, username);
+                    druidBasicSecurityExtensionRepository.createUser(authenticator, username);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "User '" + username + "' created successfully in authenticator '" + authenticator + "'")
@@ -76,7 +76,7 @@ public class SecurityTools {
                     if (username == null) {
                         return "Error: [username] is required for DELETE action.";
                     }
-                    securityRepository.deleteUser(authenticator, username);
+                    druidBasicSecurityExtensionRepository.deleteUser(authenticator, username);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "User '" + username + "' deleted successfully from authenticator '" + authenticator + "'")
@@ -85,7 +85,7 @@ public class SecurityTools {
                     if (username == null || password == null) {
                         return "Error: [username] and [password] are required for SET_PASSWORD action.";
                     }
-                    securityRepository.setUserCredentials(authenticator, username, password);
+                    druidBasicSecurityExtensionRepository.setUserCredentials(authenticator, username, password);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "Password updated successfully for user '" + username + "' in authenticator '" + authenticator + "'")
@@ -117,39 +117,39 @@ public class SecurityTools {
         try {
             switch (act) {
                 case "LIST_USERS":
-                    return securityRepository.getAllAuthorizationUsers(authorizer).toString();
+                    return druidBasicSecurityExtensionRepository.getAllAuthorizationUsers(authorizer).toString();
                 case "GET_USER":
                     if (name == null) return "Error: [name] (username) is required for GET_USER.";
-                    return securityRepository.getAuthorizationUser(authorizer, name).toString();
+                    return druidBasicSecurityExtensionRepository.getAuthorizationUser(authorizer, name).toString();
                 case "CREATE_USER":
                     if (name == null) return "Error: [name] (username) is required for CREATE_USER.";
-                    securityRepository.createAuthorizationUser(authorizer, name);
+                    druidBasicSecurityExtensionRepository.createAuthorizationUser(authorizer, name);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "Authorization user '" + name + "' created successfully in authorizer '" + authorizer + "'")
                             .toString();
                 case "DELETE_USER":
                     if (name == null) return "Error: [name] (username) is required for DELETE_USER.";
-                    securityRepository.deleteAuthorizationUser(authorizer, name);
+                    druidBasicSecurityExtensionRepository.deleteAuthorizationUser(authorizer, name);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "Authorization user '" + name + "' deleted successfully from authorizer '" + authorizer + "'")
                             .toString();
                 case "LIST_ROLES":
-                    return securityRepository.getAllRoles(authorizer).toString();
+                    return druidBasicSecurityExtensionRepository.getAllRoles(authorizer).toString();
                 case "GET_ROLE":
                     if (name == null) return "Error: [name] (role name) is required for GET_ROLE.";
-                    return securityRepository.getRole(authorizer, name).toString();
+                    return druidBasicSecurityExtensionRepository.getRole(authorizer, name).toString();
                 case "CREATE_ROLE":
                     if (name == null) return "Error: [name] (role name) is required for CREATE_ROLE.";
-                    securityRepository.createRole(authorizer, name);
+                    druidBasicSecurityExtensionRepository.createRole(authorizer, name);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "Role '" + name + "' created successfully in authorizer '" + authorizer + "'")
                             .toString();
                 case "DELETE_ROLE":
                     if (name == null) return "Error: [name] (role name) is required for DELETE_ROLE.";
-                    securityRepository.deleteRole(authorizer, name);
+                    druidBasicSecurityExtensionRepository.deleteRole(authorizer, name);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "Role '" + name + "' deleted successfully from authorizer '" + authorizer + "'")
@@ -158,7 +158,7 @@ public class SecurityTools {
                     if (name == null || permissionsJson == null) {
                         return "Error: [name] (role name) and [permissionsJson] are required for SET_PERMISSIONS.";
                     }
-                    securityRepository.setRolePermissions(authorizer, name, permissionsJson);
+                    druidBasicSecurityExtensionRepository.setRolePermissions(authorizer, name, permissionsJson);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "Permissions updated successfully for role '" + name + "' in authorizer '" + authorizer + "'")
@@ -193,7 +193,7 @@ public class SecurityTools {
                     if (username == null || roleName == null) {
                         return "Error: [username] and [roleName] are required for ASSIGN_ROLE.";
                     }
-                    securityRepository.assignRoleToUser(authorizer, username, roleName);
+                    druidBasicSecurityExtensionRepository.assignRoleToUser(authorizer, username, roleName);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "Role '" + roleName + "' assigned successfully to user '" + username + "' in authorizer '" + authorizer + "'")
@@ -202,13 +202,13 @@ public class SecurityTools {
                     if (username == null || roleName == null) {
                         return "Error: [username] and [roleName] are required for UNASSIGN_ROLE.";
                     }
-                    securityRepository.unassignRoleFromUser(authorizer, username, roleName);
+                    druidBasicSecurityExtensionRepository.unassignRoleFromUser(authorizer, username, roleName);
                     return objectMapper.createObjectNode()
                             .put("status", "success")
                             .put("message", "Role '" + roleName + "' unassigned successfully from user '" + username + "' in authorizer '" + authorizer + "'")
                             .toString();
                 case "GET_CHAIN":
-                    JsonNode props = securityRepository.getCoordinatorProperties();
+                    JsonNode props = druidBasicSecurityExtensionRepository.getCoordinatorProperties();
 
                     String authChainStr = props.path("druid.auth.authenticatorChain").asText("");
                     String authorizersStr = props.path("druid.auth.authorizers").asText("");

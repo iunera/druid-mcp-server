@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.basicsecurity;
+package com.iunera.druidmcpserver.druidbasicsecurityextension;
 
 import com.iunera.druidmcpserver.config.DruidProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,8 +45,8 @@ class BasicSecurityEnabledContextTest {
     void beansPresentWhenEnabled() {
         System.out.println("[DEBUG_LOG] Checking presence of basic security beans when enabled");
 
-        assertFalse(applicationContext.getBeansOfType(SecurityTools.class).isEmpty(),
-                "SecurityTools should be present when permissions profile is active and coordinator url is set");
+        assertFalse(applicationContext.getBeansOfType(DruidBasicSecurityExtensionTools.class).isEmpty(),
+                "DruidBasicSecurityExtensionTools should be present when permissions profile is active and coordinator url is set");
 
         assertEquals("http://localhost:8081", druidProperties.getCoordinator().getUrl(),
                 "DruidProperties coordinator url should be set");

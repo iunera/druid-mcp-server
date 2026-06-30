@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.basicsecurity;
+package com.iunera.druidmcpserver.druidbasicsecurityextension;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.web.client.RestClientException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,20 +30,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for SecurityTools
+ * Unit tests for DruidBasicSecurityExtensionTools
  */
-class SecurityToolsTest {
+class DruidBasicSecurityExtensionToolsTest {
 
-    private SecurityRepository securityRepository;
+    private DruidBasicSecurityExtensionRepository druidBasicSecurityExtensionRepository;
     private ObjectMapper objectMapper;
-    private SecurityTools securityTools;
+    private DruidBasicSecurityExtensionTools druidBasicSecurityExtensionTools;
 
     @BeforeEach
     void setup() {
-        System.out.println("[DEBUG_LOG] Setting up SecurityToolsTest");
-        securityRepository = mock(SecurityRepository.class);
+        System.out.println("[DEBUG_LOG] Setting up DruidBasicSecurityExtensionToolsTest");
+        druidBasicSecurityExtensionRepository = mock(DruidBasicSecurityExtensionRepository.class);
         objectMapper = new ObjectMapper();
-        securityTools = new SecurityTools(securityRepository, objectMapper);
+        druidBasicSecurityExtensionTools = new DruidBasicSecurityExtensionTools(druidBasicSecurityExtensionRepository, objectMapper);
     }
 
     @Test
@@ -53,9 +52,9 @@ class SecurityToolsTest {
         ArrayNode arr = objectMapper.createArrayNode();
         arr.add("alice");
         arr.add("bob");
-        when(securityRepository.getAllUsers("db")).thenReturn(arr);
+        when(druidBasicSecurityExtensionRepository.getAllUsers("db")).thenReturn(arr);
 
-        String result = securityTools.manageAuthentication("db", "LIST", null, null);
+        String result = druidBasicSecurityExtensionTools.manageAuthentication("db", "LIST", null, null);
         assertNotNull(result);
         assertTrue(result.contains("alice") && result.contains("bob"));
     }
@@ -63,9 +62,9 @@ class SecurityToolsTest {
     @Test
     void manageAuthentication_list_error() {
         System.out.println("[DEBUG_LOG] manageAuthentication_list_error");
-        when(securityRepository.getAllUsers(anyString())).thenThrow(new RestClientException("connection refused"));
+        when(druidBasicSecurityExtensionRepository.getAllUsers(anyString())).thenThrow(new RestClientException("connection refused"));
 
-        String result = securityTools.manageAuthentication("db", "LIST", null, null);
+        String result = druidBasicSecurityExtensionTools.manageAuthentication("db", "LIST", null, null);
         assertNotNull(result);
         assertTrue(result.contains("error"));
         assertTrue(result.contains("connection refused"));
@@ -76,19 +75,19 @@ class SecurityToolsTest {
         System.out.println("[DEBUG_LOG] manageAuthentication_get_success");
         ObjectNode user = objectMapper.createObjectNode();
         user.put("name", "alice");
-        when(securityRepository.getUser("db", "alice")).thenReturn(user);
+        when(druidBasicSecurityExtensionRepository.getUser("db", "alice")).thenReturn(user);
 
-        String result = securityTools.manageAuthentication("db", "GET", "alice", null);
+        String result = druidBasicSecurityExtensionTools.manageAuthentication("db", "GET", "alice", null);
         assertTrue(result.contains("alice"));
     }
 
     @Test
     void manageAuthentication_create_success() {
         System.out.println("[DEBUG_LOG] manageAuthentication_create_success");
-        when(securityRepository.createUser("db", "dana"))
+        when(druidBasicSecurityExtensionRepository.createUser("db", "dana"))
                 .thenReturn(objectMapper.createObjectNode().put("ok", true));
 
-        String result = securityTools.manageAuthentication("db", "CREATE", "dana", null);
+        String result = druidBasicSecurityExtensionTools.manageAuthentication("db", "CREATE", "dana", null);
         assertTrue(result.contains("success"));
         assertTrue(result.contains("created successfully"));
     }
@@ -96,10 +95,10 @@ class SecurityToolsTest {
     @Test
     void manageAuthentication_delete_success() {
         System.out.println("[DEBUG_LOG] manageAuthentication_delete_success");
-        when(securityRepository.deleteUser("db", "frank"))
+        when(druidBasicSecurityExtensionRepository.deleteUser("db", "frank"))
                 .thenReturn(objectMapper.createObjectNode().put("ok", true));
 
-        String result = securityTools.manageAuthentication("db", "DELETE", "frank", null);
+        String result = druidBasicSecurityExtensionTools.manageAuthentication("db", "DELETE", "frank", null);
         assertTrue(result.contains("success"));
         assertTrue(result.contains("deleted successfully"));
     }
@@ -107,10 +106,10 @@ class SecurityToolsTest {
     @Test
     void manageAuthentication_setPassword_success() {
         System.out.println("[DEBUG_LOG] manageAuthentication_setPassword_success");
-        when(securityRepository.setUserCredentials("db", "gina", "pw"))
+        when(druidBasicSecurityExtensionRepository.setUserCredentials("db", "gina", "pw"))
                 .thenReturn(objectMapper.createObjectNode().put("ok", true));
 
-        String result = securityTools.manageAuthentication("db", "SET_PASSWORD", "gina", "pw");
+        String result = druidBasicSecurityExtensionTools.manageAuthentication("db", "SET_PASSWORD", "gina", "pw");
         assertTrue(result.contains("success"));
         assertTrue(result.contains("Password updated successfully"));
     }
@@ -119,9 +118,9 @@ class SecurityToolsTest {
     void manageAuthorization_listUsers_success() {
         System.out.println("[DEBUG_LOG] manageAuthorization_listUsers_success");
         ArrayNode arr = objectMapper.createArrayNode().add("u1").add("u2");
-        when(securityRepository.getAllAuthorizationUsers("db")).thenReturn(arr);
+        when(druidBasicSecurityExtensionRepository.getAllAuthorizationUsers("db")).thenReturn(arr);
 
-        String result = securityTools.manageAuthorization("db", "LIST_USERS", null, null);
+        String result = druidBasicSecurityExtensionTools.manageAuthorization("db", "LIST_USERS", null, null);
         assertTrue(result.contains("u1") && result.contains("u2"));
     }
 
@@ -129,19 +128,19 @@ class SecurityToolsTest {
     void manageAuthorization_listRoles_success() {
         System.out.println("[DEBUG_LOG] manageAuthorization_listRoles_success");
         ArrayNode roles = objectMapper.createArrayNode().add("admin").add("reader");
-        when(securityRepository.getAllRoles("db")).thenReturn(roles);
+        when(druidBasicSecurityExtensionRepository.getAllRoles("db")).thenReturn(roles);
 
-        String result = securityTools.manageAuthorization("db", "LIST_ROLES", null, null);
+        String result = druidBasicSecurityExtensionTools.manageAuthorization("db", "LIST_ROLES", null, null);
         assertTrue(result.contains("admin") && result.contains("reader"));
     }
 
     @Test
     void manageAuthorization_setPermissions_success() {
         System.out.println("[DEBUG_LOG] manageAuthorization_setPermissions_success");
-        when(securityRepository.setRolePermissions("db", "writer", "[]"))
+        when(druidBasicSecurityExtensionRepository.setRolePermissions("db", "writer", "[]"))
                 .thenReturn(objectMapper.createObjectNode());
 
-        String result = securityTools.manageAuthorization("db", "SET_PERMISSIONS", "writer", "[]");
+        String result = druidBasicSecurityExtensionTools.manageAuthorization("db", "SET_PERMISSIONS", "writer", "[]");
         assertTrue(result.contains("success"));
         assertTrue(result.contains("Permissions updated successfully"));
     }
@@ -149,10 +148,10 @@ class SecurityToolsTest {
     @Test
     void manageSecurityAssignments_assign_success() {
         System.out.println("[DEBUG_LOG] manageSecurityAssignments_assign_success");
-        when(securityRepository.assignRoleToUser("db", "neo", "writer"))
+        when(druidBasicSecurityExtensionRepository.assignRoleToUser("db", "neo", "writer"))
                 .thenReturn(objectMapper.createObjectNode());
 
-        String result = securityTools.manageSecurityAssignments("db", "ASSIGN_ROLE", "neo", "writer");
+        String result = druidBasicSecurityExtensionTools.manageSecurityAssignments("db", "ASSIGN_ROLE", "neo", "writer");
         assertTrue(result.contains("success"));
         assertTrue(result.contains("assigned successfully to user"));
     }
@@ -163,9 +162,9 @@ class SecurityToolsTest {
         ObjectNode props = objectMapper.createObjectNode();
         props.put("druid.auth.authenticatorChain", "[\"db\"]");
         props.put("druid.auth.authorizers", "[\"db\"]");
-        when(securityRepository.getCoordinatorProperties()).thenReturn(props);
+        when(druidBasicSecurityExtensionRepository.getCoordinatorProperties()).thenReturn(props);
 
-        String result = securityTools.manageSecurityAssignments("db", "GET_CHAIN", null, null);
+        String result = druidBasicSecurityExtensionTools.manageSecurityAssignments("db", "GET_CHAIN", null, null);
         assertTrue(result.contains("authenticatorChain"));
         assertTrue(result.contains("authorizers"));
     }

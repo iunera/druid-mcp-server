@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.basicsecurity;
+package com.iunera.druidmcpserver.druidbasicsecurityextension;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests verifying that protected roles (e.g., admin, druid_system)
- * cannot be modified via SecurityRepository methods.
+ * cannot be modified via DruidBasicSecurityExtensionRepository methods.
  */
-class SecurityRepositoryGuardTest {
+class DruidBasicSecurityExtensionRepositoryGuardTest {
 
     @Test
     void deleteRole_adminRoleShouldThrow() {
         System.out.println("[DEBUG_LOG] Verifying deleteRole rejects 'admin' role");
-        SecurityRepository repo = new SecurityRepository(null);
+        DruidBasicSecurityExtensionRepository repo = new DruidBasicSecurityExtensionRepository(null);
         assertThrows(IllegalArgumentException.class, () ->
                 repo.deleteRole("authorizer", "admin"),
                 "Deleting 'admin' role must be forbidden");
@@ -38,7 +38,7 @@ class SecurityRepositoryGuardTest {
     @Test
     void deleteRole_adminRoleCaseInsensitiveAndTrimShouldThrow() {
         System.out.println("[DEBUG_LOG] Verifying deleteRole rejects ' Admin ' role (case-insensitive, trimmed)");
-        SecurityRepository repo = new SecurityRepository(null);
+        DruidBasicSecurityExtensionRepository repo = new DruidBasicSecurityExtensionRepository(null);
         assertThrows(IllegalArgumentException.class, () ->
                 repo.deleteRole("authorizer", " Admin "),
                 "Deleting 'admin' role (with spaces/mixed case) must be forbidden");
@@ -47,7 +47,7 @@ class SecurityRepositoryGuardTest {
     @Test
     void setRolePermissions_druidSystemRoleShouldThrow() {
         System.out.println("[DEBUG_LOG] Verifying setRolePermissions rejects 'druid_system' role");
-        SecurityRepository repo = new SecurityRepository(null);
+        DruidBasicSecurityExtensionRepository repo = new DruidBasicSecurityExtensionRepository(null);
         assertThrows(IllegalArgumentException.class, () ->
                 repo.setRolePermissions("authorizer", "druid_system", "[]"),
                 "Modifying 'druid_system' role permissions must be forbidden");

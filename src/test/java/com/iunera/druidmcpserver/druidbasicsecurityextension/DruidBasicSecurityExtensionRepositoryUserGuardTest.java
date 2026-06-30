@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.basicsecurity;
+package com.iunera.druidmcpserver.druidbasicsecurityextension;
 
 import org.junit.jupiter.api.Test;
 
@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Unit tests for user immutability rules in basic authentication.
  */
-class SecurityRepositoryUserGuardTest {
+class DruidBasicSecurityExtensionRepositoryUserGuardTest {
 
     @Test
     void deleteUser_adminShouldThrow() {
         System.out.println("[DEBUG_LOG] Verifying deleteUser rejects 'admin' user");
-        SecurityRepository repo = new SecurityRepository(null);
+        DruidBasicSecurityExtensionRepository repo = new DruidBasicSecurityExtensionRepository(null);
         assertThrows(IllegalArgumentException.class, () ->
                 repo.deleteUser("authenticator", "admin"),
                 "Deleting 'admin' user must be forbidden");
@@ -37,7 +37,7 @@ class SecurityRepositoryUserGuardTest {
     @Test
     void deleteUser_druidSystemShouldThrow() {
         System.out.println("[DEBUG_LOG] Verifying deleteUser rejects 'druid_system' user");
-        SecurityRepository repo = new SecurityRepository(null);
+        DruidBasicSecurityExtensionRepository repo = new DruidBasicSecurityExtensionRepository(null);
         assertThrows(IllegalArgumentException.class, () ->
                 repo.deleteUser("authenticator", "druid_system"),
                 "Deleting 'druid_system' user must be forbidden");
@@ -46,7 +46,7 @@ class SecurityRepositoryUserGuardTest {
     @Test
     void setUserCredentials_druidSystemShouldThrow() {
         System.out.println("[DEBUG_LOG] Verifying setUserCredentials rejects 'druid_system' user");
-        SecurityRepository repo = new SecurityRepository(null);
+        DruidBasicSecurityExtensionRepository repo = new DruidBasicSecurityExtensionRepository(null);
         assertThrows(IllegalArgumentException.class, () ->
                 repo.setUserCredentials("authenticator", "druid_system", "secret"),
                 "Changing 'druid_system' password must be forbidden");

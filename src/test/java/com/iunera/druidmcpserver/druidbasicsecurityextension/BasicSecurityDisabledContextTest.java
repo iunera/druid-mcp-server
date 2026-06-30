@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.basicsecurity;
+package com.iunera.druidmcpserver.druidbasicsecurityextension;
 
 import com.iunera.druidmcpserver.config.DruidProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,8 +45,8 @@ class BasicSecurityDisabledContextTest {
     void beansAbsentWhenDisabled() {
         System.out.println("[DEBUG_LOG] Checking absence of basic security beans when disabled");
 
-        assertTrue(applicationContext.getBeansOfType(SecurityTools.class).isEmpty(),
-                "SecurityTools should NOT be present when permissions profile is inactive and coordinator url is empty");
+        assertTrue(applicationContext.getBeansOfType(DruidBasicSecurityExtensionTools.class).isEmpty(),
+                "DruidBasicSecurityExtensionTools should NOT be present when permissions profile is inactive and coordinator url is empty");
 
         assertTrue(druidProperties.getCoordinator().getUrl().isEmpty(),
                 "DruidProperties coordinator url should be empty");

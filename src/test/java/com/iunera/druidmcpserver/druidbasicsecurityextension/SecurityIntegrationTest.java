@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.basicsecurity;
+package com.iunera.druidmcpserver.druidbasicsecurityextension;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,27 +40,27 @@ import static org.junit.jupiter.api.Assertions.*;
 class SecurityIntegrationTest {
 
     @Autowired
-    private SecurityRepository securityRepository;
+    private DruidBasicSecurityExtensionRepository druidBasicSecurityExtensionRepository;
 
     @Autowired
-    private SecurityTools securityTools;
+    private DruidBasicSecurityExtensionTools druidBasicSecurityExtensionTools;
 
     @Test
     void testSecurityServicesAreInjected() {
         System.out.println("[DEBUG_LOG] Testing security services injection");
 
-        assertNotNull(securityRepository, "SecurityRepository should be injected");
-        assertNotNull(securityTools, "SecurityTools should be injected");
+        assertNotNull(druidBasicSecurityExtensionRepository, "DruidBasicSecurityExtensionRepository should be injected");
+        assertNotNull(druidBasicSecurityExtensionTools, "DruidBasicSecurityExtensionTools should be injected");
 
         System.out.println("[DEBUG_LOG] All security services are properly injected");
     }
 
     @Test
     void testSecurityToolsMethods() {
-        System.out.println("[DEBUG_LOG] Testing SecurityTools methods");
+        System.out.println("[DEBUG_LOG] Testing DruidBasicSecurityExtensionTools methods");
 
         // Use AopUtils to get the target class if proxied
-        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(securityTools);
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(druidBasicSecurityExtensionTools);
         Method[] methods = targetClass.getDeclaredMethods();
 
         boolean hasManageAuth = Arrays.stream(methods)
@@ -70,25 +70,25 @@ class SecurityIntegrationTest {
         boolean hasManageAssignments = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("manageSecurityAssignments"));
 
-        assertTrue(hasManageAuth, "SecurityTools should have manageAuthentication method");
-        assertTrue(hasManageAuthz, "SecurityTools should have manageAuthorization method");
-        assertTrue(hasManageAssignments, "SecurityTools should have manageSecurityAssignments method");
+        assertTrue(hasManageAuth, "DruidBasicSecurityExtensionTools should have manageAuthentication method");
+        assertTrue(hasManageAuthz, "DruidBasicSecurityExtensionTools should have manageAuthorization method");
+        assertTrue(hasManageAssignments, "DruidBasicSecurityExtensionTools should have manageSecurityAssignments method");
 
-        System.out.println("[DEBUG_LOG] SecurityTools methods verified");
+        System.out.println("[DEBUG_LOG] DruidBasicSecurityExtensionTools methods verified");
     }
 
     @Test
     void testSecurityToolReturnCorrectTypes() {
         System.out.println("[DEBUG_LOG] Testing security tools return correct types");
 
-        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(securityTools);
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(druidBasicSecurityExtensionTools);
         Method[] methods = targetClass.getDeclaredMethods();
 
         for (Method method : methods) {
             if (method.getName().startsWith("manage")) {
                 System.out.println("[DEBUG_LOG] Tested: Method" + method.getName());
                 assertEquals(String.class, method.getReturnType(),
-                        "SecurityTools method " + method.getName() + " should return String");
+                        "DruidBasicSecurityExtensionTools method " + method.getName() + " should return String");
             }
         }
 
@@ -97,10 +97,10 @@ class SecurityIntegrationTest {
 
     @Test
     void testAuthenticationToolsFunctionality() {
-        System.out.println("[DEBUG_LOG] Testing SecurityTools manageAuthentication functionality");
+        System.out.println("[DEBUG_LOG] Testing DruidBasicSecurityExtensionTools manageAuthentication functionality");
 
         try {
-            String result = securityTools.manageAuthentication("db", "LIST", null, null);
+            String result = druidBasicSecurityExtensionTools.manageAuthentication("db", "LIST", null, null);
             assertNotNull(result, "manageAuthentication list should return a non-null result");
             assertInstanceOf(String.class, result, "manageAuthentication list should return a String");
             System.out.println("[DEBUG_LOG] manageAuthentication list result: " +
@@ -109,15 +109,15 @@ class SecurityIntegrationTest {
             System.out.println("[DEBUG_LOG] Security tool method failed (expected if Druid security not available): " + e.getMessage());
         }
 
-        System.out.println("[DEBUG_LOG] SecurityTools functionality test completed");
+        System.out.println("[DEBUG_LOG] DruidBasicSecurityExtensionTools functionality test completed");
     }
 
     @Test
     void testSecurityRepositoryConfiguration() {
-        System.out.println("[DEBUG_LOG] Testing SecurityRepository configuration");
+        System.out.println("[DEBUG_LOG] Testing DruidBasicSecurityExtensionRepository configuration");
 
-        // Verify that SecurityRepository has the expected methods
-        Method[] methods = securityRepository.getClass().getDeclaredMethods();
+        // Verify that DruidBasicSecurityExtensionRepository has the expected methods
+        Method[] methods = druidBasicSecurityExtensionRepository.getClass().getDeclaredMethods();
 
         boolean hasGetAllUsers = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("getAllUsers"));
@@ -128,19 +128,19 @@ class SecurityIntegrationTest {
         boolean hasSetRolePermissions = Arrays.stream(methods)
                 .anyMatch(m -> m.getName().equals("setRolePermissions"));
 
-        assertTrue(hasGetAllUsers, "SecurityRepository should have getAllUsers method");
-        assertTrue(hasCreateUser, "SecurityRepository should have createUser method");
-        assertTrue(hasGetAllRoles, "SecurityRepository should have getAllRoles method");
-        assertTrue(hasSetRolePermissions, "SecurityRepository should have setRolePermissions method");
+        assertTrue(hasGetAllUsers, "DruidBasicSecurityExtensionRepository should have getAllUsers method");
+        assertTrue(hasCreateUser, "DruidBasicSecurityExtensionRepository should have createUser method");
+        assertTrue(hasGetAllRoles, "DruidBasicSecurityExtensionRepository should have getAllRoles method");
+        assertTrue(hasSetRolePermissions, "DruidBasicSecurityExtensionRepository should have setRolePermissions method");
 
-        System.out.println("[DEBUG_LOG] SecurityRepository configuration verified");
+        System.out.println("[DEBUG_LOG] DruidBasicSecurityExtensionRepository configuration verified");
     }
 
     @Test
     void testSecurityToolParameterCount() {
         System.out.println("[DEBUG_LOG] Testing security tool parameter counts");
 
-        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(securityTools);
+        Class<?> targetClass = org.springframework.aop.support.AopUtils.getTargetClass(druidBasicSecurityExtensionTools);
         Method[] methods = targetClass.getDeclaredMethods();
 
         for (Method method : methods) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iunera.druidmcpserver.basicsecurity;
+package com.iunera.druidmcpserver.druidbasicsecurityextension;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Profile;
@@ -31,11 +31,11 @@ import org.springframework.web.client.RestClientException;
 @Profile("permissions")
 @ConditionalOnExpression("!'${druid.coordinator.url:}'.isEmpty()")
 @Repository
-public class SecurityRepository {
+public class DruidBasicSecurityExtensionRepository {
 
     private final RestClient druidCoordinatorRestClient;
 
-    public SecurityRepository(@Qualifier("druidCoordinatorRestClient") RestClient druidCoordinatorRestClient) {
+    public DruidBasicSecurityExtensionRepository(@Qualifier("druidCoordinatorRestClient") RestClient druidCoordinatorRestClient) {
         this.druidCoordinatorRestClient = druidCoordinatorRestClient;
     }
 
