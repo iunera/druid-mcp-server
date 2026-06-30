@@ -25,14 +25,18 @@ spec:
       type: "string"
       required: false
       default: ""
-      description: "Username for Druid basic authentication"
+      description: |
+        Username for Druid authentication. 
+        Is only needed when Druid basic security extension is enabled
       sensitive: false
+      pattern: null
     DRUID_AUTH_PASSWORD:
       type: "string"
       required: false
       default: ""
-      description: "Password for Druid basic authentication"
+      description: Password for Druid authentication. Is only needed when Druid basic security extension is enabled
       sensitive: true
+      pattern: null
     DRUID_SSL_ENABLED:
       type: "boolean"
       required: false
