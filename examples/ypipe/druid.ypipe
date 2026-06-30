@@ -87,57 +87,177 @@ spec:
       actionType: null
       target: null
   tools:
-    getDatasources:
-      description: "List all available Apache Druid datasources or get detailed information for a specific datasource."
+    cancelMultiStageQueryTask:
+      description: null
       usageIntent: null
-      discoveryHint: "Use this to discover tables, search schemas, or check column names and types in datasources."
-      properties: null
-      required: null
-    queryDruidSql:
-      description: "Execute high-performance SQL queries on Apache Druid datasources."
-      usageIntent: null
-      discoveryHint: "Use this tool to run standard SELECT, aggregates, filters, or group-by analysis on datasets."
-      properties: null
-      required: null
-    diagnoseCluster:
-      description: "Perform automated diagnostic health checks, configuration audits, or query performance analysis."
-      usageIntent: null
-      discoveryHint: "Use to run diagnosis scans (COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION) when diagnosing bottlenecks or checking setup."
+      discoveryHint: "Use this tool to cancel, terminate, abort, or kill an active multi-stage query task (MSQ task) running on the Druid cluster. Useful when a long-running insert or replace query is stuck, consuming too many resources, or no longer needed. Requires the specific task ID of the query you wish to stop."
       properties: null
       required: null
     checkFunctionalityHealth:
-      description: "Validate operations of ingestion systems, supervisor state transitions, and historical query latency."
+      description: null
       usageIntent: null
-      discoveryHint: "Check the functional health of specific Druid components like ingestion, supervisors, or historicals."
+      discoveryHint: "Run functional health tests and active smoke checks on the Druid cluster components. This checks ingestion pipelines, supervisor states, segment loading status, broker query routing delays, and historical segment latency. Use this when you want to verify that the cluster is not just running, but actually ingesting and querying correctly."
       properties: null
       required: null
-    getTasks:
-      description: "List ingestion tasks matching specific states."
+    diagnoseCluster:
+      description: null
       usageIntent: null
-      discoveryHint: "Query current running, completed, or failed ingestion tasks."
+      discoveryHint: "Perform an automated diagnostics check, system audit, configuration verification, or query performance analysis on the Druid cluster. Modes include COMPREHENSIVE (full status scan), QUICK (rapid health review), PERFORMANCE (checks bottlenecks/slow queries), or CONFIGURATION (checks properties audits). Essential for troubleshooting, diagnosing connection issues, and performance tuning."
+      properties: null
+      required: null
+    getClusterStatus:
+      description: null
+      usageIntent: null
+      discoveryHint: "Check the overall system health, leader status, metadata configs, or system properties for the Druid coordinator and router. Useful for checking if the router is reachable, discovering which coordinator is currently the active leader, inspecting global cluster configuration properties, or running a simple overall cluster heartbeat check."
+      properties: null
+      required: null
+    getCompactionConfig:
+      description: null
+      usageIntent: null
+      discoveryHint: "Retrieve the auto-compaction configuration settings, parameters, and audit change history for one or all datasources. Useful when analyzing background segment compaction setups, checking segment optimization rules, reviewing historical changes to compaction settings, or verifying why automatic compaction is disabled."
+      properties: null
+      required: null
+    getCompactionStatus:
+      description: null
+      usageIntent: null
+      discoveryHint: "Retrieve the execution status and progress statistics of background compaction runs. This shows the compaction status of datasources, percentage of segments compacted, compaction progress, bytes compacted, and number of segments optimized. Use this to verify if auto-compaction tasks are running, pending, or completed."
+      properties: null
+      required: null
+    getDatasources:
+      description: null
+      usageIntent: null
+      discoveryHint: "List all analytical tables (datasources) in Apache Druid or get detailed schema descriptions, column names, data types, and sizes for a specific datasource. Use this tool to discover what tables are available, search schemas, find out which dimensions/metrics exist in a datasource, or check column type definitions."
+      properties: null
+      required: null
+    getLookups:
+      description: null
+      usageIntent: null
+      discoveryHint: "Retrieve lookup configurations, registered key-value mapping lookups, or propagation status across cluster tiers. Useful for checking if dynamic lookups are configured, inspecting lookup keys and values, viewing lookup configurations in specific tiers, or checking if lookup changes have propagated across all nodes."
+      properties: null
+      required: null
+    getMultiStageQueryTaskStatus:
+      description: null
+      usageIntent: null
+      discoveryHint: "Retrieve the current state, status details, execution progress, or final status of a Multi-Stage Query (MSQ) task. Essential for polling long-running SQL INSERT, REPLACE, or SELECT tasks to check if they are pending, running, successfully completed, or failed with specific errors."
+      properties: null
+      required: null
+    getNodesStatus:
+      description: null
+      usageIntent: null
+      discoveryHint: "List registered servers, node types (historicals, brokers, coordinators, overlords, middlemanagers), and their detailed status or metadata. Useful for inspecting the cluster topology, listing active servers, verifying server status, finding broker configurations, or debugging node connectivity."
+      properties: null
+      required: null
+    getRetentionRules:
+      description: null
+      usageIntent: null
+      discoveryHint: "Retrieve currently configured data retention rules, load/drop policies, and rule modification history for a datasource or the entire cluster. Use this to inspect rules determining how long segments are kept in historical nodes, what intervals are loaded forever, and audit who modified retention rules."
+      properties: null
+      required: null
+    getSegmentLoadQueue:
+      description: null
+      usageIntent: null
+      discoveryHint: "Get the coordinator load queue status, indicating segments currently being loaded or dropped across historical servers. Useful when checking cluster balance progress, verifying if new segments are loading after an ingestion, or troubleshooting slow query response times caused by un-loaded segments."
+      properties: null
+      required: null
+    getSegments:
+      description: null
+      usageIntent: null
+      discoveryHint: "Fetch metadata, identifiers, dimensions, sizes, and detailed segment lists for specific datasources or get details for a single segment. Useful for querying the segment catalog, verifying if segments are active, reviewing segment sizes, or querying core segment metadata directly from system catalog tables."
       properties: null
       required: null
     getSupervisors:
-      description: "List all supervisors or query details of a specific supervisor."
+      description: null
       usageIntent: null
-      discoveryHint: "Find active real-time pipelines, like Kafka or Kinesis ingestion streams."
+      discoveryHint: "List active streaming supervisors or query detailed status configurations for a specific supervisor. Use this to locate real-time data pipelines (such as Kafka, Kinesis, or other continuous streaming sources), check offset lags, partition counts, and supervisor health."
+      properties: null
+      required: null
+    getTaskDetails:
+      description: null
+      usageIntent: null
+      discoveryHint: "Fetch comprehensive details, specs, reports, or logs for an ingestion task by its ID. Aspects include STATUS (current state), RAW_DETAILS (full task payload), SPEC (ingestion specification), REPORTS (ingestion metrics, row counts, partition info), and LOG (live or archived task logs starting from optional offsets)."
+      properties: null
+      required: null
+    getTasks:
+      description: null
+      usageIntent: null
+      discoveryHint: "List ingestion tasks matching specific states (RUNNING, PENDING, WAITING, COMPLETED). Useful for viewing active batch ingestion jobs, checking queued ingestion specifications, finding out if a task is waiting for locks, or listing historical completed tasks."
+      properties: null
+      required: null
+    manageCompaction:
+      description: null
+      usageIntent: null
+      discoveryHint: "Create, update, upsert, or delete auto-compaction configuration specifications for a specific datasource. Use this tool to enable background compaction, configure segment sizing targets, or delete/disable automatic compaction tasks for optimization control."
+      properties: null
+      required: null
+    manageDatasourceOrSegment:
+      description: null
+      usageIntent: null
+      discoveryHint: "Perform administrative lifecycle operations on datasources and segments, including enabling disabled segments, disabling active segments, or permanently deleting/killing segment metadata and data files from deep storage over a specified time interval."
+      properties: null
+      required: null
+    manageLookup:
+      description: null
+      usageIntent: null
+      discoveryHint: "Create, update, upsert, or delete lookup configurations dynamically across specific lookup tiers. Use this to register key-value lookup tables, modify map lookups, or remove dynamic lookups from the cluster."
+      properties: null
+      required: null
+    manageRetentionRules:
+      description: null
+      usageIntent: null
+      discoveryHint: "Update retention rules configuration (load rules, drop rules, broadcast rules) for a specific datasource. Useful when setting data retention windows, changing how many historical tiers load data, or configuring how old data is dropped from the cluster."
+      properties: null
+      required: null
+    manageSupervisor:
+      description: null
+      usageIntent: null
+      discoveryHint: "Control real-time stream supervisor execution states. Actions include SUSPEND (pause streaming ingestion), RESUME (unpause streaming), or TERMINATE (permanently stop and remove a supervisor pipeline). Useful for restarting, pausing, or killing Kafka/Kinesis stream tasks."
+      properties: null
+      required: null
+    queryDruidMultiStage:
+      description: null
+      usageIntent: null
+      discoveryHint: "Submit and execute a multi-stage SQL query (MSQ) as an asynchronous task. This engine is suitable for complex queries, large datasets, and writing data using INSERT or REPLACE statements. Use this for running batch SQL queries that require shuffle operations and large workloads."
+      properties: null
+      required: null
+    queryDruidMultiStageWithContext:
+      description: null
+      usageIntent: null
+      discoveryHint: "Submit and execute a multi-stage SQL query (MSQ) passing custom context parameters. Context parameters can control maxNumTasks, taskAssignment, finalizeAggregations, and other processing flags. Suitable for fine-tuning large INSERT/REPLACE batch tasks or complex queries."
+      properties: null
+      required: null
+    queryDruidSql:
+      description: null
+      usageIntent: null
+      discoveryHint: "Execute a standard SQL query (SELECT, group by, aggregations, filters) against Druid datasources. Standard queries run synchronously and are read-only. This is the main tool for retrieving data, performing ad-hoc analysis, and browsing tables."
+      properties: null
+      required: null
+    shutdownTask:
+      description: null
+      usageIntent: null
+      discoveryHint: "Kill, abort, stop, or shut down a running batch ingestion task or compact task by its task ID. Useful for stopping stuck ingestion jobs, freeing up cluster task slots, or aborting tasks submitted with incorrect configurations."
+      properties: null
+      required: null
+    submitIngestion:
+      description: null
+      usageIntent: null
+      discoveryHint: "Submit a complete batch ingestion JSON specification (spec) to launch an ingestion job, or generate a simple batch ingestion JSON spec template based on datasource name, input source type (local, s3, http), and input path. Useful for scripting batch data loads."
       properties: null
       required: null
     manageAuthentication:
-      description: "Administer basic security users and passwords."
+      description: null
       usageIntent: null
-      discoveryHint: "Create, delete, list users, or set passwords in basic security (only active with permissions profile)."
+      discoveryHint: "Administer basic security extension authenticator users, credentials, and passwords. Allowed actions: LIST (list all users), GET (view user details), CREATE (add new user), DELETE (remove user), and SET_PASSWORD (update user credentials). Active only under the permissions profile."
       properties: null
       required: null
     manageAuthorization:
-      description: "Manage security authorization properties, roles, and resource access policies."
+      description: null
       usageIntent: null
-      discoveryHint: "Manage roles, list roles, or configure permissions (only active with permissions profile)."
+      discoveryHint: "Manage basic security authorization configuration, roles, permissions, and resource access policies. Allowed actions: LIST_USERS, GET_USER, CREATE_USER, DELETE_USER, LIST_ROLES, GET_ROLE, CREATE_ROLE, DELETE_ROLE, and SET_PERMISSIONS (associating roles with resources). Active only under permissions profile."
       properties: null
       required: null
     manageSecurityAssignments:
-      description: "Configure mapping rules assigning roles to users, or retrieve the configured authenticator chains."
+      description: null
       usageIntent: null
-      discoveryHint: "Assign or unassign roles to users (only active with permissions profile)."
+      discoveryHint: "Configure security assignments by mapping roles to users or retrieving the configured authenticator and authorizer chain properties from the cluster config. Allowed actions: ASSIGN_ROLE, UNASSIGN_ROLE, and GET_CHAIN. Active only under the permissions profile."
       properties: null
       required: null
