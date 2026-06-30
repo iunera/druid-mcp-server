@@ -35,4 +35,4 @@ build/
 ### Environment files ###
 .env
 key.pem
-
+all_tools.txt

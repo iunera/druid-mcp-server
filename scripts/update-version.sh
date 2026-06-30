@@ -147,8 +147,9 @@ update_jbang_catalog_json() {
         return 1
     fi
 
-    sed -i.tmp -E "s/(com\.iunera:druid-mcp-server:)[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?/\1$new_version/g" "$file"
-    rm -f "${file}.tmp"
+    local new_url="https://github.com/iunera/druid-mcp-server/releases/download/v${new_version}/druid-mcp-server-${new_version}.jar"
+    local tmp_file="${file}.tmp"
+    jq --arg url "$new_url" '.aliases["druid-mcp-server"]["script-ref"] = $url' "$file" > "$tmp_file" && mv "$tmp_file" "$file"
     
     print_success "Updated $file"
 }
