@@ -7,7 +7,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 ## [2.0.0] - 2026-06-15
 
 ### Added
-- **SQL Syntax Correction**: Introduced `SqlSyntaxCorrectionService` to automatically validate and normalize SQL queries before sending them to Druid. This feature strips trailing semicolons, resolves case sensitivity, automatically double-quotes unquoted identifiers (table and column names) avoiding SQL keywords, and protects comments, literals, and quoted elements using a placeholder extraction tokenizer. The feature is switchable via `druid.sql-syntax-correction.enabled` (default `true`) and caches Druid metadata in-memory using Spring Caching (`@Cacheable` and `@CacheEvict`).
+- **SQL Syntax Correction**: Introduced `SqlSyntaxCorrectionService` to automatically validate and normalize SQL queries before sending them to Druid. This feature strips trailing semicolons, resolves case sensitivity, automatically double-quotes unquoted identifiers (table and column names) avoiding SQL keywords, and protects comments, literals, and quoted elements using a placeholder extraction tokenizer. The feature is switchable via `druid.sql-syntax-correction.enabled` (default `true`) and caches Druid metadata in-memory using Spring Caching (`@Cacheable` and `@CacheEvict`). This feature querys your druid metadata on startup of the mcp server and periodically.  
 - **Renamed and Restructured Spring Profiles**: Introduced shorter, refined Spring profiles to control dynamic tool activation:
   * `query` (Default): Safe, read-only analytical SQL querying.
   * `ops`: Administration, ingestion tasks, supervisors, and compaction; includes `health` profile automatically.

@@ -17,6 +17,9 @@
 package com.iunera.druidmcpserver.datamanagement.query;
 
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.event.EventListener;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +36,16 @@ public class DruidMetadataLoader {
 
     public DruidMetadataLoader(@Qualifier("druidRouterRestClient") RestClient druidRouterRestClient) {
         this.druidRouterRestClient = druidRouterRestClient;
+    }
+
+    @Async
+    @EventListener(ApplicationReadyEvent.class)
+    public void warmupCache() {
+        try {
+            fetchSchemaMetadata();
+        } catch (Exception e) {
+            log.debug("Cache warmup failed silently: {}", e.getMessage());
+        }
     }
 
     /**
