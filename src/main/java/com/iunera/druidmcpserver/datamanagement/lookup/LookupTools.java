@@ -40,7 +40,10 @@ public class LookupTools {
     /**
      * Get lookups configuration or status
      */
-    @McpTool(description = "Get configuration or status of lookups for all or a specific tier. Parameters: [tier] (String, optional), [lookupName] (String, optional) to fetch a specific lookup, and [includeStatus] (Boolean, optional) to fetch lookup propagation status instead of configuration.")
+    @McpTool(
+            description = "Get configuration or status of lookups for all or a specific tier. Parameters: [tier] (String, optional), [lookupName] (String, optional) to fetch a specific lookup, and [includeStatus] (Boolean, optional) to fetch lookup propagation status instead of configuration.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getLookups(
             @McpToolParam(description = "Name of the lookup tier (optional)", required = false) String tier,
             @McpToolParam(description = "Name of the lookup (optional)", required = false) String lookupName,
@@ -77,7 +80,10 @@ public class LookupTools {
     /**
      * Manage lookup configuration
      */
-    @McpTool(description = "Create, update, or delete a lookup configuration. Parameters: [action] (Enum: UPSERT, DELETE, required), [tier] (String, required), [lookupName] (String, required), and [configJson] (String, optional) containing the lookup spec.")
+    @McpTool(
+            description = "Create, update, or delete a lookup configuration. Parameters: [action] (Enum: UPSERT, DELETE, required), [tier] (String, required), [lookupName] (String, required), and [configJson] (String, optional) containing the lookup spec.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = true)
+    )
     public String manageLookup(
             @McpToolParam(description = "Action to perform: UPSERT, DELETE (required)", required = true) String action,
             @McpToolParam(description = "Name of the lookup tier (required)", required = true) String tier,

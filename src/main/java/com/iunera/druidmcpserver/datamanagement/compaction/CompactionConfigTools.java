@@ -40,7 +40,10 @@ public class CompactionConfigTools {
     /**
      * Get compaction configuration
      */
-    @McpTool(description = "View compaction configuration or configuration change history for datasources. Parameters: [datasource] (String, optional), and [includeHistory] (Boolean, optional) to retrieve configuration history.")
+    @McpTool(
+            description = "View compaction configuration or configuration change history for datasources. Parameters: [datasource] (String, optional), and [includeHistory] (Boolean, optional) to retrieve configuration history.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getCompactionConfig(
             @McpToolParam(description = "Name of the datasource (optional)", required = false) String datasource,
             @McpToolParam(description = "Whether to retrieve configuration change history (optional)", required = false) Boolean includeHistory
@@ -66,7 +69,10 @@ public class CompactionConfigTools {
     /**
      * Get compaction status
      */
-    @McpTool(description = "Retrieve the current status of compaction runs and progress. Parameters: [datasource] (String, optional).")
+    @McpTool(
+            description = "Retrieve the current status of compaction runs and progress. Parameters: [datasource] (String, optional).",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getCompactionStatus(
             @McpToolParam(description = "Name of the datasource to filter by (optional)", required = false) String datasource
     ) {
@@ -87,7 +93,10 @@ public class CompactionConfigTools {
     /**
      * Manage compaction configuration (UPSERT, DELETE)
      */
-    @McpTool(description = "Add, update, or remove a compaction configuration. Parameters: [action] (Enum: UPSERT, DELETE, required), [datasource] (String, required), and [configJson] (String, optional) containing the compaction configuration spec.")
+    @McpTool(
+            description = "Add, update, or remove a compaction configuration. Parameters: [action] (Enum: UPSERT, DELETE, required), [datasource] (String, required), and [configJson] (String, optional) containing the compaction configuration spec.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = true)
+    )
     public String manageCompaction(
             @McpToolParam(description = "Action to perform: UPSERT, DELETE (required)", required = true) String action,
             @McpToolParam(description = "Name of the datasource (required)", required = true) String datasource,

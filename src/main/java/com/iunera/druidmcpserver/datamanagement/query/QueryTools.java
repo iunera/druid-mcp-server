@@ -41,7 +41,10 @@ public class QueryTools {
     /**
      * Execute a Druid SQL query against a datasource
      */
-    @McpTool(description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter. In addition call the 'feedback' tool and ask the user for feedback on the first query.")
+    @McpTool(
+            description = "Execute a SQL query against Druid datasources. Provide the SQL query as a parameter. In addition call the 'feedback' tool and ask the user for feedback on the first query.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String queryDruidSql(String sqlQuery) {
         String correctedQuery = sqlSyntaxCorrectionService.correctQuerySyntax(sqlQuery);
         try {

@@ -43,7 +43,10 @@ public class DruidBasicSecurityExtensionTools {
     /**
      * Administer basic security users and credentials.
      */
-    @McpTool(description = "Administer basic security users and passwords. Parameters: [authenticator] (String, required), [action] (Enum: LIST, GET, CREATE, DELETE, SET_PASSWORD, required), [username] (String, optional), and [password] (String, optional) to set user credentials.")
+    @McpTool(
+            description = "Administer basic security users and passwords. Parameters: [authenticator] (String, required), [action] (Enum: LIST, GET, CREATE, DELETE, SET_PASSWORD, required), [username] (String, optional), and [password] (String, optional) to set user credentials.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = true)
+    )
     public String manageAuthentication(
             @McpToolParam(description = "Name of the authenticator (e.g., 'db')", required = true) String authenticator,
             @McpToolParam(description = "Action to perform: LIST, GET, CREATE, DELETE, SET_PASSWORD", required = true) String action,
@@ -103,7 +106,10 @@ public class DruidBasicSecurityExtensionTools {
     /**
      * Manage security authorization properties, roles, and resource access policies.
      */
-    @McpTool(description = "Manage security authorization properties, roles, and resource access policies. Parameters: [authorizer] (String, required), [action] (Enum: LIST_USERS, GET_USER, CREATE_USER, DELETE_USER, LIST_ROLES, GET_ROLE, CREATE_ROLE, DELETE_ROLE, SET_PERMISSIONS, required), [name] (String, optional) specifying user name or role name, and [permissionsJson] (String, optional) specifying a JSON permissions list.")
+    @McpTool(
+            description = "Manage security authorization properties, roles, and resource access policies. Parameters: [authorizer] (String, required), [action] (Enum: LIST_USERS, GET_USER, CREATE_USER, DELETE_USER, LIST_ROLES, GET_ROLE, CREATE_ROLE, DELETE_ROLE, SET_PERMISSIONS, required), [name] (String, optional) specifying user name or role name, and [permissionsJson] (String, optional) specifying a JSON permissions list.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = true)
+    )
     public String manageAuthorization(
             @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) String authorizer,
             @McpToolParam(description = "Action to perform: LIST_USERS, GET_USER, CREATE_USER, DELETE_USER, LIST_ROLES, GET_ROLE, CREATE_ROLE, DELETE_ROLE, SET_PERMISSIONS", required = true) String action,
@@ -176,7 +182,10 @@ public class DruidBasicSecurityExtensionTools {
     /**
      * Configure mapping rules assigning roles to users, or retrieve the configured authenticator chains.
      */
-    @McpTool(description = "Configure mapping rules assigning roles to users, or retrieve the configured authenticator chains. Parameters: [authorizer] (String, required), [action] (Enum: ASSIGN_ROLE, UNASSIGN_ROLE, GET_CHAIN, required), [username] (String, optional), and [roleName] (String, optional).")
+    @McpTool(
+            description = "Configure mapping rules assigning roles to users, or retrieve the configured authenticator chains. Parameters: [authorizer] (String, required), [action] (Enum: ASSIGN_ROLE, UNASSIGN_ROLE, GET_CHAIN, required), [username] (String, optional), and [roleName] (String, optional).",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = true)
+    )
     public String manageSecurityAssignments(
             @McpToolParam(description = "Name of the authorizer (e.g., 'db')", required = true) String authorizer,
             @McpToolParam(description = "Action to perform: ASSIGN_ROLE, UNASSIGN_ROLE, GET_CHAIN", required = true) String action,

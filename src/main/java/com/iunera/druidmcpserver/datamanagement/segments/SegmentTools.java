@@ -38,7 +38,10 @@ public class SegmentTools {
     /**
      * Get segments (list all, filter by datasource/id, get metadata/details)
      */
-    @McpTool(description = "Fetch segments for all or specific datasources, or get details for a single segment. Parameters: [datasource] (String, optional), [segmentId] (String, optional), [detailed] (Boolean, optional), [metadataOnly] (Boolean, optional) to restrict retrieval to core segment metadata.")
+    @McpTool(
+            description = "Fetch segments for all or specific datasources, or get details for a single segment. Parameters: [datasource] (String, optional), [segmentId] (String, optional), [detailed] (Boolean, optional), [metadataOnly] (Boolean, optional) to restrict retrieval to core segment metadata.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getSegments(
             @McpToolParam(description = "Name of the datasource (optional)", required = false) String datasource,
             @McpToolParam(description = "ID of the specific segment (optional)", required = false) String segmentId,
@@ -86,7 +89,10 @@ public class SegmentTools {
     /**
      * Get segment load queue status
      */
-    @McpTool(description = "Get the load queue status showing segments currently being loaded. Parameters: [serverName] (String, optional) to filter by a specific server.")
+    @McpTool(
+            description = "Get the load queue status showing segments currently being loaded. Parameters: [serverName] (String, optional) to filter by a specific server.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getSegmentLoadQueue(
             @McpToolParam(description = "Name of the server to get load queue for (optional)", required = false) String serverName
     ) {

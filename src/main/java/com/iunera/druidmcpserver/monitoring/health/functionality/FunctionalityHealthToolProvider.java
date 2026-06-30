@@ -54,7 +54,10 @@ public class FunctionalityHealthToolProvider {
     /**
      * Check the health of specific or all Druid component functionalities.
      */
-    @McpTool(description = "Validate operations of ingestion systems, supervisor state transitions, and historical query latency. Parameters: [component] (Enum: ALL, SUPERVISORS, HISTORICALS, INGESTION, optional), and [quick] (Boolean, optional) to trigger a rapid smoke check.")
+    @McpTool(
+            description = "Validate operations of ingestion systems, supervisor state transitions, and historical query latency. Parameters: [component] (Enum: ALL, SUPERVISORS, HISTORICALS, INGESTION, optional), and [quick] (Boolean, optional) to trigger a rapid smoke check.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String checkFunctionalityHealth(
             @McpToolParam(description = "The component to check: ALL, SUPERVISORS, HISTORICALS, INGESTION (optional, defaults to ALL)", required = false) String component,
             @McpToolParam(description = "Whether to trigger a quick rapid smoke check (optional, defaults to false)", required = false) Boolean quick

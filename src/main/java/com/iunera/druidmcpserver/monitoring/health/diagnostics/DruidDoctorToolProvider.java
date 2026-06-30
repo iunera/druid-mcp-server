@@ -62,7 +62,10 @@ public class DruidDoctorToolProvider {
     /**
      * Diagnose Druid cluster health, configuration, or performance.
      */
-    @McpTool(description = "Perform automated diagnostic health checks, configuration audits, or query performance analysis. Parameters: [mode] (Enum: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION, required).")
+    @McpTool(
+            description = "Perform automated diagnostic health checks, configuration audits, or query performance analysis. Parameters: [mode] (Enum: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION, required).",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String diagnoseCluster(
             @McpToolParam(description = "The diagnostic mode to run: COMPREHENSIVE, QUICK, PERFORMANCE, CONFIGURATION", required = true) String mode
     ) {

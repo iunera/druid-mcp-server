@@ -37,7 +37,10 @@ public class TasksTools {
     /**
      * Get tasks listing
      */
-    @McpTool(description = "List ingestion tasks matching specific states. Parameters: [state] (Enum: RUNNING, PENDING, WAITING, COMPLETED, optional).")
+    @McpTool(
+            description = "List ingestion tasks matching specific states. Parameters: [state] (Enum: RUNNING, PENDING, WAITING, COMPLETED, optional).",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getTasks(
             @McpToolParam(description = "Task state to list: RUNNING, PENDING, WAITING, COMPLETED (optional)", required = false) String state
     ) {
@@ -68,7 +71,10 @@ public class TasksTools {
     /**
      * Get detailed task information
      */
-    @McpTool(description = "Fetch detailed information, specifications, execution reports, or execution logs for a task. Parameters: [taskId] (String, required), [aspect] (Enum: STATUS, RAW_DETAILS, SPEC, REPORTS, LOG, required), and [logOffset] (Long, optional) to begin reading task logs from a specific byte offset.")
+    @McpTool(
+            description = "Fetch detailed information, specifications, execution reports, or execution logs for a task. Parameters: [taskId] (String, required), [aspect] (Enum: STATUS, RAW_DETAILS, SPEC, REPORTS, LOG, required), and [logOffset] (Long, optional) to begin reading task logs from a specific byte offset.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getTaskDetails(
             @McpToolParam(description = "ID of the task (required)", required = true) String taskId,
             @McpToolParam(description = "Aspect to retrieve: STATUS, RAW_DETAILS, SPEC, REPORTS, LOG (required)", required = true) String aspect,
@@ -109,7 +115,10 @@ public class TasksTools {
     /**
      * Shutdown a task
      */
-    @McpTool(description = "Kill/shutdown a Druid task. Parameters: [taskId] (String, required).")
+    @McpTool(
+            description = "Kill/shutdown a Druid task. Parameters: [taskId] (String, required).",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = true, destructiveHint = false)
+    )
     public String shutdownTask(
             @McpToolParam(description = "ID of the task to shutdown (required)", required = true) String taskId
     ) {

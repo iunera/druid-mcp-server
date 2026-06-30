@@ -46,7 +46,10 @@ public class DatasourceTools {
     /**
      * Get datasources (list all or show details for specific)
      */
-    @McpTool(description = "List all available Apache Druid datasources or get detailed information for a specific datasource. Parameters: [datasourceName] (String, optional) to fetch details for a single datasource, and [detailed] (Boolean, optional) to include schema and column specifications.")
+    @McpTool(
+            description = "List all available Apache Druid datasources or get detailed information for a specific datasource. Parameters: [datasourceName] (String, optional) to fetch details for a single datasource, and [detailed] (Boolean, optional) to include schema and column specifications.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getDatasources(
             @McpToolParam(description = "Name of the datasource to get details for (optional)", required = false) String datasourceName,
             @McpToolParam(description = "Whether to include detailed columns and data types (optional)", required = false) Boolean detailed
@@ -99,7 +102,10 @@ public class DatasourceTools {
     /**
      * Manage a datasource or its segments
      */
-    @McpTool(description = "Modify segment states or permanently drop a datasource. Parameters: [action] (Enum: ENABLE_SEGMENT, DISABLE_SEGMENT, KILL_DATASOURCE, required), [datasource] (String, required), [segmentId] (String, optional) to target a specific segment, and [interval] (String, optional) to specify the time range for killing data.")
+    @McpTool(
+            description = "Modify segment states or permanently drop a datasource. Parameters: [action] (Enum: ENABLE_SEGMENT, DISABLE_SEGMENT, KILL_DATASOURCE, required), [datasource] (String, required), [segmentId] (String, optional) to target a specific segment, and [interval] (String, optional) to specify the time range for killing data.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = true)
+    )
     public String manageDatasourceOrSegment(
             @McpToolParam(description = "Action to perform: ENABLE_SEGMENT, DISABLE_SEGMENT, KILL_DATASOURCE (required)", required = true) String action,
             @McpToolParam(description = "Name of the datasource (required)", required = true) String datasource,

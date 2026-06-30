@@ -37,7 +37,10 @@ public class SupervisorsTools {
     /**
      * Get supervisors (list all or get status of specific)
      */
-    @McpTool(description = "List all supervisors or query details of a specific supervisor. Parameters: [supervisorId] (String, optional) to get status details for a single supervisor.")
+    @McpTool(
+            description = "List all supervisors or query details of a specific supervisor. Parameters: [supervisorId] (String, optional) to get status details for a single supervisor.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getSupervisors(
             @McpToolParam(description = "ID of the supervisor (optional)", required = false) String supervisorId
     ) {
@@ -58,7 +61,10 @@ public class SupervisorsTools {
     /**
      * Manage supervisor state (suspend, resume, terminate)
      */
-    @McpTool(description = "Suspend, resume, or terminate a supervisor's execution. Parameters: [supervisorId] (String, required), and [action] (Enum: SUSPEND, RESUME, TERMINATE, required).")
+    @McpTool(
+            description = "Suspend, resume, or terminate a supervisor's execution. Parameters: [supervisorId] (String, required), and [action] (Enum: SUSPEND, RESUME, TERMINATE, required).",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = true)
+    )
     public String manageSupervisor(
             @McpToolParam(description = "ID of the supervisor (required)", required = true) String supervisorId,
             @McpToolParam(description = "Action to perform: SUSPEND, RESUME, TERMINATE (required)", required = true) String action

@@ -41,7 +41,10 @@ public class IngestionSpecTools {
     /**
      * Submit an ingestion specification or generate a template
      */
-    @McpTool(description = "Submit a Druid ingestion specification or generate a simple batch template. Parameters: [action] (Enum: SUBMIT_SPEC, GENERATE_TEMPLATE, required), [payloadJson] (String, optional) containing the ingestion spec for SUBMIT_SPEC, [datasourceName] (String, optional) for template generation, [inputSourceType] (String, optional) for template generation, and [inputSourcePath] (String, optional) for template generation.")
+    @McpTool(
+            description = "Submit a Druid ingestion specification or generate a simple batch template. Parameters: [action] (Enum: SUBMIT_SPEC, GENERATE_TEMPLATE, required), [payloadJson] (String, optional) containing the ingestion spec for SUBMIT_SPEC, [datasourceName] (String, optional) for template generation, [inputSourceType] (String, optional) for template generation, and [inputSourcePath] (String, optional) for template generation.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = false, idempotentHint = false, destructiveHint = false)
+    )
     public String submitIngestion(
             @McpToolParam(description = "Action: SUBMIT_SPEC, GENERATE_TEMPLATE (required)", required = true) String action,
             @McpToolParam(description = "Ingestion specification JSON string (required for SUBMIT_SPEC)", required = false) String payloadJson,

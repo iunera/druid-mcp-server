@@ -59,7 +59,10 @@ public class HealthToolProvider {
     /**
      * Get cluster status metrics or metadata
      */
-    @McpTool(description = "Check overall health or fetch specific metadata/properties from coordinators or routers. Parameters: [aspect] (Enum: OVERALL, COORDINATOR, ROUTER, LEADER, METADATA, PROPERTIES, SELF_DISCOVERY_COORDINATOR, SELF_DISCOVERY_ROUTER, optional).")
+    @McpTool(
+            description = "Check overall health or fetch specific metadata/properties from coordinators or routers. Parameters: [aspect] (Enum: OVERALL, COORDINATOR, ROUTER, LEADER, METADATA, PROPERTIES, SELF_DISCOVERY_COORDINATOR, SELF_DISCOVERY_ROUTER, optional).",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getClusterStatus(
             @McpToolParam(description = "Aspect to retrieve: OVERALL, COORDINATOR, ROUTER, LEADER, METADATA, PROPERTIES, SELF_DISCOVERY_COORDINATOR, SELF_DISCOVERY_ROUTER (optional, defaults to OVERALL)", required = false) String aspect
     ) {
@@ -137,7 +140,10 @@ public class HealthToolProvider {
     /**
      * Get status of nodes / servers
      */
-    @McpTool(description = "List registered servers, their detailed status, or single node status. Parameters: [serverName] (String, optional), and [detailed] (Boolean, optional) to include complete node metadata.")
+    @McpTool(
+            description = "List registered servers, their detailed status, or single node status. Parameters: [serverName] (String, optional), and [detailed] (Boolean, optional) to include complete node metadata.",
+            annotations = @McpTool.McpAnnotations(readOnlyHint = true, idempotentHint = true, destructiveHint = false)
+    )
     public String getNodesStatus(
             @McpToolParam(description = "Name of the server to filter by (optional, use 'broker' to get broker status)", required = false) String serverName,
             @McpToolParam(description = "Whether to retrieve full node metadata details (optional)", required = false) Boolean detailed
