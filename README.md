@@ -125,7 +125,7 @@ Note on Spring profiles:
 mvn clean package -DskipTests
 
 # Run the application
-java -jar target/druid-mcp-server-2.0.0.jar
+java -jar target/druid-mcp-server-2.0.1.jar
 ```
 
 The server will start on port 8080 by default.
@@ -160,11 +160,11 @@ Download the JAR from Maven Central https://repo.maven.apache.org/maven2/com/iun
 
 ```bash
 # STDIO mode (default)
-java -jar target/druid-mcp-server-2.0.0.jar
+java -jar target/druid-mcp-server-2.0.1.jar
 
 # HTTP mode (profile: http) - exposes /mcp on port 8080
 java -Dspring.profiles.active=http \
-     -jar target/druid-mcp-server-2.0.0.jar
+     -jar target/druid-mcp-server-2.0.1.jar
 ```
 
 ## For Developers
@@ -321,7 +321,7 @@ export DRUID_SSL_ENABLED="true"
 export DRUID_SSL_SKIP_VERIFICATION="false"  # Use "true" only for testing
 
 # Start the MCP server
-java -jar target/druid-mcp-server-2.0.0.jar
+java -jar target/druid-mcp-server-2.0.1.jar
 ```
 
 ##### Method 2: Runtime System Properties
@@ -332,7 +332,7 @@ Pass configuration as JVM system properties:
 java -Ddruid.router.url="http://localhost:8888" \
      -Ddruid.auth.username="admin" \
      -Ddruid.auth.password="password" \
-     -jar target/druid-mcp-server-2.0.0.jar
+     -jar target/druid-mcp-server-2.0.1.jar
 ```
 
 #### SSL Configuration Options
@@ -383,7 +383,7 @@ Update your `mcp-servers-config.json` to include environment variables:
         "DRUID_SSL_ENABLED",
         "-e",
         "DRUID_SSL_SKIP_VERIFICATION",
-        "iunera/druid-mcp-server:2.0.0"
+        "iunera/druid-mcp-server:2.0.1"
       ],
       "env": {
         "DRUID_ROUTER_URL": "http://host.docker.internal:8888",
@@ -419,7 +419,7 @@ You can override any prompt template using Java system properties with the `-D` 
 
 ```bash
 java -Dprompts.druid-data-exploration.template="Your custom template here" \
-     -jar target/druid-mcp-server-2.0.0.jar
+     -jar target/druid-mcp-server-2.0.1.jar
 ```
 
 #### Method 2: Custom Properties File
@@ -437,7 +437,7 @@ Environment: {environment}
 2. Load it at runtime:
 ```bash
 java -Dspring.config.additional-location=classpath:custom-prompts.properties \
-     -jar target/druid-mcp-server-2.0.0.jar
+     -jar target/druid-mcp-server-2.0.1.jar
 ```
 
 ### Available Prompt Variables
@@ -505,7 +505,7 @@ The new **Streamable HTTP** transport provides enhanced performance and scalabil
 # Default configuration with Streamable HTTP
 
 java -Dspring.profiles.active=http \
-     -jar target/druid-mcp-server-2.0.0.jar
+     -jar target/druid-mcp-server-2.0.1.jar
 # Server available at http://localhost:8080/mcp (configurable endpoint)
 ```
 
@@ -525,7 +525,7 @@ Security
 Perfect for LLM clients and desktop applications:
 
 ```bash
-java -jar target/druid-mcp-server-2.0.0.jar
+java -jar target/druid-mcp-server-2.0.1.jar
 ```
 
 #### Legacy SSE Transport (Deprecated)

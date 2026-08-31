@@ -1,7 +1,7 @@
 {
   "aliases": {
     "druid-mcp-server": {
-      "script-ref": "https://github.com/iunera/druid-mcp-server/releases/download/v2.0.0/druid-mcp-server-2.0.0.jar",
+      "script-ref": "https://github.com/iunera/druid-mcp-server/releases/download/v2.0.1/druid-mcp-server-2.0.1.jar",
       "description": "A Model Context Protocol (MCP) server for Apache Druid.",
       "runtime-options": [
         "-Dorg.slf4j.simpleLogger.logFile=System.err"

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [2.0.1] - 2026-08-31
+
+### Changed
+- **Spring Boot: upgraded from `4.1.0` to `4.1.1`** - Latest bug fixes and improvements.
+- **Spring AI: upgraded from `2.0.0` to `2.0.1`** - Dependency maintenance and stability updates.
+
 ## [2.0.0] - 2026-06-15
 
 ### Added
@@ -183,6 +189,8 @@ Changes
 
 ---
 
+[2.0.1]: https://github.com/iunera/druid-mcp-server/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/iunera/druid-mcp-server/compare/v1.8.0...v2.0.0
 [1.8.0]: https://github.com/iunera/druid-mcp-server/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/iunera/druid-mcp-server/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/iunera/druid-mcp-server/compare/v1.5.2...v1.6.0

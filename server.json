@@ -6,11 +6,11 @@
     "url": "https://github.com/iunera/druid-mcp-server",
     "source": "github"
   },
-  "version": "2.0.0",
+  "version": "2.0.1",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "docker.io/iunera/druid-mcp-server:2.0.0",
+      "identifier": "docker.io/iunera/druid-mcp-server:2.0.1",
       "runtimeHint": "docker",
       "transport": {
         "type": "stdio",

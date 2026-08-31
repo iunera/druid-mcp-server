@@ -79,7 +79,7 @@ The Inspector provides a web UI and a CLI to list tools/resources/prompts, call 
 #### Start the Druid MCP Server
 
 ```bash
-java -jar target/druid-mcp-server-2.0.0.jar \
+java -jar target/druid-mcp-server-2.0.1.jar \
   --spring.profiles.active=http \
   --druid.auth.username=admin \
   --druid.auth.password=password
@@ -372,7 +372,7 @@ Provides active monitoring, health diagnostic assessments, and automated doctor 
 java -Dspring.ai.mcp.server.stdio=true \
      -Dspring.main.web-application-type=none \
      -Dlogging.pattern.console= \
-     -jar target/druid-mcp-server-2.0.0.jar
+     -jar target/druid-mcp-server-2.0.1.jar
 ```
 
 

@@ -21,12 +21,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.iunera</groupId>
     <artifactId>druid-mcp-server</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <name>druid-mcp-server</name>
     <description>A comprehensive Model Context Protocol (MCP) server for Apache Druid that provides AI-assisted tools, resources, and prompts for managing and
         analyzing Druid clusters. Built with Spring Boot and Spring AI, this server enables seamless integration between Large Language Models and Apache Druid
@@ -63,7 +63,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring.ai.version>2.0.0</spring.ai.version>
+        <spring.ai.version>2.0.1</spring.ai.version>
     </properties>
 
     <dependencyManagement>
