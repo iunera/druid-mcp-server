@@ -36,3 +36,4 @@ build/
 .env
 key.pem
 all_tools.txt
+/skills/system/run-workflow/SKILL.md
