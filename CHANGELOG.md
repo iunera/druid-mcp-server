@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [2.0.2] - 2026-11-18
+
+### Security
+- **Docker Base Image Patched for Java4Shell (CVE-2026-114938)**: Migrated Docker build and runtime images to `maven:3-amazoncorretto-25` and `amazoncorretto:25-al2023-headless` (`OpenJDK 25.0.5.1+2-LTS`) to address CVE-2026-114938 ("Java4Shell").
+
 ## [2.0.1] - 2026-08-31
 
 ### Changed
@@ -189,6 +194,7 @@ Changes
 
 ---
 
+[2.0.2]: https://github.com/iunera/druid-mcp-server/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/iunera/druid-mcp-server/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/iunera/druid-mcp-server/compare/v1.8.0...v2.0.0
 [1.8.0]: https://github.com/iunera/druid-mcp-server/compare/v1.7.0...v1.8.0

@@ -1,7 +1,7 @@
 # Multi-stage build for Spring Boot application
 
 # Stage 1: deps - download and cache Maven dependencies
-FROM maven:3-eclipse-temurin-25 AS deps
+FROM maven:3-amazoncorretto-25 AS deps
 
 # Set working directory
 WORKDIR /app
@@ -13,7 +13,7 @@ COPY pom.xml ./
 RUN mvn -B dependency:go-offline -Dmaven.repo.local=/root/.m2/repository
 
 # Stage 2: build - compile the application using cached deps
-FROM maven:3-eclipse-temurin-25 AS build
+FROM maven:3-amazoncorretto-25 AS build
 
 # Set working directory
 WORKDIR /app
@@ -28,7 +28,7 @@ COPY pom.xml ./
 RUN mvn clean package -Dmaven.repo.local=/root/.m2/repository
 
 # Stage 3: Runtime stage
-FROM eclipse-temurin:25-jre
+FROM amazoncorretto:25-al2023-headless
 
 # Add MCP server metadata labels
 LABEL io.modelcontextprotocol.server.name="com.iunera/druid-mcp-server"
@@ -39,8 +39,11 @@ LABEL org.opencontainers.image.vendor="iunera"
 # Set working directory
 WORKDIR /app
 
-# Install curl for health check
-RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
+# Install shadow-utils (useradd/groupadd) and nmap-ncat (nc) for health check
+RUN dnf update -y && \
+    dnf install -y shadow-utils nmap-ncat && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf
 
 # Create user and group with id 1000
 RUN groupadd -g 1000 appgroup 2>/dev/null || true && \
